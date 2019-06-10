@@ -35,6 +35,11 @@ class MemberUserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /**********create temporary traits******* */
+            $memberUser->createTempUsername();
+            $memberUser->setPassword('87654321');
+
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($memberUser);
             $entityManager->flush();

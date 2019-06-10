@@ -181,4 +181,9 @@ class MemberUser extends AbstrMember implements UserInterface
 
         return $this;
     }
+
+    public function createTempUsername()
+    {
+        $this->username = $this->firstName.$this->surname;
+    }
 }
