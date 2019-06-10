@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}wpłata składki{% endblock %}
+
+{% block body %}
+    <h1>nowa wpłata składki</h1>
+
+    {{ include('contribution/_form.html.twig') }}
+
+    <a href="{{ path('contribution_index') }}">back to list</a>
+{% endblock %}

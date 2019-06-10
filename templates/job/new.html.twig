@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nowe stanowisko{% endblock %}
+
+{% block body %}
+    <h1>Utwórz nowe stanowisko</h1>
+
+    {{ include('job/_form.html.twig') }}
+
+    <a href="{{ path('job_index') }}">powót do listy</a>
+{% endblock %}
