@@ -186,4 +186,5 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         $this->username = $this->firstName.$this->surname;
     }
+
 }

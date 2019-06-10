@@ -1,16 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Contribution index{% endblock %}
+{% block title %}zapłacone składki{% endblock %}
 
 {% block body %}
-    <h1>Contribution index</h1>
+    <h1>zapłacone składki</h1>
 
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Value</th>
-                <th>PaymentDate</th>
+                <th>Imię i Nazwisko</th>
+                <th>Kwota</th>
+                <th>Data wpłaty</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -18,8 +19,10 @@
         {% for contribution in contributions %}
             <tr>
                 <td>{{ contribution.id }}</td>
+                {% set mu = contribution.myUser %}
+                <td>{{ mu.firstName }} {{ mu.surname }}</td>
                 <td>{{ contribution.value }}</td>
-                <td>{{ contribution.paymentDate ? contribution.paymentDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ contribution.paymentDate ? contribution.paymentDate|date('Y-m-d') : '' }}</td>
                 <td>
                     <a href="{{ path('contribution_show', {'id': contribution.id}) }}">show</a>
                     <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">edit</a>

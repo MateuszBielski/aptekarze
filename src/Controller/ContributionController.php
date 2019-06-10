@@ -31,6 +31,7 @@ class ContributionController extends AbstractController
     public function new(Request $request): Response
     {
         $contribution = new Contribution();
+        $contribution->setPaymentDate(new \DateTime('now'));
         $form = $this->createForm(ContributionType::class, $contribution);
         $form->handleRequest($request);
 

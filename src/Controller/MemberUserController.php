@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\MemberUser;
+use App\Entity\MemberHistory;
 use App\Form\MemberUserType;
 use App\Repository\MemberUserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,10 +70,13 @@ class MemberUserController extends AbstractController
     public function edit(Request $request, MemberUser $memberUser): Response
     {
         $form = $this->createForm(MemberUserType::class, $memberUser);
+        $previousUserData = new MemberHistory($memberUser);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($previousUserData);
+            $em->flush();
 
             return $this->redirectToRoute('member_user_index', [
                 'id' => $memberUser->getId(),

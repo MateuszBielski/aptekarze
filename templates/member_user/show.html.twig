@@ -35,10 +35,24 @@
                 <th>Roles</th>
                 <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
             </tr>
-            <tr>
+            {# <tr>
                 <th>Password</th>
                 <td>{{ member_user.password }}</td>
+            </tr> #}
+            <tr>
+                <th>Stanowisko/wysokość składki</th>
+                <td>{{ member_user.job.name }} / {{ member_user.job.rate }} zł</td>
             </tr>
+            {% if member_user.myHistory|length > 0 %}
+            <tr>
+                <th>Historia zmian</th>
+            </tr>
+                {% for history_row in member_user.myHistory %}
+                <tr><td>{{ history_row.date.format('d.m.y') }}</td></tr>
+                {% endfor %}
+
+            {% endif %}
+
         </tbody>
     </table>
 

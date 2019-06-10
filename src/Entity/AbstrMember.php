@@ -44,6 +44,11 @@ abstract class AbstrMember
      */
     protected $job;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $paymentDayOfMonth = 1;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,5 +112,24 @@ abstract class AbstrMember
         $this->job = $job;
 
         return $this;
+    }
+
+    public function getPaymentDayOfMonth(): ?int
+    {
+        return $this->paymentDayOfMonth;
+    }
+
+    public function setPaymentDayOfMonth(?int $paymentDayOfMonth): self
+    {
+        $this->paymentDayOfMonth = $paymentDayOfMonth;
+
+        return $this;
+    }
+
+    public function getNameAndValue()
+    {
+        $name = "$this->firstName $this->surname ";
+        $value = $this->job->getRate()." zł";
+        return $name.$value;
     }
 }

@@ -15,10 +15,16 @@ class MemberHistory extends AbstrMember
     private $date;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\MemberUser", inversedBy="myUser")
+     * @ORM\ManyToOne(targetEntity="App\Entity\MemberUser", inversedBy="myHistory")
      */
     private $myUser;
 
+    public function __construct(MemberUser $memberUser)
+    {
+        $this->CopyData($memberUser);
+        $this->setDate(new \DateTime('now'));
+    }
+    
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -41,5 +47,16 @@ class MemberHistory extends AbstrMember
         $this->myUser = $myUser;
 
         return $this;
+    }
+    
+    public function CopyData(MemberUser $memberUser)
+    {
+        $this->setTelephone($memberUser->getTelephone());
+        $this->setEmail($memberUser->getEmail());
+        $this->setFirstName($memberUser->getFirstName());
+        $this->setSurname($memberUser->getSurname());
+        $this->setJob($memberUser->getJob());
+        $this->setPaymentDayOfMonth($memberUser->getPaymentDayOfMonth());
+        $this->setMyUser($memberUser);
     }
 }
