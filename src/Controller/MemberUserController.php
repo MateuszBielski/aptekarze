@@ -39,10 +39,12 @@ class MemberUserController extends AbstractController
             /**********create temporary traits******* */
             $memberUser->createTempUsername();
             $memberUser->setPassword('87654321');
-
+            
+            $memberStartHistory = new MemberHistory($memberUser);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($memberUser);
+            $entityManager->persist($memberStartHistory);
             $entityManager->flush();
 
             return $this->redirectToRoute('member_user_index');
@@ -78,7 +80,7 @@ class MemberUserController extends AbstractController
             $em->persist($previousUserData);
             $em->flush();
 
-            return $this->redirectToRoute('member_user_index', [
+            return $this->redirectToRoute('member_user_show', [
                 'id' => $memberUser->getId(),
             ]);
         }

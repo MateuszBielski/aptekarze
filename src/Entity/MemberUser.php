@@ -31,6 +31,7 @@ class MemberUser extends AbstrMember implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", mappedBy="myUser")
+     * @ORM\OrderBy({"date" = "DESC"})
      */
     private $myHistory;
 

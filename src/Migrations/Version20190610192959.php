@@ -21,7 +21,7 @@ final class Version20190610192959 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
+        $this->addSql('ALTER TABLE abstr_member ADD payment_day_of_month INT DEFAULT NULL');
         $this->addSql('ALTER TABLE contribution CHANGE payment_date payment_date DATE NOT NULL');
     }
 
