@@ -59,4 +59,11 @@ class MemberHistory extends AbstrMember
         $this->setPaymentDayOfMonth($memberUser->getPaymentDayOfMonth());
         $this->setMyUser($memberUser);
     }
+
+    public function InfoChangeComparingToPrevious(MemberHistory $mh)
+    {
+        //zwrócić jako gotowy do wyświetlenia string
+        //może wcześniej zmiany znaleźć w sposób sformalizowany
+        //sprawdzić czy pierwszy wpis jest datą rejestracji (czy pierwszy jest równy drugi lub aktualny)
+    }
 }

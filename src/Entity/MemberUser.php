@@ -44,6 +44,7 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         $this->myHistory = new ArrayCollection();
         $this->contributions = new ArrayCollection();
+        $this->KindOfHistoryChanges();
     }
 
     /*
@@ -188,4 +189,17 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->username = $this->firstName.$this->surname;
     }
 
+    public function KindOfHistoryChanges()
+    {
+        //co się zmieniło względem poprzedniego wpisu
+        // czy pierwszy wpis dotyczy rejestracji
+        
+        $previous ;
+        $numbOfRecord = count($this->myHistory);
+        $i = 1;
+        for($i;$i < $numbOfRecord ; $i++){
+            myHistory[$i]->InfoChangeComparingToPrevious();
+        }
+        
+    }
 }

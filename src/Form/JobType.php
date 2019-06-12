@@ -24,3 +24,4 @@ class JobType extends AbstractType
         ]);
     }
 }
+
