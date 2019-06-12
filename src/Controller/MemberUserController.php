@@ -61,6 +61,8 @@ class MemberUserController extends AbstractController
      */
     public function show(MemberUser $memberUser): Response
     {
+        $memberUser->KindOfHistoryChanges();
+        //tu warto posortować w odwrotnej kolejności historię;
         return $this->render('member_user/show.html.twig', [
             'member_user' => $memberUser,
         ]);

@@ -15,7 +15,7 @@ class ContributionType extends AbstractType
     {
         $builder
             ->add('value',null,['label' => 'kwota'])
-            ->add('paymentDate')
+            ->add('paymentDate',null,['label' => 'data wpłaty'])
             ->add('myUser',EntityType::class,[
                 'class' => MemberUser::class,
                 'choice_label' => function(MemberUser $mu){return $mu->getNameAndValue();},

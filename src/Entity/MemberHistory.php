@@ -19,6 +19,10 @@ class MemberHistory extends AbstrMember
      */
     private $myUser;
 
+    private $infoChangeComparingToNext;
+
+    public $changeJob = false;
+
     public function __construct(MemberUser $memberUser)
     {
         $this->CopyData($memberUser);
@@ -60,10 +64,57 @@ class MemberHistory extends AbstrMember
         $this->setMyUser($memberUser);
     }
 
-    public function InfoChangeComparingToPrevious(MemberHistory $mh)
+    public function GenerateInfoChangeComparingToNext(AbstrMember $compared)
     {
         //zwrócić jako gotowy do wyświetlenia string
         //może wcześniej zmiany znaleźć w sposób sformalizowany
         //sprawdzić czy pierwszy wpis jest datą rejestracji (czy pierwszy jest równy drugi lub aktualny)
+        
+        $result = '';
+        if ($this->email != $compared->getEmail()) {
+            $result .= "e-mail $this->email";
+        };
+        if ($this->telephone != $compared->getTelephone()) {
+            $result .= "telefon $this->telephone";
+        };
+        if ($this->firstName != $compared->getFirstName()) {
+            $result .= "imię $this->firstName";
+        };
+        if ($this->surname != $compared->getSurname()) {
+            $result .= "nazwisko $this->surname";
+        };
+        if ($this->job != $compared->getJob()) {
+            //$job = $this->job;
+            $name = $this->job->getName();
+            $rate = $this->job->getRate();
+            $result .= "stanowisko $name $rate zł";
+
+            $this->changeJob = true;
+        };
+        if ($this->paymentDayOfMonth != $compared->getPaymentDayOfMonth()) {
+            $result .= "dzień płatności $this->paymentDayOfMonth";
+        };
+        if (!strlen($result)) {
+            $result = "data rejestracji";
+        } else {
+            $result = "zmiana: ".$result;
+        }
+        $this->infoChangeComparingToNext = $result;
     }
+    
+    public function getInfoChangeComparingToNext()
+    {
+        $result = '';
+        // $result .= "e-m $this->email ";
+        // $result .= "tel $this->telephone ";
+        // $result .= "im $this->firstName ";
+        // $result .= "naz$this->surname ";
+        // $name = $this->job->getName();
+        // $rate = $this->job->getRate();
+        // $result .= "stan $name $rate zł ";
+        // $result .= "dz pł $this->paymentDayOfMonth ";
+        $result .= $this->infoChangeComparingToNext;
+        return $result;
+    }
+    
 }

@@ -31,8 +31,9 @@ class MemberUser extends AbstrMember implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", mappedBy="myUser")
-     * @ORM\OrderBy({"date" = "DESC"})
+     * @ORM\OrderBy({"date" = "ASC"})
      */
+    //w widoku jest odwrócenie kolejności
     private $myHistory;
 
     /**
@@ -40,11 +41,12 @@ class MemberUser extends AbstrMember implements UserInterface
      */
     private $contributions;
 
+    private $historyChangesChecked = false;
+
     public function __construct()
     {
         $this->myHistory = new ArrayCollection();
         $this->contributions = new ArrayCollection();
-        $this->KindOfHistoryChanges();
     }
 
     /*
@@ -194,12 +196,41 @@ class MemberUser extends AbstrMember implements UserInterface
         //co się zmieniło względem poprzedniego wpisu
         // czy pierwszy wpis dotyczy rejestracji
         
-        $previous ;
         $numbOfRecord = count($this->myHistory);
+        if (!$numbOfRecord) return;
+        
+        $current = $this->myHistory[0];
+        if ($numbOfRecord == 1) {
+            //czy to jest data rejestracji
+            $current->GenerateInfoChangeComparingToNext($this);
+            return;
+        }
         $i = 1;
         for($i;$i < $numbOfRecord ; $i++){
-            myHistory[$i]->InfoChangeComparingToPrevious();
+            $current->GenerateInfoChangeComparingToNext($this->myHistory[$i]);
+            $current = $this->myHistory[$i];
         }
-        
+        //ostatnia pozycja 
+        $current->GenerateInfoChangeComparingToNext($this);
+        $this->historyChangesChecked = true;
+    }
+    /* metoda obliczająca wszystkie należne składki od daty zarejestrowania + kwota(bilans - bo może być na minusie) początkowa */
+    public function CalculateAllDueContribution()
+    {
+        if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
+        $interval_months = array();
+        $valueRate = array();
+
+        $intervalStart = 0;
+        $intervalStop = 0;
+        //oddzielny przypadek dla sytuacji bez daty rejestracji?
+        foreach($this->myHistory as $h_row) {
+            if ($h_row->changeJob) {
+                //zaokrąglić 
+                // $interval_months = \
+                // $valueRate = $h_row->getJob->getRate();
+            }
+        }
+        //ostatni okres to porównanie do zakończonego miesiąca + sprawdzenie, czy w tym miesiącu jesteśmy po dniu płatności
     }
 }

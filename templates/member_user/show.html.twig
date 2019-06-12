@@ -47,8 +47,11 @@
             <tr>
                 <th>Historia zmian</th>
             </tr>
-                {% for history_row in member_user.myHistory %}
-                <tr><td>{{ history_row.date.format('d.m.y') }}</td></tr>
+                {% for history_row in member_user.myHistory|reverse %}
+                <tr>
+                    <td>{{ history_row.date.format('d.m.y') }}</td>
+                    <td>{{ history_row.getInfoChangeComparingToNext() }}</td>
+                </tr>
                 {% endfor %}
 
             {% endif %}
