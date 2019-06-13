@@ -116,5 +116,12 @@ class MemberHistory extends AbstrMember
         $result .= $this->infoChangeComparingToNext;
         return $result;
     }
+
+    public function getDateRoundToNextMonth()
+    {
+        $roundDate = clone $this->date;
+        $roundDate->modify('first day of next month');
+        return $roundDate;
+    }
     
 }

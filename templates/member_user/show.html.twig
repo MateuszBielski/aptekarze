@@ -55,9 +55,12 @@
                 {% endfor %}
 
             {% endif %}
+            
 
         </tbody>
     </table>
+    <br>
+    Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} zł <br>
 
     <a href="{{ path('member_user_index') }}">back to list</a>
 

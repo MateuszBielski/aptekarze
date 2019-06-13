@@ -43,6 +43,11 @@ class MemberUser extends AbstrMember implements UserInterface
 
     private $historyChangesChecked = false;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $initialAccount = 0;
+
     public function __construct()
     {
         $this->myHistory = new ArrayCollection();
@@ -186,6 +191,18 @@ class MemberUser extends AbstrMember implements UserInterface
         return $this;
     }
 
+    public function getInitialAccount(): ?float
+    {
+        return $this->initialAccount;
+    }
+
+    public function setInitialAccount(?float $initialAccount): self
+    {
+        $this->initialAccount = $initialAccount;
+
+        return $this;
+    }
+
     public function createTempUsername()
     {
         $this->username = $this->firstName.$this->surname;
@@ -221,16 +238,64 @@ class MemberUser extends AbstrMember implements UserInterface
         $interval_months = array();
         $valueRate = array();
 
+        $IntervalToMonths = function (\DateInterval $interval) {
+            $years = intval($interval->format('y'));
+            $remainingMonths = intval($interval->format('m'));
+            
+            return $years*12 + $remainingMonths;
+        };
+
         $intervalStart = 0;
         $intervalStop = 0;
         //oddzielny przypadek dla sytuacji bez daty rejestracji?
+        $stopStartWynik = 'startStop ';
+        if (count($this->myHistory)) $intervalStart = clone $this->myHistory[0]->getDate();
         foreach($this->myHistory as $h_row) {
             if ($h_row->changeJob) {
-                //zaokrąglić 
-                // $interval_months = \
-                // $valueRate = $h_row->getJob->getRate();
+                $intervalStop = clone $h_row->getDateRoundToNextMonth();
+                $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
+                //$interval = $datetime1->diff($datetime2);
+                $interval_months[] = $IntervalToMonths($intervalStop->diff($intervalStart));
+                $valueRate[] = $h_row->getJob()->getRate();
+                $intervalStart = clone $intervalStop;
             }
         }
+        $result = 0;
         //ostatni okres to porównanie do zakończonego miesiąca + sprawdzenie, czy w tym miesiącu jesteśmy po dniu płatności
+        $today = new \DateTime('now');
+        $begThisMonth =  clone $today;
+        $begThisMonth->modify('first day of this month');
+        $begNextMonth = clone $today;
+        $begNextMonth->modify('first day of next month');
+        $intervalStop = $this->AfterPaymentDay() ? $begNextMonth : $begThisMonth;
+
+        $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
+        $interval_months[] = $IntervalToMonths($intervalStop->diff($intervalStart));
+        $valueRate[] = $this->job->getRate();
+
+        $numbOfIntervals = count($interval_months);
+        // if (!$numbOfIntervals) {
+            
+        // }
+        $okresy = '';
+        $i = 0;
+        for($i ; $i < $numbOfIntervals ; $i++) {
+            $result += $interval_months[$i] * $valueRate[$i];
+            $okresy .= " + ".$interval_months[$i];
+        }
+        $result += $this->initialAccount;
+
+        //return $result;
+        return $stopStartWynik;
     }
+
+    //czy jesteśmy po dniu płatności
+    public function AfterPaymentDay()
+    {
+        $today = new \DateTime('now');
+        $dayOfToday = intval($today->format('d'));
+        return $dayOfToday > $this->paymentDayOfMonth;
+    }
+
+    
 }
