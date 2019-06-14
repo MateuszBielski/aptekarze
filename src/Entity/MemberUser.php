@@ -238,23 +238,21 @@ class MemberUser extends AbstrMember implements UserInterface
         $interval_months = array();
         $valueRate = array();
 
-        $IntervalToMonths = function (\DateInterval $interval) {
-            $years = intval($interval->format('%y'));
-            $remainingMonths = intval($interval->format('%m'));
-            
-            return $years*12 + $remainingMonths;
-        };
-
         $intervalStart = 0;
         $intervalStop = 0;
         //oddzielny przypadek dla sytuacji bez daty rejestracji?
+        //jeżeli w pierwszym i drugim wpisie są inne stanowiska to dla okresu między nimi
+        //przyjęta jest stawka z drugiego wpisu.
         // $stopStartWynik = 'startStop ';
-        if (count($this->myHistory)) $intervalStart = clone $this->myHistory[0]->getDate();
+        if (count($this->myHistory)) {
+            $intervalStart = clone $this->myHistory[0]->getDate();
+            $intervalStart->modify('first day of next month');
+        }
         foreach($this->myHistory as $h_row) {
             if ($h_row->changeJob) {
                 $intervalStop = clone $h_row->getDateRoundToNextMonth();
                 // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
-                $interval_months[] = $IntervalToMonths($intervalStop->diff($intervalStart));
+                $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
                 $valueRate[] = $h_row->getJob()->getRate();
                 $intervalStart = clone $intervalStop;
             }
@@ -266,10 +264,10 @@ class MemberUser extends AbstrMember implements UserInterface
         $begThisMonth->modify('first day of this month');
         $begNextMonth = clone $day;
         $begNextMonth->modify('first day of next month');
-        $intervalStop = $this->AfterPaymentDay() ? $begNextMonth : $begThisMonth;
+        $intervalStop = $this->AfterPaymentDay($day) ? $begNextMonth : $begThisMonth;
 
         // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
-        $interval_months[] = $IntervalToMonths($intervalStop->diff($intervalStart));
+        $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
         $valueRate[] = $this->job->getRate();
 
         $numbOfIntervals = count($interval_months);
@@ -283,7 +281,33 @@ class MemberUser extends AbstrMember implements UserInterface
 
         // return $okresy;
         return $result;
+        // $tempDate1 = $intervalStart->format('y-m-d');
+        // $tempDate2 = $intervalStop->format('y-m-d');
+        // return $tempDate1."   ".$tempDate2;
         // return $stopStartWynik;
+    }
+
+    public static function IntervalToMonths(\DateInterval $interval) {
+        $years = intval($interval->format('%Y'));
+        $remainingMonths = intval($interval->format('%M'));
+        $remainingDays = intval($interval->format('%D'));
+        
+        //return $remainingDays;
+        return $years*12 + $remainingMonths;
+    }
+
+    public static function DatesDiffToMonth(\DateTimeInterface $start, \DateTimeInterface $stop)
+    {
+        //opis wymagań: ile jest pełnych miesięcy między dwoma datami, każda to pierwszy dzień miesiąca
+        //metoda IntervalToMonths nie zawsze się sprawdza
+        //więc trzeba inaczej
+        //najpierw pełne lata:
+
+        //1999-11-1  2001-2-1
+        $years = intval($stop->format('Y')) - intval($start->format('Y'));//Y - czterocyfrowo rok
+        //nawet liczby ujemne powinny być ok
+        $months = intval($stop->format('m')) - intval($start->format('m'));
+        return $years*12 + $months;
     }
 
     public function CalculateAllDueContribution()
@@ -293,10 +317,10 @@ class MemberUser extends AbstrMember implements UserInterface
     }
 
     //czy jesteśmy po dniu płatności
-    public function AfterPaymentDay()
+    public function AfterPaymentDay(\DateTimeInterface $day)
     {
-        $today = new \DateTime('now');
-        $dayOfToday = intval($today->format('d'));
+        // day = new \DateTime('now');
+        $dayOfToday = intval($day->format('d'));
         return $dayOfToday > $this->paymentDayOfMonth;
     }
 
