@@ -30,14 +30,14 @@ class MemberUser extends AbstrMember implements UserInterface
     private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", mappedBy="myUser")
+     * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", mappedBy="myUser", cascade = {"persist","remove"})
      * @ORM\OrderBy({"date" = "ASC"})
      */
     //w widoku jest odwrócenie kolejności
     private $myHistory;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Contribution", mappedBy="myUser")
+     * @ORM\OneToMany(targetEntity="App\Entity\Contribution", mappedBy="myUser", cascade = {"persist","remove"})
      */
     private $contributions;
 
@@ -141,7 +141,7 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         if (!$this->myHistory->contains($myHistory)) {
             $this->myHistory[] = $myHistory;
-            $myHistory->setMyHistory($this);
+            $myHistory->setMyUser($this);
         }
 
         return $this;
@@ -152,8 +152,8 @@ class MemberUser extends AbstrMember implements UserInterface
         if ($this->myHistory->contains($myHistory)) {
             $this->myHistory->removeElement($myHistory);
             // set the owning side to null (unless already changed)
-            if ($myHistory->getMyHistory() === $this) {
-                $myHistory->setmyHistory(null);
+            if ($myHistory->getMyUser() === $this) {
+                $myHistory->setmyUser(null);
             }
         }
 
@@ -232,15 +232,15 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->historyChangesChecked = true;
     }
     /* metoda obliczająca wszystkie należne składki od daty zarejestrowania + kwota(bilans - bo może być na minusie) początkowa */
-    public function CalculateAllDueContribution()
+    public function CalculateAllDueContributionOn(\DateTimeInterface $day)
     {
         if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
         $interval_months = array();
         $valueRate = array();
 
         $IntervalToMonths = function (\DateInterval $interval) {
-            $years = intval($interval->format('y'));
-            $remainingMonths = intval($interval->format('m'));
+            $years = intval($interval->format('%y'));
+            $remainingMonths = intval($interval->format('%m'));
             
             return $years*12 + $remainingMonths;
         };
@@ -248,13 +248,12 @@ class MemberUser extends AbstrMember implements UserInterface
         $intervalStart = 0;
         $intervalStop = 0;
         //oddzielny przypadek dla sytuacji bez daty rejestracji?
-        $stopStartWynik = 'startStop ';
+        // $stopStartWynik = 'startStop ';
         if (count($this->myHistory)) $intervalStart = clone $this->myHistory[0]->getDate();
         foreach($this->myHistory as $h_row) {
             if ($h_row->changeJob) {
                 $intervalStop = clone $h_row->getDateRoundToNextMonth();
-                $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
-                //$interval = $datetime1->diff($datetime2);
+                // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
                 $interval_months[] = $IntervalToMonths($intervalStop->diff($intervalStart));
                 $valueRate[] = $h_row->getJob()->getRate();
                 $intervalStart = clone $intervalStop;
@@ -262,31 +261,35 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $result = 0;
         //ostatni okres to porównanie do zakończonego miesiąca + sprawdzenie, czy w tym miesiącu jesteśmy po dniu płatności
-        $today = new \DateTime('now');
-        $begThisMonth =  clone $today;
+        
+        $begThisMonth =  clone $day;
         $begThisMonth->modify('first day of this month');
-        $begNextMonth = clone $today;
+        $begNextMonth = clone $day;
         $begNextMonth->modify('first day of next month');
         $intervalStop = $this->AfterPaymentDay() ? $begNextMonth : $begThisMonth;
 
-        $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
+        // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
         $interval_months[] = $IntervalToMonths($intervalStop->diff($intervalStart));
         $valueRate[] = $this->job->getRate();
 
         $numbOfIntervals = count($interval_months);
-        // if (!$numbOfIntervals) {
-            
-        // }
-        $okresy = '';
+        // $okresy = '';
         $i = 0;
         for($i ; $i < $numbOfIntervals ; $i++) {
             $result += $interval_months[$i] * $valueRate[$i];
-            $okresy .= " + ".$interval_months[$i];
+            // $okresy .= " + ".$interval_months[$i];
         }
         $result += $this->initialAccount;
 
-        //return $result;
-        return $stopStartWynik;
+        // return $okresy;
+        return $result;
+        // return $stopStartWynik;
+    }
+
+    public function CalculateAllDueContribution()
+    {
+        $today = new \DateTime('now');
+        return $this->CalculateAllDueContributionOn($today);
     }
 
     //czy jesteśmy po dniu płatności
@@ -297,5 +300,12 @@ class MemberUser extends AbstrMember implements UserInterface
         return $dayOfToday > $this->paymentDayOfMonth;
     }
 
-    
+    public function CreateDummyData()
+    {
+        $this->firstName = 'imię';
+        $this->surname = 'nazwisko';
+        $this->telephone = '1234';
+        $this->email = 'a@b';
+    }
 }
+
