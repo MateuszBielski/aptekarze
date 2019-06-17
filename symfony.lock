@@ -1,0 +1,5 @@
+{
+    "symfony/expression-language": {
+        "version": "v4.3.1"
+    }
+}

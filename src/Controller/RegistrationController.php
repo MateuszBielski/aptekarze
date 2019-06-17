@@ -21,6 +21,7 @@ class RegistrationController extends AbstractController
     {
         $user = new MemberUser();
         $user->CreateDummyData();
+        $user->createTempUsername();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 

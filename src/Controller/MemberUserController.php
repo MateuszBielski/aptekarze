@@ -6,6 +6,8 @@ use App\Entity\MemberUser;
 use App\Entity\MemberHistory;
 use App\Form\MemberUserType;
 use App\Repository\MemberUserRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,7 +72,9 @@ class MemberUserController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="member_user_edit", methods={"GET","POST"})
+     * @Security("memberUser == user", message="Brak uprawnień")
      */
+    //@IsGranted("MANAGE", subject="memberUser")
     public function edit(Request $request, MemberUser $memberUser): Response
     {
         $form = $this->createForm(MemberUserType::class, $memberUser);
@@ -95,6 +99,7 @@ class MemberUserController extends AbstractController
 
     /**
      * @Route("/{id}", name="member_user_delete", methods={"DELETE"})
+     * @IsGranted("MANAGE", subject="article")
      */
     public function delete(Request $request, MemberUser $memberUser): Response
     {

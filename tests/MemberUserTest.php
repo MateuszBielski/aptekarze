@@ -57,6 +57,16 @@ class MemberUserTest extends TestCase
         $result = MemberUser::DatesDiffToMonth($start, $stop);
         $this->assertEquals(15, $result);
     }
+
+    public function testUserWithoutHistory()
+    {
+        $testMemberUser = new MemberUser();
+        $testMemberUser->setInitialAccount(264);
+
+        $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('now'));
+        $this->assertEquals(264, $result);
+    }
+
     public function test_1_CalculateAllDueContributionOn()
     {
         $testMemberUser = $this->UserWithOne_JobRate_Date(10,new \DateTime('2000-01-01'));

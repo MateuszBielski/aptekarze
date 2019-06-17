@@ -9,6 +9,11 @@
         <a href="{{ path('member_user_index') }}">członkowie</a>
         <a href="{{ path('job_index') }}">stanowiska</a>
         <a href="{{ path('contribution_new') }}">nowa wpłata</a>
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            <a class="link" href="{{ path('app_logout') }}">Wyloguj</a>
+        {% else %}
+            <a class="link" href="{{ path('app_login') }}">Zaloguj</a>
+        {% endif %}
         {#
         <a href="{{ path('schemat_index') }}">Schemat</a>
         <a href="{{ path('pacjent_index') }}">Pacjenci</a>

@@ -270,7 +270,7 @@ class MemberUser extends AbstrMember implements UserInterface
 
         // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
         $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
-        $valueRate[] = $this->job->getRate();
+        $valueRate[] = ($this->job == null) ? 0 : $this->job->getRate();
 
         $numbOfIntervals = count($interval_months);
         // $okresy = '';
@@ -298,13 +298,15 @@ class MemberUser extends AbstrMember implements UserInterface
         return $years*12 + $remainingMonths;
     }
 
-    public static function DatesDiffToMonth(\DateTimeInterface $start, \DateTimeInterface $stop)
+    public static function DatesDiffToMonth($start, $stop)
     {
         //opis wymagań: ile jest pełnych miesięcy między dwoma datami, każda to pierwszy dzień miesiąca
         //metoda IntervalToMonths nie zawsze się sprawdza
         //więc trzeba inaczej
         //najpierw pełne lata:
 
+        if (!$start instanceof \DateTimeInterface) return 0;
+        if (!$stop instanceof \DateTimeInterface) return 0;
         //1999-11-1  2001-2-1
         $years = intval($stop->format('Y')) - intval($start->format('Y'));//Y - czterocyfrowo rok
         //nawet liczby ujemne powinny być ok
