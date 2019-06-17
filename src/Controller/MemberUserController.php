@@ -78,6 +78,7 @@ class MemberUserController extends AbstractController
     {
         $form = $this->createForm(MemberUserType::class, $memberUser);
         $previousUserData = new MemberHistory($memberUser);
+        $previousUserData->setWhoMadeChange($this->getUser());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -98,7 +99,7 @@ class MemberUserController extends AbstractController
 
     /**
      * @Route("/{id}", name="member_user_delete", methods={"DELETE"})
-     * @IsGranted("MANAGE", subject="article")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function delete(Request $request, MemberUser $memberUser): Response
     {

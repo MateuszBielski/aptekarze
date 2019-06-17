@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}MemberUser{% endblock %}
+{% block title %}Członek izby{% endblock %}
 
 {% block body %}
-    <h1>MemberUser</h1>
+    <h3>Członek izby</h3>
 
     <table class="table">
         <tbody>
@@ -12,29 +12,29 @@
                 <td>{{ member_user.id }}</td>
             </tr>
             <tr>
-                <th>Telephone</th>
+                <th>Telefon</th>
                 <td>{{ member_user.telephone }}</td>
             </tr>
             <tr>
-                <th>Email</th>
+                <th>E-mail</th>
                 <td>{{ member_user.email }}</td>
             </tr>
             <tr>
-                <th>FirstName</th>
+                <th>Imię</th>
                 <td>{{ member_user.firstName }}</td>
             </tr>
             <tr>
-                <th>Surname</th>
+                <th>Nazwisko</th>
                 <td>{{ member_user.surname }}</td>
             </tr>
             <tr>
-                <th>Username</th>
+                <th>Nazwa użytkownika</th>
                 <td>{{ member_user.username }}</td>
             </tr>
-            <tr>
+            {# <tr>
                 <th>Roles</th>
                 <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
-            </tr>
+            </tr> #}
             {# <tr>
                 <th>Password</th>
                 <td>{{ member_user.password }}</td>
@@ -61,10 +61,11 @@
     </table>
     <br>
     Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} zł <br>
+    Suma wpłaconych składek {{ member_user.PaidContributionSum() }} zł <br>
 
-    <a href="{{ path('member_user_index') }}">back to list</a>
+    <a href="{{ path('member_user_index') }}">powrót do listy</a>
 
-    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edit</a>
+    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
 
     {{ include('member_user/_delete_form.html.twig') }}
 {% endblock %}

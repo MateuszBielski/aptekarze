@@ -23,6 +23,11 @@ class MemberHistory extends AbstrMember
 
     public $changeJob = false;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\MemberUser")
+     */
+    private $whoMadeChange;
+
     public function __construct(MemberUser $memberUser)
     {
         $this->CopyData($memberUser);
@@ -122,6 +127,18 @@ class MemberHistory extends AbstrMember
         $roundDate = clone $this->date;
         $roundDate->modify('first day of next month');
         return $roundDate;
+    }
+
+    public function getWhoMadeChange(): ?MemberUser
+    {
+        return $this->whoMadeChange;
+    }
+
+    public function setWhoMadeChange(?MemberUser $whoMadeChange): self
+    {
+        $this->whoMadeChange = $whoMadeChange;
+
+        return $this;
     }
     
 }

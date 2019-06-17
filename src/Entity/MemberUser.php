@@ -335,5 +335,25 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->telephone = '1234';
         $this->email = 'a@b';
     }
+
+    public function PaidContributionSum()
+    {
+        $sum  = 0;
+        foreach($this->contributions as $contr)
+        {
+            $sum += $contr->getValue();
+        }
+        return $sum;
+    }
+
+    //aktualny bilans
+    public function StringCurrentAccount(): string
+    {
+        $sign = '';
+        $account = $this->PaidContributionSum()-$this->CalculateAllDueContribution();
+        if ($account > 0) $sign = '+ ';
+        // if ($account < 0) $sign = '- ';
+        return $sign.strval($account)." zł";
+    }
 }
 
