@@ -10,16 +10,10 @@
         <a href="{{ path('job_index') }}">stanowiska</a>
         <a href="{{ path('contribution_new') }}">nowa wpłata</a>
         {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-            <a class="link" href="{{ path('app_logout') }}">Wyloguj</a>
+            <a class="link" href="{{ path('app_logout') }}">wyloguj</a>
         {% else %}
-            <a class="link" href="{{ path('app_login') }}">Zaloguj</a>
+            <a class="link" href="{{ path('app_login') }}">zaloguj się</a>
         {% endif %}
-        {#
-        <a href="{{ path('schemat_index') }}">Schemat</a>
-        <a href="{{ path('pacjent_index') }}">Pacjenci</a>
-        <a href="{{ path('szczepienie_index') }}">Szczepienia</a>
-        <a href="{{ path('kalendarz_szczepien_index') }}">Kalendarz Szczepień</a>
-        <a href="{{ path('app_logout') }}">Wyloguj</a> #}
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>

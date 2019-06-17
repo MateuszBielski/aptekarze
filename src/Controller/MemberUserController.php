@@ -72,9 +72,8 @@ class MemberUserController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="member_user_edit", methods={"GET","POST"})
-     * @Security("memberUser == user", message="Brak uprawnień")
+     * @Security("memberUser == user or is_granted('ROLE_ADMIN')", message="Brak uprawnień")
      */
-    //@IsGranted("MANAGE", subject="memberUser")
     public function edit(Request $request, MemberUser $memberUser): Response
     {
         $form = $this->createForm(MemberUserType::class, $memberUser);
