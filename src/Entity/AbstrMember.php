@@ -47,7 +47,7 @@ abstract class AbstrMember
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    protected $paymentDayOfMonth = 1;
+    protected $paymentDayOfMonth = 20;
 
     public function getId(): ?int
     {

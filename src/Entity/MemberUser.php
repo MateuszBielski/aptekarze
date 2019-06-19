@@ -245,14 +245,17 @@ class MemberUser extends AbstrMember implements UserInterface
         //oddzielny przypadek dla sytuacji bez daty rejestracji?
         //jeżeli w pierwszym i drugim wpisie są inne stanowiska to dla okresu między nimi
         //przyjęta jest stawka z drugiego wpisu.
-        // $stopStartWynik = 'startStop ';
         if (count($this->myHistory)) {
-            $intervalStart = clone $this->myHistory[0]->getDate();
-            $intervalStart->modify('first day of next month');
+            // $intervalStart = clone $this->myHistory[0]->getDate();
+            //$intervalStart->modify('first day of next month');
+            //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
+            $intervalStart = clone $this->myHistory[0]->getDateRoundToMonthAccordingToDayOfChange();
         }
         foreach($this->myHistory as $h_row) {
             if ($h_row->changeJob) {
-                $intervalStop = clone $h_row->getDateRoundToNextMonth();
+                //$intervalStop = clone $h_row->getDateRoundToNextMonth();
+                //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
+                $intervalStop = clone $h_row->getDateRoundToMonthAccordingToDayOfChange();
                 // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
                 $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
                 $valueRate[] = $h_row->getJob()->getRate();

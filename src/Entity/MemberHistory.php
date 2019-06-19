@@ -123,5 +123,14 @@ class MemberHistory extends AbstrMember
         $roundDate->modify('first day of next month');
         return $roundDate;
     }
+
+    //jeśli zmiana była do 15 dnia miesiąca to już należy płacić wg nowej stawki
+    public function getDateRoundToMonthAccordingToDayOfChange()
+    {
+        $roundDate = clone $this->date;
+        $day = intval($this->date->format('d'));
+        $roundDate = ($day > 15) ? $roundDate->modify('first day of next month') : $roundDate->modify('first day of this month');
+        return $roundDate;
+    }
     
 }
