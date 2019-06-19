@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\ArchiveJob;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/job")
@@ -28,6 +29,7 @@ class JobController extends AbstractController
 
     /**
      * @Route("/new", name="job_new", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function new(Request $request): Response
     {
@@ -61,6 +63,7 @@ class JobController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="job_edit", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function edit(Request $request, Job $job): Response
     {
@@ -85,6 +88,7 @@ class JobController extends AbstractController
 
     /**
      * @Route("/{id}", name="job_delete", methods={"DELETE"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function delete(Request $request, Job $job): Response
     {

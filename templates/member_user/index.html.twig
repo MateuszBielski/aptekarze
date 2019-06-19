@@ -1,47 +1,49 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}MemberUser index{% endblock %}
+{% block title %}Lista członków{% endblock %}
 
 {% block body %}
-    <h1>MemberUser index</h1>
+    <h3>Lista członków</h3>
 
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Telephone</th>
-                <th>Email</th>
-                <th>FirstName</th>
-                <th>Surname</th>
-                <th>Username</th>
-                <th>Roles</th>
-                <th>Password</th>
-                <th>actions</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Telefon</th>
+                <th>e-mail</th>
+                <th>Nazwa użytkownika</th>
+                <th>bilans składkek</th>
+                {# <th>Roles</th>
+                <th>Password</th> #}
+                <th> </th>
             </tr>
         </thead>
         <tbody>
         {% for member_user in member_users %}
             <tr>
                 <td>{{ member_user.id }}</td>
-                <td>{{ member_user.telephone }}</td>
-                <td>{{ member_user.email }}</td>
                 <td>{{ member_user.firstName }}</td>
                 <td>{{ member_user.surname }}</td>
+                <td>{{ member_user.telephone }}</td>
+                <td>{{ member_user.email }}</td>
                 <td>{{ member_user.username }}</td>
-                <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
-                <td>{{ member_user.password }}</td>
+                <td>{{ member_user.StringCurrentAccount() }}</td>
+                {# <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
+                <td>{{ member_user.password }}</td> #}
                 <td>
-                    <a href="{{ path('member_user_show', {'id': member_user.id}) }}">show</a>
-                    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edit</a>
+                    <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
+                    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="9">no records found</td>
+                <td colspan="9">brak danych</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('member_user_new') }}">Create new</a>
+    <a href="{{ path('member_user_new') }}">Utwórz nowy</a>
 {% endblock %}

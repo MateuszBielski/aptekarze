@@ -28,4 +28,9 @@ class SecurityController extends AbstractController
     {
         return $this->redirectToRoute('member_user_index');
     }
+
+    public function access_denied()
+    {
+        return $this->render('security/access_denied.html.twig');
+    }
 }

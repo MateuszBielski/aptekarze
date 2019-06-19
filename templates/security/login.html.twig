@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Proszę się zalogować{% endblock %}
 
 {% block body %}
 <form method="post">
@@ -8,10 +8,10 @@
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputUsername" class="sr-only">Username</label>
+    <h3 class="h3 mb-3 font-weight-normal">Proszę się zalogować</h3>
+    <label for="inputUsername" class="sr-only">nazwa użytkownika</label>
     <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
-    <label for="inputPassword" class="sr-only">Password</label>
+    <label for="inputPassword" class="sr-only">hasło</label>
     <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
 
     <input type="hidden" name="_csrf_token"
@@ -30,7 +30,7 @@
     #}
 
     <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
+        Zaloguj
     </button>
 </form>
 {% endblock %}
