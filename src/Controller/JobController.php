@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\ArchiveJob;
 
 /**
  * @Route("/job")
@@ -63,6 +64,8 @@ class JobController extends AbstractController
      */
     public function edit(Request $request, Job $job): Response
     {
+        $archiveJob = new ArchiveJob($job);
+        $job->addArchiveJob($archiveJob);
         $form = $this->createForm(JobType::class, $job);
         $form->handleRequest($request);
 

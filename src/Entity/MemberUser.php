@@ -44,6 +44,7 @@ class MemberUser extends AbstrMember implements UserInterface
     private $contributions;
 
     private $historyChangesChecked = false;
+    private $archiveRatesAdded = false;
 
     /**
      * @ORM\Column(type="float", nullable=true)
@@ -233,6 +234,25 @@ class MemberUser extends AbstrMember implements UserInterface
         $current->GenerateInfoChangeComparingToNext($this);
         $this->historyChangesChecked = true;
     }
+
+    public function MyExtendedHistoryWithArchiveRates_Sorted()
+    {
+        $exendedHistory = $this->myHistory;
+        if ($this->archiveRatesAdded) return;
+        foreach ($this->myHistory as $r_history) {
+            $r_history->AddMyArchievedRatesToCollection($exendedHistory);
+        }
+        $this->archiveRatesAdded = true;
+
+        $iterator = $exendedHistory->getIterator();
+        $iterator->uasort(function($aj, $bj) {
+            $date_a = $aj->getDate();
+            $date_b = $bj->getDate();
+            return ($date_a < $date_b) ? -1 : 1;
+        });
+        return new ArrayCollection(iterator_to_array($iterator));
+    }
+
     /* metoda obliczająca wszystkie należne składki od daty zarejestrowania + kwota(bilans - bo może być na minusie) początkowa */
     public function CalculateAllDueContributionOn(\DateTimeInterface $day)
     {

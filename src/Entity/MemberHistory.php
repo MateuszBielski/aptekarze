@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MemberHistoryRepository")
@@ -83,7 +84,9 @@ class MemberHistory extends AbstrMember
         if ($this->surname != $compared->getSurname()) {
             $result .= "nazwisko $this->surname";
         };
-        if ($this->job != $compared->getJob()) {
+        //if ($this->job != $compared->getJob()) {
+        //poniższe jest przygotowaniem do historycznego różnicowania stawek
+        if ($this->job->getRate() != $compared->getJob()->getRate()) {
             //$job = $this->job;
             $name = $this->job->getName();
             $rate = $this->job->getRate();
@@ -132,5 +135,17 @@ class MemberHistory extends AbstrMember
         $roundDate = ($day > 15) ? $roundDate->modify('first day of next month') : $roundDate->modify('first day of this month');
         return $roundDate;
     }
-    
+
+    public function AddMyArchievedRatesToCollection(ArrayCollection& $userHistory)
+    {
+        if (!$this->changeJob) return;
+        $mu = $this->myUser;
+        foreach($this->job->getArchieveJobs() as $aj)
+        {
+            $newHistory = new MemberHistory($mu);
+            $newHistory->setDate($aj->getDateOfChange());
+            $newHistory->setJob($aj);
+            $userHistory[] = $newHistory;
+        }
+    }
 }
