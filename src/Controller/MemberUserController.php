@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\MemberUser;
 use App\Entity\MemberHistory;
+use App\Entity\UserMemberToSerialize;
 use App\Form\MemberUserType;
 use App\Repository\MemberUserRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -12,12 +13,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\JobRepository;
 
 /**
  * @Route("/member/user")
  */
 class MemberUserController extends AbstractController
 {
+    
     /**
      * @Route("/", name="member_user_index", methods={"GET"})
      */
@@ -58,6 +67,69 @@ class MemberUserController extends AbstractController
         ]);
     }
 
+    
+    public function deserialize(JobRepository $jobRepository): Response
+    {
+        $jobs = array();
+        foreach ($jobRepository->findAll() as $job) {
+            $jobs[$job->getRate()] = $job;
+        }
+        $encoders = [new CsvEncoder()];//new XmlEncoder(), new JsonEncoder(), 
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+        $file = '/home/mateusz/symfonyProjekt/aptekarze/var/dataDeserialize.csv';
+        $data = file_get_contents($file);
+        $mus = array();
+        $mus = $serializer->deserialize($data, UserMemberToSerialize::class, 'csv');
+        $entityManager = $this->getDoctrine()->getManager();
+        // foreach ($mus as $mu) {
+            $memberUser = $mus->createMemberUser($jobs);
+            $entityManager->persist($memberUser);
+        // }
+        // $content = 'tablica $mus zawiera '.count($mus).' obiektów';
+        $entityManager->flush();
+        $response = new Response();
+        $response->setContent(gettype($mus));
+        $newHistory = new MemberHistory($mus);
+        return $response;
+        //return $this->redirectToRoute('member_user_index');
+        /*
+        1,87654321,a@b,Jan,Kowalski5,20,
+1,98765432,a@b,imię,nazwisko6,20,
+1,888031726,mateo.bass@interia.pl,Mateusz,Bielski23,20,
+1,888031726,mateo.bass@interia.pl,Mateusz3,Bielski34,20,
+22,888031726,mateo.bass@interia.pl,Mateusz4,Bielski45,20,
+       */
+    }
+
+   
+    public function serialize(MemberUserRepository $memberUserRepository): Response
+    {
+        $users = $memberUserRepository->findAll();
+        $encoders = [new XmlEncoder(), new JsonEncoder(), new CsvEncoder()];//XmlEncoder do usunięcia
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+
+        $memberUserToSerialize = array();
+        foreach($users as $u)
+        {
+            $mts = new UserMemberToSerialize();
+            $mts->setPropertiesFrom($u);
+            $memberUserToSerialize[]=$mts;
+        }
+        $content = $serializer->serialize($memberUserToSerialize, 'csv',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+        $response = new Response();
+        file_put_contents(
+            '/home/mateusz/symfonyProjekt/aptekarze/var/data.csv',
+            $content
+        );
+        $response->setContent($content);
+        return $response;
+    }
     /**
      * @Route("/{id}", name="member_user_show", methods={"GET"})
      */
@@ -111,4 +183,8 @@ class MemberUserController extends AbstractController
 
         return $this->redirectToRoute('member_user_index');
     }
+
+    
+
+    
 }

@@ -23,6 +23,7 @@
                 <td>
                     {# <a href="{{ path('job_show', {'id': job.id}) }}">pokaż</a> #}
                     <a href="{{ path('job_edit', {'id': job.id}) }}">edytuj</a>
+                    <a href="{{ path('job_id_serialize', {'id': job.id}) }}">csvSerialize</a>
                 </td>
             </tr>
         {% else %}
@@ -34,4 +35,6 @@
     </table>
 
     <a href="{{ path('job_new') }}">Dodaj nowe stanowisko</a>
+    <a href="{{ path('job_zpliku') }}">Deserialize</a>
+    <a href="{{ path('job_serialize') }}">csvSerialize</a>
 {% endblock %}

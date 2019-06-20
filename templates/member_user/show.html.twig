@@ -66,6 +66,8 @@
     <a href="{{ path('member_user_index') }}">powrót do listy</a>
 
     <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
+    
+    
 
     {{ include('member_user/_delete_form.html.twig') }}
 {% endblock %}

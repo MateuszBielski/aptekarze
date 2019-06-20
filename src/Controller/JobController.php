@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\ArchiveJob;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @Route("/job")
@@ -49,6 +53,70 @@ class JobController extends AbstractController
             'job' => $job,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/zpliku", name="job_zpliku", methods={"GET", "POST"})
+     */
+    public function deserialize(): Response //JobRepository $jobRepository
+    {
+        $encoders = [new CsvEncoder()];//XmlEncoder do usunięcia
+        $normalizers = [new ObjectNormalizer(),new ArrayDenormalizer()];// 
+        $serializer = new Serializer($normalizers, $encoders);
+        $file = '/home/mateusz/symfonyProjekt/aptekarze/var/dataJobDeserialize.csv';
+        $data = file_get_contents($file);
+        $jobs = $serializer->deserialize($data,'App\Entity\Job[]', 'csv');
+        $entityManager = $this->getDoctrine()->getManager();
+        foreach ($jobs as $job) {
+            $entityManager->persist($job);
+        }
+        $entityManager->flush();
+        return $this->redirectToRoute('job_index');
+    }
+
+    /**
+     * @Route("/serialize", name="job_serialize", methods={"GET", "POST"})
+     */
+    public function serialize(JobRepository $jobRepository): Response
+    {
+        $jobs = $jobRepository->findAll();
+        $encoders = [new CsvEncoder()]; 
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+        $content = $serializer->serialize($jobs, 'csv',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+        $response = new Response();
+        file_put_contents(
+            '/home/mateusz/symfonyProjekt/aptekarze/var/dataJobSerialize.csv',
+            $content
+        );
+        $response->setContent($content);
+        return $response;
+    }
+
+    /**
+     * @Route("/{id}/serialize", name="job_id_serialize", methods={"GET", "POST"})
+     */
+    public function serializeId(Job $job): Response
+    {
+        $encoders = [new CsvEncoder()];//new XmlEncoder(), new JsonEncoder(), 
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+        $content = $serializer->serialize($job, 'csv',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+        $response = new Response();
+        file_put_contents(
+            '/home/mateusz/symfonyProjekt/aptekarze/var/dataJobSerializeId.csv',
+            $content
+        );
+        $response->setContent($content);
+        return $response;
     }
 
     /**
