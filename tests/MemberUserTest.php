@@ -135,6 +135,20 @@ class MemberUserTest extends TestCase
         $this->assertEquals(30, $result);
     }
 
+    public function test_8_CalculateAllDueContributionOn()
+    {
+        $testMemberUser = $this->UserWithOne_JobRate_Date(10,new \DateTime('2019-06-20'));
+        $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2019-06-20'));
+        $this->assertEquals(0, $result);
+    }
+
+    public function test_9_CalculateAllDueContributionOn()
+    {
+        $testMemberUser = $this->UserWithOne_JobRate_Date(10,new \DateTime('2019-06-20'));
+        $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2019-07-20'));
+        $this->assertEquals(0, $result);
+    }
+
 
     private function UserWithOne_JobRate_Date(int $rate,\DateTimeInterface $date)
     {

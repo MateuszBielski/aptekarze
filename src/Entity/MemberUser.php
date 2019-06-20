@@ -260,11 +260,12 @@ class MemberUser extends AbstrMember implements UserInterface
         $interval_months = array();
         $valueRate = array();
 
-        $intervalStart = 0;
-        $intervalStop = 0;
+        $intervalStart = $day;//gdyby historia była pusta
+        $intervalStop = $day;
         //oddzielny przypadek dla sytuacji bez daty rejestracji?
         //jeżeli w pierwszym i drugim wpisie są inne stanowiska to dla okresu między nimi
         //przyjęta jest stawka z drugiego wpisu.
+        $capture = '';
         if (count($this->myHistory)) {
             // $intervalStart = clone $this->myHistory[0]->getDate();
             //$intervalStart->modify('first day of next month');
@@ -282,6 +283,7 @@ class MemberUser extends AbstrMember implements UserInterface
                 $intervalStart = clone $intervalStop;
             }
         }
+        // $capture = $intervalStart->format('d.m.Y');
         $result = 0;
         //ostatni okres to porównanie do zakończonego miesiąca + sprawdzenie, czy w tym miesiącu jesteśmy po dniu płatności
         
@@ -290,6 +292,10 @@ class MemberUser extends AbstrMember implements UserInterface
         $begNextMonth = clone $day;
         $begNextMonth->modify('first day of next month');
         $intervalStop = $this->AfterPaymentDay($day) ? $begNextMonth : $begThisMonth;
+
+        //sytuacja: zarejestrowany po 15: w dniu rejestracji jest taka sytuacja:
+        //intervalStop < intervalStart, więc:
+        if ($intervalStop < $intervalStart) $intervalStop = clone $intervalStart;
 
         // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
         $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
@@ -306,9 +312,10 @@ class MemberUser extends AbstrMember implements UserInterface
 
         // return $okresy;
         return $result;
-        // $tempDate1 = $intervalStart->format('y-m-d');
-        // $tempDate2 = $intervalStop->format('y-m-d');
+        // $tempDate1 = $intervalStart->format('d.m.Y');
+        // $tempDate2 = $intervalStop->format('d.m.Y');
         // return $tempDate1."   ".$tempDate2;
+        // return $capture;
         // return $stopStartWynik;
     }
 
