@@ -35,6 +35,7 @@
                 <td>
                     <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
                     <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
+                    <a href="{{ path('member_user_test', {'id': member_user.id}) }}">test</a>
                 </td>
             </tr>
         {% else %}
@@ -46,6 +47,6 @@
     </table>
 
     <a href="{{ path('member_user_new') }}">Utwórz nowy</a>
-    
+    <a href="{{ path('member_users_zpliku') }}">Deserialize</a>
 
 {% endblock %}

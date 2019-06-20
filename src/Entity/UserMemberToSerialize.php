@@ -14,6 +14,9 @@ class UserMemberToSerialize
     private $job;
     private $paymentDayOfMonth = 20;
     private $jobRate;
+    //przydadzą się w przyszłości:
+    //initial account
+    //jakaś forma daty rejestracji wcześniejszej niż bieżąca
 
     public function setPropertiesFrom(MemberUser $mu)
     {
@@ -142,6 +145,11 @@ class UserMemberToSerialize
         $this->jobRate = $job->getRate();
         $this->job = $job;
         return $this;
+    }
+
+    public function setJobRate(int $rate)
+    {
+        $this->jobRate = $rate;
     }
 
     public function createMemberUser(array& $jobs)

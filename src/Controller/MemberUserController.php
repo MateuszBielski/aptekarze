@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\JobRepository;
@@ -67,6 +68,9 @@ class MemberUserController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/zpliku", name="member_users_zpliku", methods={"GET", "POST"})
+     */
     
     public function deserialize(JobRepository $jobRepository): Response
     {
@@ -74,32 +78,23 @@ class MemberUserController extends AbstractController
         foreach ($jobRepository->findAll() as $job) {
             $jobs[$job->getRate()] = $job;
         }
-        $encoders = [new CsvEncoder()];//new XmlEncoder(), new JsonEncoder(), 
-        $normalizers = [new ObjectNormalizer()];
+        $encoders = [new CsvEncoder()];
+        $normalizers = [new ObjectNormalizer(), new ArrayDenormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
-        $file = '/home/mateusz/symfonyProjekt/aptekarze/var/dataDeserialize.csv';
+        $file = '/home/mateusz/symfonyProjekt/aptekarze/var/dataUsersDeserialize.csv';
         $data = file_get_contents($file);
-        $mus = array();
-        $mus = $serializer->deserialize($data, UserMemberToSerialize::class, 'csv');
+        $mus = $serializer->deserialize($data, 'App\Entity\UserMemberToSerialize[]', 'csv');
         $entityManager = $this->getDoctrine()->getManager();
-        // foreach ($mus as $mu) {
-            $memberUser = $mus->createMemberUser($jobs);
+        foreach ($mus as $mu) {
+            $memberUser = $mu->createMemberUser($jobs);
             $entityManager->persist($memberUser);
-        // }
-        // $content = 'tablica $mus zawiera '.count($mus).' obiektów';
+        }
         $entityManager->flush();
-        $response = new Response();
-        $response->setContent(gettype($mus));
-        $newHistory = new MemberHistory($mus);
-        return $response;
-        //return $this->redirectToRoute('member_user_index');
-        /*
-        1,87654321,a@b,Jan,Kowalski5,20,
-1,98765432,a@b,imię,nazwisko6,20,
-1,888031726,mateo.bass@interia.pl,Mateusz,Bielski23,20,
-1,888031726,mateo.bass@interia.pl,Mateusz3,Bielski34,20,
-22,888031726,mateo.bass@interia.pl,Mateusz4,Bielski45,20,
-       */
+        // $response = new Response();
+        // $response->setContent(count($mus));
+        // return $response;
+        return $this->redirectToRoute('member_user_index');
+        
     }
 
    
@@ -167,6 +162,17 @@ class MemberUserController extends AbstractController
             'member_user' => $memberUser,
             'form' => $form->createView(),
         ]);
+    }
+
+     /**
+     * @Route("/{id}/test", name="member_user_test", methods={"GET","POST"})
+     */
+    public function test(Request $request, MemberUser $memberUser): Response
+    {
+        $content = $memberUser->CalculateAllDueContributionOn(new \DateTime('2019-06-19'));
+        $response = new Response();
+        $response->setContent($content);
+        return $response;
     }
 
     /**
