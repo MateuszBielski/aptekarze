@@ -161,11 +161,14 @@ class UserMemberToSerialize
         $newMemberUser->setSurname($this->getSurname());
         $newMemberUser->setPaymentDayOfMonth($this->getPaymentDayOfMonth());
 
-        try{
-            //może nie być odpowiedniego obiektu w tablicy jobs
-        }catch(Exception $e){
-
+        if (!array_key_exists($this->jobRate, $jobs))
+        {
+            $job = new Job();
+            $job->setName('stawka uzupełniająca');
+            $job->setRate($this->jobRate);
+            $jobs[$this->jobRate] = $job;
         }
+        
         $newMemberUser->setJob($jobs[$this->jobRate]);
         $newMemberUser->createTempUsername();
         $newMemberUser->setPassword('87654321');

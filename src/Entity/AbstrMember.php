@@ -39,7 +39,7 @@ abstract class AbstrMember
     protected $surname;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Job")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Job", cascade = {"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     protected $job;
