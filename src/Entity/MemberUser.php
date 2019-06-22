@@ -208,7 +208,7 @@ class MemberUser extends AbstrMember implements UserInterface
 
     public function createTempUsername()
     {
-        $this->username = $this->firstName.$this->surname;
+        $this->username = $this->firstName.$this->surname.$this->telephone;
     }
 
     public function KindOfHistoryChanges()
