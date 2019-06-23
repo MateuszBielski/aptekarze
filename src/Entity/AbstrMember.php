@@ -49,6 +49,8 @@ abstract class AbstrMember
      */
     protected $paymentDayOfMonth = 20;
 
+    protected $myJobRateCached;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,4 +134,14 @@ abstract class AbstrMember
         $value = $this->job->getRate()." zł";
         return $name.$value;
     }
+    
+    public function getMyJobRateCached()
+    {
+        return $this->myJobRateCached;
+    }
+    public function setMyJobRatedCached($rate)
+    {
+        $this->myJobRateCached = $rate;
+    }
+
 }

@@ -21,6 +21,7 @@ use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\JobRepository;
+use App\Service\MemberUserOptimizer;
 
 /**
  * @Route("/member/user")
@@ -31,12 +32,24 @@ class MemberUserController extends AbstractController
     /**
      * @Route("/", name="member_user_index", methods={"GET"})
      */
-    public function index(MemberUserRepository $memberUserRepository): Response
+    public function index(MemberUserOptimizer $memUsOptim)
     {
+        $memUsOptim->ReadRepositoriesAndCompleteCollections();
+        // $content = $memUsOptim->getfUserIdFromHistoryList();
+        // $response = new Response();
+        // return $response;
+        // return $this->render('member_user/test.html.twig',['content' => $content]);
         return $this->render('member_user/index.html.twig', [
-            'member_users' => $memberUserRepository->findAll(),
+            'member_users' => $memUsOptim->getUsersList(),
         ]);
+        
     }
+    // public function index(MemberUserRepository $memberUserRepository): Response
+    // {
+    //     return $this->render('member_user/index.html.twig', [
+    //         'member_users' => $memberUserRepository->findAll(),
+    //     ]);
+    // }
 
     /**
      * @Route("/new", name="member_user_new", methods={"GET","POST"})

@@ -34,17 +34,21 @@ class MemberUser extends AbstrMember implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", mappedBy="myUser", cascade = {"persist","remove"})
      * @ORM\OrderBy({"date" = "ASC"})
+     * @ORM\Cache
      */
     //w widoku jest odwrócenie kolejności
     private $myHistory;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Contribution", mappedBy="myUser", cascade = {"persist","remove"})
+     * @ORM\Cache
      */
     private $contributions;
 
     private $historyChangesChecked = false;
     private $archiveRatesAdded = false;
+    private $myHistoryCached = array();
+    
 
     /**
      * @ORM\Column(type="float", nullable=true)
@@ -150,6 +154,11 @@ class MemberUser extends AbstrMember implements UserInterface
         return $this;
     }
 
+    public function addMyHistoryDirectly(MemberHistory $history)
+    {
+        $this->myHistoryCached[] = $history;
+    }
+
     public function removeMyHistory(MemberHistory $myHistory): self
     {
         if ($this->myHistory->contains($myHistory)) {
@@ -216,10 +225,10 @@ class MemberUser extends AbstrMember implements UserInterface
         //co się zmieniło względem poprzedniego wpisu
         // czy pierwszy wpis dotyczy rejestracji
         
-        $numbOfRecord = count($this->myHistory);
+        $numbOfRecord = count($this->myHistoryCached);
         if (!$numbOfRecord) return;
         
-        $current = $this->myHistory[0];
+        $current = $this->myHistoryCached[0];
         if ($numbOfRecord == 1) {
             //czy to jest data rejestracji
             $current->GenerateInfoChangeComparingToNext($this);
@@ -227,8 +236,8 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $i = 1;
         for($i;$i < $numbOfRecord ; $i++){
-            $current->GenerateInfoChangeComparingToNext($this->myHistory[$i]);
-            $current = $this->myHistory[$i];
+            $current->GenerateInfoChangeComparingToNext($this->myHistoryCached[$i]);
+            $current = $this->myHistoryCached[$i];
         }
         //ostatnia pozycja 
         $current->GenerateInfoChangeComparingToNext($this);
@@ -237,9 +246,9 @@ class MemberUser extends AbstrMember implements UserInterface
 
     public function MyExtendedHistoryWithArchiveRates_Sorted()
     {
-        $exendedHistory = $this->myHistory;
+        $exendedHistory = $this->myHistoryCached;
         if ($this->archiveRatesAdded) return;
-        foreach ($this->myHistory as $r_history) {
+        foreach ($this->myHistoryCached as $r_history) {
             $r_history->AddMyArchievedRatesToCollection($exendedHistory);
         }
         $this->archiveRatesAdded = true;
@@ -266,20 +275,20 @@ class MemberUser extends AbstrMember implements UserInterface
         //jeżeli w pierwszym i drugim wpisie są inne stanowiska to dla okresu między nimi
         //przyjęta jest stawka z drugiego wpisu.
         $capture = '';
-        if (count($this->myHistory)) {
-            // $intervalStart = clone $this->myHistory[0]->getDate();
+        if (count($this->myHistoryCached)) {
+            // $intervalStart = clone $this->myHistoryCached[0]->getDate();
             //$intervalStart->modify('first day of next month');
             //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
-            $intervalStart = clone $this->myHistory[0]->getDateRoundToMonthAccordingToDayOfChange();
+            $intervalStart = clone $this->myHistoryCached[0]->getDateRoundToMonthAccordingToDayOfChange();
         }
-        foreach($this->myHistory as $h_row) {
+        foreach($this->myHistoryCached as $h_row) {
             if ($h_row->changeJob) {
                 //$intervalStop = clone $h_row->getDateRoundToNextMonth();
                 //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
                 $intervalStop = clone $h_row->getDateRoundToMonthAccordingToDayOfChange();
                 // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
                 $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
-                $valueRate[] = $h_row->getJob()->getRate();
+                $valueRate[] = $h_row->getMyJobRateCached();
                 $intervalStart = clone $intervalStop;
             }
         }
@@ -299,7 +308,7 @@ class MemberUser extends AbstrMember implements UserInterface
 
         // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
         $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
-        $valueRate[] = ($this->job == null) ? 0 : $this->job->getRate();
+        $valueRate[] = ($this->myJobRateCached == null) ? 0 : $this->getMyJobRateCached();
 
         $numbOfIntervals = count($interval_months);
         // $okresy = '';
@@ -317,6 +326,7 @@ class MemberUser extends AbstrMember implements UserInterface
         // return $tempDate1."   ".$tempDate2;
         // return $capture;
         // return $stopStartWynik;
+
     }
 
     public static function IntervalToMonths(\DateInterval $interval) {
@@ -385,5 +395,16 @@ class MemberUser extends AbstrMember implements UserInterface
         // if ($account < 0) $sign = '- ';
         return $sign.strval($account)." zł";
     }
+
+    public function test()
+    {
+        // return count($this->myHistoryCached);
+        // return $this->myJobRateCached;
+        // return $this->CalculateAllDueContribution();
+        return $this->StringCurrentAccount();
+        // return 'test';
+    }
+
+    
 }
 

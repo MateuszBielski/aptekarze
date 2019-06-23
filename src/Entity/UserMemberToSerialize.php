@@ -178,5 +178,8 @@ class UserMemberToSerialize
         return $newMemberUser;
     }
 
-    
+    public static function getPreparedSerializerCSV()
+    {
+        
+    }
 }
