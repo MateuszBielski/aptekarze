@@ -50,6 +50,7 @@ abstract class AbstrMember
     protected $paymentDayOfMonth = 20;
 
     protected $myJobRateCached;
+    protected $optimized = false;
 
     public function getId(): ?int
     {
@@ -137,7 +138,8 @@ abstract class AbstrMember
     
     public function getMyJobRateCached()
     {
-        return $this->myJobRateCached;
+        if ($this->optimized) return $this->myJobRateCached;
+        else return $this->job->getRate();
     }
     public function setMyJobRateCached($rate)
     {

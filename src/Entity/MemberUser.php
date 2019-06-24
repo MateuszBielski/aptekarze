@@ -47,7 +47,7 @@ class MemberUser extends AbstrMember implements UserInterface
     private $archiveRatesAdded = false;
     private $myHistoryCached = array();
     private $contributionsCached = array();
-    private $optimized = false;
+    
     
 
     /**
@@ -144,6 +144,12 @@ class MemberUser extends AbstrMember implements UserInterface
         return $this->myHistory;
     }
 
+    public function getMyHistoryCached()
+    {
+        if ($this->optimized) return $this->myHistoryCached;
+        else return $this->myHistory;
+    }
+
     public function addMyHistory(MemberHistory $myHistory): self
     {
         if (!$this->myHistory->contains($myHistory)) {
@@ -233,10 +239,10 @@ class MemberUser extends AbstrMember implements UserInterface
         //co się zmieniło względem poprzedniego wpisu
         // czy pierwszy wpis dotyczy rejestracji
         
-        $numbOfRecord = count($this->myHistoryCached);
+        $numbOfRecord = count($this->getMyHistoryCached());
         if (!$numbOfRecord) return;
         
-        $current = $this->myHistoryCached[0];
+        $current = $this->getMyHistoryCached()[0];
         if ($numbOfRecord == 1) {
             //czy to jest data rejestracji
             $current->GenerateInfoChangeComparingToNext($this);
@@ -244,8 +250,8 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $i = 1;
         for($i;$i < $numbOfRecord ; $i++){
-            $current->GenerateInfoChangeComparingToNext($this->myHistoryCached[$i]);
-            $current = $this->myHistoryCached[$i];
+            $current->GenerateInfoChangeComparingToNext($this->getMyHistoryCached()[$i]);
+            $current = $this->getMyHistoryCached()[$i];
         }
         //ostatnia pozycja 
         $current->GenerateInfoChangeComparingToNext($this);
@@ -283,13 +289,13 @@ class MemberUser extends AbstrMember implements UserInterface
         //jeżeli w pierwszym i drugim wpisie są inne stanowiska to dla okresu między nimi
         //przyjęta jest stawka z drugiego wpisu.
         $capture = '';
-        if (count($this->myHistoryCached)) {
+        if (count($this->getMyHistoryCached())) {
             // $intervalStart = clone $this->myHistoryCached[0]->getDate();
             //$intervalStart->modify('first day of next month');
             //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
-            $intervalStart = clone $this->myHistoryCached[0]->getDateRoundToMonthAccordingToDayOfChange();
+            $intervalStart = clone $this->getMyHistoryCached()[0]->getDateRoundToMonthAccordingToDayOfChange();
         }
-        foreach($this->myHistoryCached as $h_row) {
+        foreach($this->getMyHistoryCached() as $h_row) {
             if ($h_row->changeJob) {
                 //$intervalStop = clone $h_row->getDateRoundToNextMonth();
                 //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
