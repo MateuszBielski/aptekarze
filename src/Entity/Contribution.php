@@ -32,6 +32,11 @@ class Contribution
      */
     private $myUser;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $source;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +74,18 @@ class Contribution
     public function setMyUser(?MemberUser $myUser): self
     {
         $this->myUser = $myUser;
+
+        return $this;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function setSource(?string $source): self
+    {
+        $this->source = $source;
 
         return $this;
     }

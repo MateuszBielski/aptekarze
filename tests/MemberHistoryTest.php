@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use App\Entity\MemberHistory;
 use App\Entity\MemberUser;
 use App\Entity\Job;
+use App\Entity\ArchiveJob;
 
 class MemberHistoryTest extends TestCase
 {
@@ -49,6 +50,8 @@ class MemberHistoryTest extends TestCase
         $newJob1->setRate(12);
         $mu->addMyHistory($mh1);
         $mu->setJob($newJob1);
+
+        $newArchiveJob = new ArchiveJob($newJob1);
 
         //zmiana stanowiska z zapisem historii
         $mh2 = new MemberHistory($mu);

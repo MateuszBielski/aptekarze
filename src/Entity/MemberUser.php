@@ -150,7 +150,7 @@ class MemberUser extends AbstrMember implements UserInterface
             $this->myHistory[] = $myHistory;
             $myHistory->setMyUser($this);
         }
-
+        $this->myHistoryCached[] = $myHistory;
         return $this;
     }
 
@@ -400,9 +400,9 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         // return count($this->myHistoryCached);
         // return $this->myJobRateCached;
-        // return $this->CalculateAllDueContribution();
-        return $this->StringCurrentAccount();
-        // return 'test';
+        return $this->CalculateAllDueContribution();
+        //return $this->StringCurrentAccount();
+        //return 'test';
     }
 
     

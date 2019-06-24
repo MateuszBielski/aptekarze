@@ -94,7 +94,7 @@ class MemberUserController extends AbstractController
         $encoders = [new CsvEncoder()];
         $normalizers = [new ObjectNormalizer(), new ArrayDenormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
-        $file = '/home/mateusz/symfonyProjekt/aptekarze/nazwiska.csv';
+        $file = '/home/mateusz/php/sfprojects/aptekarze/nazwiska.csv';
         $data = file_get_contents($file);
         $mus = $serializer->deserialize($data, 'App\Entity\UserMemberToSerialize[]', 'csv');
         $entityManager = $this->getDoctrine()->getManager();
@@ -102,7 +102,7 @@ class MemberUserController extends AbstractController
             $memberUser = $mu->createMemberUser($jobs);
             $entityManager->persist($memberUser);
         }
-        //$entityManager->flush(); <-nazwiska zapisano do bazy
+        //$entityManager->flush(); //<-nazwiska zapisano do bazy
         // $response = new Response();
         // $response->setContent(count($mus));
         // return $response;

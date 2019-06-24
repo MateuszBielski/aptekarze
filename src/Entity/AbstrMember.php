@@ -112,7 +112,7 @@ abstract class AbstrMember
     public function setJob(?Job $job): self
     {
         $this->job = $job;
-
+        if(null != $job)$this->myJobRateCached = $job->getRate();
         return $this;
     }
 
