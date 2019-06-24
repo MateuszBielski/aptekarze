@@ -1,0 +1,46 @@
+    <table id="users_list" class="table">
+        <thead>
+            <tr>
+                {# <th>Key</th> #}
+                <th>Id</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Telefon</th>
+                <th>e-mail</th>
+                <th>Nazwa użytkownika</th>
+                <th>bilans składek</th>
+                {# <th>Roles</th>
+                <th>Password</th> #}
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for key,member_user in member_users %}
+            <tr>
+                {# <td>{{ key }}</td> #}
+                <td>{{ member_user.id }}</td>
+                <td>{{ member_user.firstName }}</td>
+                <td>{{ member_user.surname }}</td>
+                <td>{{ member_user.telephone }}</td>
+                <td>{{ member_user.email }}</td>
+                <td>{{ member_user.username }}</td>
+                {# <td>{{ member_user.test }}</td> #}
+                <td>{{ member_user.StringCurrentAccount() }}</td>
+                {# <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
+                <td>{{ member_user.password }}</td> #}
+                <td>
+                    <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
+                    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
+                    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">nowa wpłata</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">brak danych</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('member_user_new') }}">Utwórz nowy</a>
+    <a href="{{ path('member_users_zpliku') }}">Deserialize</a>

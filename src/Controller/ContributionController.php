@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use App\Entity\MemberUser;
 
 /**
  * @Route("/contribution")
@@ -61,6 +62,30 @@ class ContributionController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/{id}/new", name="contribution_new_forUser", methods={"GET","POST"})
+     */
+    public function newForUser(Request $request, MemberUser $memberUser): Response
+    {
+        $contribution = new Contribution();
+        $contribution->setMyUser($memberUser);
+        $contribution->setPaymentDate(new \DateTime('now'));
+        $form = $this->createForm(ContributionType::class, $contribution);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($contribution);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('member_user_show', ['id' => $memberUser->getId()]);
+        }
+
+        return $this->render('contribution/new.html.twig', [
+            'contribution' => $contribution,
+            'form' => $form->createView(),
+        ]);
+    }
     /**
      * @Route("/{id}/edit", name="contribution_edit", methods={"GET","POST"})
      */

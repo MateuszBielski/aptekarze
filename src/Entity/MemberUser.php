@@ -47,6 +47,7 @@ class MemberUser extends AbstrMember implements UserInterface
     private $archiveRatesAdded = false;
     private $myHistoryCached = array();
     private $contributionsCached = array();
+    private $optimized = false;
     
 
     /**
@@ -60,12 +61,12 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->contributions = new ArrayCollection();
     }
 
-    /*
-    public function getId(): ?int
+    
+    public function setOptimizedTrue()
     {
-        return $this->id;
+        $this->optimized = true;
     }
-    */
+    
 
     /**
      * A visual identifier that represents this user.
@@ -386,7 +387,8 @@ class MemberUser extends AbstrMember implements UserInterface
     public function PaidContributionSum()
     {
         $sum  = 0;
-        foreach($this->contributionsCached as $contr)
+        $contributions = $this->optimized ? $this->contributionsCached : $this->contributions;
+        foreach($contributions as $contr)
         {
             $sum += $contr->getValue();
         }

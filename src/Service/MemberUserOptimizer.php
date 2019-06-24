@@ -61,6 +61,7 @@ class MemberUserOptimizer
         {
             $jobId = $us->getJob()->getId();
             $us->setMyJobRateCached($this->jobList[$jobId]->getRate());
+            $us->setOptimizedTrue();
         }
         foreach($this->historyList as $h)
         {
