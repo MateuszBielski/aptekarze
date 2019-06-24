@@ -45,14 +45,12 @@ class MemberUserOptimizer
     }
     public function ReadRepositoriesAndCompleteCollectionsNarrow(string $str)
     {
-        $usersCollection = $this->memUsRep->findByNamePortion($str);
-        $usersIdList = array();
-        foreach ($usersCollection as $us) {
-            $usersIdList[] = $us->getId();
-        }
-        $this->historyList = $this->memHistRep->findByUserIdIn();
-        $this->contrList = $this->contrRep->findByUserIdIn();
-        $jobsCollection = $this->jobRep->findByUserIdIn();
+        $this->usersList = $this->memUsRep->findByNamePortion($str);
+        $usersIdList = array_keys($this->usersList);
+        
+        $this->historyList = $this->memHistRep->findByUserIdIn($usersIdList);
+        $this->contrList = $this->contrRep->findByUserIdIn($usersIdList);
+        $this->jobList = $this->jobRep->findAllIndexedById();//wszystkie stanowiska odczytać
 
         $this->setJobHistoryContribution();
     }

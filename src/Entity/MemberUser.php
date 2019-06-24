@@ -34,14 +34,12 @@ class MemberUser extends AbstrMember implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", mappedBy="myUser", cascade = {"persist","remove"})
      * @ORM\OrderBy({"date" = "ASC"})
-     * @ORM\Cache
      */
     //w widoku jest odwrócenie kolejności
     private $myHistory;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Contribution", mappedBy="myUser", cascade = {"persist","remove"})
-     * @ORM\Cache
      */
     private $contributions;
 

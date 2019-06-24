@@ -49,10 +49,10 @@ class MemberUserRepository extends ServiceEntityRepository
     */
     public function findByNamePortion(string $string)
     {
-        return $this->createQueryBuilder('o')
+        return $this->createQueryBuilder('o','o.id')
        ->where('o.firstName LIKE :string or o.surname LIKE :string')
        ->setParameter('string', '%'.$string.'%')
-       ->setMaxResults(20)
+       ->setMaxResults(100)
        ->getQuery()
        ->getResult();
     }

@@ -16,7 +16,7 @@ class MemberHistory extends AbstrMember
     private $date;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\MemberUser",fetch="EAGER", inversedBy="myHistory")
+     * @ORM\ManyToOne(targetEntity="App\Entity\MemberUser", inversedBy="myHistory")
      */
     private $myUser;
 

@@ -53,4 +53,13 @@ class ContributionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findByUserIdIn(array $usersId)
+    {
+        return $this->createQueryBuilder('o','o.id')
+        ->leftJoin('o.myUser','user')
+        ->where("user.id IN(:usersIds)")
+        ->setParameter('usersIds',array_values($usersId))
+        ->getQuery()
+        ->getResult();
+    }
 }
