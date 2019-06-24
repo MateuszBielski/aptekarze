@@ -47,4 +47,13 @@ class MemberUserRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findByNamePortion(string $string)
+    {
+        return $this->createQueryBuilder('o')
+       ->where('o.firstName LIKE :string or o.surname LIKE :string')
+       ->setParameter('string', '%'.$string.'%')
+       ->setMaxResults(20)
+       ->getQuery()
+       ->getResult();
+    }
 }

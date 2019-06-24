@@ -17,8 +17,8 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\JobRepository;
 use App\Service\MemberUserOptimizer;
@@ -34,9 +34,10 @@ class MemberUserController extends AbstractController
      */
     public function index(MemberUserOptimizer $memUsOptim)
     {
-        $memUsOptim->ReadRepositoriesAndCompleteCollections();
-        // $content = $memUsOptim->getfUserIdFromHistoryList();
-        // $response = new Response();
+        //$memUsOptim->ReadRepositoriesAndCompleteCollections();
+        $memUsOptim->ReadRepositoriesAndCompleteCollectionsNarrow('ock');
+        // $content = json_encode($memUsOptim->getUsersList());
+        // return new JsonResponse($memUsOptim->getUserListJson());
         // return $response;
         // return $this->render('member_user/test.html.twig',['content' => $content]);
         return $this->render('member_user/index.html.twig', [
@@ -182,7 +183,7 @@ class MemberUserController extends AbstractController
      */
     public function test(Request $request, MemberUser $memberUser): Response
     {
-        $content = $memberUser->CalculateAllDueContributionOn(new \DateTime('2019-06-19'));
+        $content = json_encode($memberUser);
         $response = new Response();
         $response->setContent($content);
         return $response;
