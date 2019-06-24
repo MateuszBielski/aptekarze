@@ -56,4 +56,10 @@ class MemberUserRepository extends ServiceEntityRepository
        ->getQuery()
        ->getResult();
     }
+    public function findAllIndexedById()
+    {
+        return $this->createQueryBuilder('o','o.id')
+            ->getQuery()
+            ->getResult();
+    }
 }

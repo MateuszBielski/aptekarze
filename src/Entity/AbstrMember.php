@@ -139,7 +139,7 @@ abstract class AbstrMember
     {
         return $this->myJobRateCached;
     }
-    public function setMyJobRatedCached($rate)
+    public function setMyJobRateCached($rate)
     {
         $this->myJobRateCached = $rate;
     }

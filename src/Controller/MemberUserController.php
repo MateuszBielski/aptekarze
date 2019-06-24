@@ -34,6 +34,7 @@ class MemberUserController extends AbstractController
      */
     public function index(MemberUserOptimizer $memUsOptim)
     {
+        // $memUsOptim->ReadUsersIndexed();
         $memUsOptim->ReadRepositoriesAndCompleteCollections();
         // $memUsOptim->ReadRepositoriesAndCompleteCollectionsNarrow('ock');
         // $content = json_encode($memUsOptim->getUsersList());

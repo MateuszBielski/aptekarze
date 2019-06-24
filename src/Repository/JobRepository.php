@@ -47,4 +47,10 @@ class JobRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findAllIndexedById()
+    {
+        return $this->createQueryBuilder('o','o.id')
+            ->getQuery()
+            ->getResult();
+    }
 }

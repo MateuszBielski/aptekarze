@@ -47,4 +47,10 @@ class MemberHistoryRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findAllIndexedById()
+    {
+        return $this->createQueryBuilder('o','o.id')
+            ->getQuery()
+            ->getResult();
+    }
 }

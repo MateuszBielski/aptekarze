@@ -8,6 +8,7 @@
     <table class="table">
         <thead>
             <tr>
+                {# <th>Key</th> #}
                 <th>Id</th>
                 <th>Imię</th>
                 <th>Nazwisko</th>
@@ -21,8 +22,9 @@
             </tr>
         </thead>
         <tbody>
-        {% for member_user in member_users %}
+        {% for key,member_user in member_users %}
             <tr>
+                {# <td>{{ key }}</td> #}
                 <td>{{ member_user.id }}</td>
                 <td>{{ member_user.firstName }}</td>
                 <td>{{ member_user.surname }}</td>

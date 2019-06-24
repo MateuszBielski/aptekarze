@@ -6,10 +6,10 @@ use App\Repository\MemberUserRepository;
 use App\Repository\MemberHistoryRepository;
 use App\Repository\JobRepository;
 use App\Repository\ContributionRepository;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+// use Symfony\Component\Serializer\Encoder\CsvEncoder;
+// use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+// use Symfony\Component\Serializer\Serializer;
+// use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 
 class MemberUserOptimizer
 {
@@ -17,7 +17,7 @@ class MemberUserOptimizer
     private $memHistRep;
     private $jobRep;
     private $contrRep;
-    private $usersList = array();
+    private $usersList;
     private $historyList;
     private $jobList;
     private $contrList;
@@ -34,12 +34,12 @@ class MemberUserOptimizer
 
     public function ReadRepositoriesAndCompleteCollections()
     {
-        $this->historyList = $this->memHistRep->findAll();
-        $this->contrList = $this->contrRep->findAll();
-        $jobsCollection = $this->jobRep->findAll();
-        $usersCollection = $this->memUsRep->findAll();
+        $this->historyList = $this->memHistRep->findAllIndexedById();
+        $this->contrList = $this->contrRep->findAllIndexedById();
+        $this->jobList = $this->jobRep->findAllIndexedById();
+        $this->usersList = $this->memUsRep->findAllIndexedById();
 
-        $this->setJobHistoryContribution($usersCollection,$jobsCollection);
+        $this->setJobHistoryContribution();
         
         
     }
@@ -54,25 +54,20 @@ class MemberUserOptimizer
         $this->contrList = $this->contrRep->findByUserIdIn();
         $jobsCollection = $this->jobRep->findByUserIdIn();
 
-        $this->setJobHistoryContribution($usersCollection,$jobsCollection);
+        $this->setJobHistoryContribution();
     }
-    private function setJobHistoryContribution(array $usersCollection,array $jobsCollection)
+    private function setJobHistoryContribution()
     {
-        foreach($jobsCollection as $job)
+        
+        foreach($this->usersList as $us)
         {
-            $this->jobList[$job->getId()] = $job;
-        }
-        foreach($usersCollection as $us)
-        {
-            $id = $us->getId();
             $jobId = $us->getJob()->getId();
-            $us->setMyJobRatedCached($this->jobList[$jobId]->getRate());
-            $this->usersList[$id] = $us;
+            $us->setMyJobRateCached($this->jobList[$jobId]->getRate());
         }
         foreach($this->historyList as $h)
         {
             $jobId = $h->getJob()->getId();
-            $h->setMyJobRatedCached($this->jobList[$jobId]->getRate());
+            $h->setMyJobRateCached($this->jobList[$jobId]->getRate());
             $this->usersList[$h->getMyUser()->getId()]->addMyHistoryDirectly($h);
         }
         foreach($this->contrList as $contr)
@@ -80,6 +75,11 @@ class MemberUserOptimizer
             $usId = $contr->getMyUser()->getId();
             $this->usersList[$usId]->addContributionCached($contr);
         }
+    }
+
+    public function ReadUsersIndexed()
+    {
+        $this->usersList = $this->memUsRep->findAllIndexedById();//
     }
 
     public function getUsersList()
