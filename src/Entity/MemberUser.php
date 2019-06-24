@@ -48,6 +48,7 @@ class MemberUser extends AbstrMember implements UserInterface
     private $historyChangesChecked = false;
     private $archiveRatesAdded = false;
     private $myHistoryCached = array();
+    private $contributionsCached = array();
     
 
     /**
@@ -186,7 +187,7 @@ class MemberUser extends AbstrMember implements UserInterface
             $this->contributions[] = $contribution;
             $contribution->setMyUser($this);
         }
-
+        $this->contributionsCached[] = $contribution;
         return $this;
     }
 
@@ -202,7 +203,15 @@ class MemberUser extends AbstrMember implements UserInterface
 
         return $this;
     }
+    public function getContributionsCached()
+    {
+        return $this->contributionsCached;
+    }
 
+    public function addContributionCached(Contribution $contr)
+    {
+        $this->contributionsCached[] = $contr;
+    }
     public function getInitialAccount(): ?float
     {
         return $this->initialAccount;
@@ -379,7 +388,7 @@ class MemberUser extends AbstrMember implements UserInterface
     public function PaidContributionSum()
     {
         $sum  = 0;
-        foreach($this->contributions as $contr)
+        foreach($this->contributionsCached as $contr)
         {
             $sum += $contr->getValue();
         }
@@ -400,8 +409,8 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         // return count($this->myHistoryCached);
         // return $this->myJobRateCached;
-        return $this->CalculateAllDueContribution();
-        //return $this->StringCurrentAccount();
+        // return $this->CalculateAllDueContribution();
+        return $this->StringCurrentAccount();
         //return 'test';
     }
 
