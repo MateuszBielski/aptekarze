@@ -17,7 +17,7 @@ class MemberUserOptimizer
     private $memHistRep;
     private $jobRep;
     private $contrRep;
-    private $usersList;
+    private $usersList = array();
     private $historyList;
     private $jobList;
     private $contrList;
@@ -34,13 +34,30 @@ class MemberUserOptimizer
 
     public function ReadRepositoriesAndCompleteCollections()
     {
-        $this->usersList = array();
         $this->historyList = $this->memHistRep->findAll();
         $this->contrList = $this->contrRep->findAll();
         $jobsCollection = $this->jobRep->findAll();
         $usersCollection = $this->memUsRep->findAll();
 
+        $this->setJobHistoryContribution($usersCollection,$jobsCollection);
         
+        
+    }
+    public function ReadRepositoriesAndCompleteCollectionsNarrow(string $str)
+    {
+        $usersCollection = $this->memUsRep->findByNamePortion($str);
+        $usersIdList = array();
+        foreach ($usersCollection as $us) {
+            $usersIdList[] = $us->getId();
+        }
+        $this->historyList = $this->memHistRep->findByUserIdIn();
+        $this->contrList = $this->contrRep->findByUserIdIn();
+        $jobsCollection = $this->jobRep->findByUserIdIn();
+
+        $this->setJobHistoryContribution($usersCollection,$jobsCollection);
+    }
+    private function setJobHistoryContribution(array $usersCollection,array $jobsCollection)
+    {
         foreach($jobsCollection as $job)
         {
             $this->jobList[$job->getId()] = $job;
@@ -63,11 +80,6 @@ class MemberUserOptimizer
             $usId = $contr->getMyUser()->getId();
             $this->usersList[$usId]->addContributionCached($contr);
         }
-        
-    }
-    public function ReadRepositoriesAndCompleteCollectionsNarrow(string $str)
-    {
-        $this->usersList = $this->memUsRep->findByNamePortion($str);
     }
 
     public function getUsersList()
