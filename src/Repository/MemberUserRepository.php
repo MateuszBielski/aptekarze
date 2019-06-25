@@ -47,14 +47,38 @@ class MemberUserRepository extends ServiceEntityRepository
         ;
     }
     */
-    public function findByNamePortion(string $string)
+    // public function findByNamePortion(string $string)
+    // {
+    //     return $this->createQueryBuilder('o','o.id')
+    //    ->where('o.firstName LIKE :string or o.surname LIKE :string')
+    //    ->setParameter('string', '%'.$string.'%')
+    //    ->setMaxResults(100)
+    //    ->getQuery()
+    //    ->getResult();
+    // }
+    //rozdzielone spacją
+    public function findByNamePortion(string $stringToExplode)
     {
-        return $this->createQueryBuilder('o','o.id')
-       ->where('o.firstName LIKE :string or o.surname LIKE :string')
-       ->setParameter('string', '%'.$string.'%')
-       ->setMaxResults(100)
+        $string= explode(" ",$stringToExplode);
+        $result = $this->createQueryBuilder('o','o.id');
+       
+       if (count($string) > 1) {
+        $result = $result
+            ->where('o.firstName LIKE :string0 or o.surname LIKE :string0')
+            ->setParameter('string0', '%'.$string[0].'%')
+            ->andWhere('o.firstName LIKE :string1 or o.surname LIKE :string1')
+            ->setParameter('string1', '%'.$string[1].'%'); 
+       } else {
+        $result = $result
+            ->where('o.firstName LIKE :string or o.surname LIKE :string')
+            ->setParameter('string', '%'.$stringToExplode.'%');
+       }
+       $result = $result
+       ->setMaxResults(50)
        ->getQuery()
        ->getResult();
+
+        return $result;
     }
     public function findAllIndexedById()
     {

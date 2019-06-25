@@ -40,8 +40,6 @@ class MemberUserOptimizer
         $this->usersList = $this->memUsRep->findAllIndexedById();
 
         $this->setJobHistoryContribution();
-        
-        
     }
     public function ReadRepositoriesAndCompleteCollectionsNarrow(string $str)
     {
@@ -68,6 +66,7 @@ class MemberUserOptimizer
             $jobId = $h->getJob()->getId();
             $h->setMyJobRateCached($this->jobList[$jobId]->getRate());
             $this->usersList[$h->getMyUser()->getId()]->addMyHistoryDirectly($h);
+            $h->setOptimizedTrue();
         }
         foreach($this->contrList as $contr)
         {

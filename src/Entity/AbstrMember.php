@@ -145,5 +145,9 @@ abstract class AbstrMember
     {
         $this->myJobRateCached = $rate;
     }
-
+     
+    public function setOptimizedTrue()
+    {
+        $this->optimized = true;
+    }
 }

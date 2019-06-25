@@ -57,13 +57,20 @@ class MemberUserController extends AbstractController
     /**
      * @Route("/indexAjax", name="member_user_indexAjax", methods={"GET", "POST"})
      */
-    public function indexAjax(Request $request,MemberUserOptimizer $memUsOptim)
+    public function indexAjax(Request $request,MemberUserOptimizer $memUsOptim): Response
     {
         $memUsOptim->ReadRepositoriesAndCompleteCollectionsNarrow($request->query->get("str"));
         return $this->render('member_user/indexAjax.html.twig', [
             'member_users' => $memUsOptim->getUsersList(),
         ]);
-        //return new Response('odpowiedź');
+        // $content = '';
+        // $stringToExplode = $request->query->get("str");
+        // $resultArray = explode(" ",$stringToExplode);
+        // foreach($resultArray as $line)
+        // {
+        //     $content .='<br>'.$line; 
+        // }
+        // return new Response($content);
     }
             
     /**
@@ -96,63 +103,62 @@ class MemberUserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/zpliku", name="member_users_zpliku", methods={"GET", "POST"})
-     */
-    
-    public function deserialize(JobRepository $jobRepository): Response
-    {
-        $jobs = array();
-        foreach ($jobRepository->findAll() as $job) {
-            $jobs[$job->getRate()] = $job;
-        }
-        $encoders = [new CsvEncoder()];
-        $normalizers = [new ObjectNormalizer(), new ArrayDenormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-        $file = '/home/mateusz/php/sfprojects/aptekarze/nazwiska.csv';
-        $data = file_get_contents($file);
-        $mus = $serializer->deserialize($data, 'App\Entity\UserMemberToSerialize[]', 'csv');
-        $entityManager = $this->getDoctrine()->getManager();
-        foreach ($mus as $mu) {
-            $memberUser = $mu->createMemberUser($jobs);
-            $entityManager->persist($memberUser);
-        }
-        //$entityManager->flush(); //<-nazwiska zapisano do bazy
-        // $response = new Response();
-        // $response->setContent(count($mus));
-        // return $response;
-        return $this->redirectToRoute('member_user_index');
+    // /**
+    //  * @Route("/zpliku", name="member_users_zpliku", methods={"GET", "POST"})
+    //  */
+    // public function deserialize(JobRepository $jobRepository): Response
+    // {
+    //     $jobs = array();
+    //     foreach ($jobRepository->findAll() as $job) {
+    //         $jobs[$job->getRate()] = $job;
+    //     }
+    //     $encoders = [new CsvEncoder()];
+    //     $normalizers = [new ObjectNormalizer(), new ArrayDenormalizer()];
+    //     $serializer = new Serializer($normalizers, $encoders);
+    //     $file = '/home/mateusz/php/sfprojects/aptekarze/nazwiska.csv';
+    //     $data = file_get_contents($file);
+    //     $mus = $serializer->deserialize($data, 'App\Entity\UserMemberToSerialize[]', 'csv');
+    //     $entityManager = $this->getDoctrine()->getManager();
+    //     foreach ($mus as $mu) {
+    //         $memberUser = $mu->createMemberUser($jobs);
+    //         $entityManager->persist($memberUser);
+    //     }
+    //     //$entityManager->flush(); //<-nazwiska zapisano do bazy
+    //     // $response = new Response();
+    //     // $response->setContent(count($mus));
+    //     // return $response;
+    //     return $this->redirectToRoute('member_user_index');
         
-    }
+    // }
 
    
-    public function serialize(MemberUserRepository $memberUserRepository): Response
-    {
-        $users = $memberUserRepository->findAll();
-        $encoders = [new XmlEncoder(), new JsonEncoder(), new CsvEncoder()];//XmlEncoder do usunięcia
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
+    // public function serialize(MemberUserRepository $memberUserRepository): Response
+    // {
+    //     $users = $memberUserRepository->findAll();
+    //     $encoders = [new XmlEncoder(), new JsonEncoder(), new CsvEncoder()];//XmlEncoder do usunięcia
+    //     $normalizers = [new ObjectNormalizer()];
+    //     $serializer = new Serializer($normalizers, $encoders);
 
-        $memberUserToSerialize = array();
-        foreach($users as $u)
-        {
-            $mts = new UserMemberToSerialize();
-            $mts->setPropertiesFrom($u);
-            $memberUserToSerialize[]=$mts;
-        }
-        $content = $serializer->serialize($memberUserToSerialize, 'csv',[
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
-        ]);
-        $response = new Response();
-        file_put_contents(
-            '/home/mateusz/symfonyProjekt/aptekarze/var/data.csv',
-            $content
-        );
-        $response->setContent($content);
-        return $response;
-    }
+    //     $memberUserToSerialize = array();
+    //     foreach($users as $u)
+    //     {
+    //         $mts = new UserMemberToSerialize();
+    //         $mts->setPropertiesFrom($u);
+    //         $memberUserToSerialize[]=$mts;
+    //     }
+    //     $content = $serializer->serialize($memberUserToSerialize, 'csv',[
+    //         'circular_reference_handler' => function ($object) {
+    //             return $object->getId();
+    //         }
+    //     ]);
+    //     $response = new Response();
+    //     file_put_contents(
+    //         '/home/mateusz/symfonyProjekt/aptekarze/var/data.csv',
+    //         $content
+    //     );
+    //     $response->setContent($content);
+    //     return $response;
+    // }
     /**
      * @Route("/{id}", name="member_user_show", methods={"GET"})
      */

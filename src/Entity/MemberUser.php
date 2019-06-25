@@ -61,13 +61,6 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->contributions = new ArrayCollection();
     }
 
-    
-    public function setOptimizedTrue()
-    {
-        $this->optimized = true;
-    }
-    
-
     /**
      * A visual identifier that represents this user.
      *
