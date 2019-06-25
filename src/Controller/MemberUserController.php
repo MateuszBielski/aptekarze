@@ -36,7 +36,7 @@ class MemberUserController extends AbstractController
     {
         // $memUsOptim->ReadUsersIndexed();
         $memUsOptim->ReadRepositoriesAndCompleteCollections();
-        // $memUsOptim->ReadRepositoriesAndCompleteCollectionsNarrow('ock');
+        // 
         // $content = json_encode($memUsOptim->getUsersList());
         // return new JsonResponse($memUsOptim->getUserListJson());
         // return $response;
@@ -46,13 +46,26 @@ class MemberUserController extends AbstractController
         ]);
         
     }
+
     // public function index(MemberUserRepository $memberUserRepository): Response
     // {
-    //     return $this->render('member_user/index.html.twig', [
-    //         'member_users' => $memberUserRepository->findAll(),
-    //     ]);
-    // }
+        //     return $this->render('member_user/index.html.twig', [
+            //         'member_users' => $memberUserRepository->findAll(),
+            //     ]);
+            // }
 
+    /**
+     * @Route("/indexAjax", name="member_user_indexAjax", methods={"GET", "POST"})
+     */
+    public function indexAjax(Request $request,MemberUserOptimizer $memUsOptim)
+    {
+        $memUsOptim->ReadRepositoriesAndCompleteCollectionsNarrow($request->query->get("str"));
+        return $this->render('member_user/indexAjax.html.twig', [
+            'member_users' => $memUsOptim->getUsersList(),
+        ]);
+        //return new Response('odpowiedź');
+    }
+            
     /**
      * @Route("/new", name="member_user_new", methods={"GET","POST"})
      */
