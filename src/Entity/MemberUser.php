@@ -47,6 +47,7 @@ class MemberUser extends AbstrMember implements UserInterface
     private $archiveRatesAdded = false;
     private $myHistoryCached = array();
     private $contributionsCached = array();
+    private $stringCurrentAccount = 'nie obliczone';
     
     
 
@@ -315,7 +316,7 @@ class MemberUser extends AbstrMember implements UserInterface
 
         // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
         $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
-        $valueRate[] = ($this->myJobRateCached == null) ? 0 : $this->getMyJobRateCached();
+        $valueRate[] = ($this->getMyJobRateCached() == null) ? 0 : $this->getMyJobRateCached();
 
         $numbOfIntervals = count($interval_months);
         // $okresy = '';
@@ -404,6 +405,18 @@ class MemberUser extends AbstrMember implements UserInterface
         return $sign.strval($account)." zł";
     }
 
+    public function getStringCurrentAccount()
+    {
+        return $this->stringCurrentAccount;
+    }
+
+    
+    public function setStringCurrentAccount($stringCurrentAccount)
+    {
+        $this->stringCurrentAccount = $stringCurrentAccount;
+
+        return $this;
+    }
     public function test()
     {
         // return count($this->myHistoryCached);
@@ -412,7 +425,7 @@ class MemberUser extends AbstrMember implements UserInterface
         return $this->StringCurrentAccount();
         //return 'test';
     }
-
+    
     
 }
 

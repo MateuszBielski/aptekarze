@@ -74,7 +74,16 @@ class MemberUserOptimizer
             $this->usersList[$usId]->addContributionCached($contr);
         }
     }
+    public function sortUsersList()
+    {
 
+    }
+    public function setCurrentAccounts()
+    {       
+        foreach ($this->usersList as  $user) {
+            $user->setStringCurrentAccount($user->StringCurrentAccount());
+        }
+    }
     public function ReadUsersIndexed()
     {
         $this->usersList = $this->memUsRep->findAllIndexedById();//

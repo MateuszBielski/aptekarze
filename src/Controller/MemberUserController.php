@@ -34,13 +34,8 @@ class MemberUserController extends AbstractController
      */
     public function index(MemberUserOptimizer $memUsOptim)
     {
-        // $memUsOptim->ReadUsersIndexed();
         $memUsOptim->ReadRepositoriesAndCompleteCollections();
-        // 
-        // $content = json_encode($memUsOptim->getUsersList());
-        // return new JsonResponse($memUsOptim->getUserListJson());
-        // return $response;
-        // return $this->render('member_user/test.html.twig',['content' => $content]);
+        $memUsOptim->setCurrentAccounts();
         return $this->render('member_user/index.html.twig', [
             'member_users' => $memUsOptim->getUsersList(),
         ]);
@@ -60,17 +55,10 @@ class MemberUserController extends AbstractController
     public function indexAjax(Request $request,MemberUserOptimizer $memUsOptim): Response
     {
         $memUsOptim->ReadRepositoriesAndCompleteCollectionsNarrow($request->query->get("str"));
+        $memUsOptim->setCurrentAccounts();
         return $this->render('member_user/indexAjax.html.twig', [
             'member_users' => $memUsOptim->getUsersList(),
         ]);
-        // $content = '';
-        // $stringToExplode = $request->query->get("str");
-        // $resultArray = explode(" ",$stringToExplode);
-        // foreach($resultArray as $line)
-        // {
-        //     $content .='<br>'.$line; 
-        // }
-        // return new Response($content);
     }
             
     /**

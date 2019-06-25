@@ -67,8 +67,7 @@
     Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} zł <br>
     Suma wpłaconych składek {{ member_user.PaidContributionSum() }} zł <br>
 
-    <a href="{{ path('member_user_index') }}">powrót do listy</a>
-
+    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">nowa wpłata</a>
     <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
     
     

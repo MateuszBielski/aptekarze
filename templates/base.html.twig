@@ -9,7 +9,7 @@
     <body>
         <a href="{{ path('member_user_index') }}">członkowie</a>
         <a href="{{ path('job_index') }}">stanowiska</a>
-        <a href="{{ path('contribution_new') }}">nowa wpłata</a>
+        {# <a href="{{ path('contribution_new') }}">nowa wpłata</a> #}
         {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
             <a class="link" href="{{ path('app_logout') }}">wyloguj</a>
         {% else %}

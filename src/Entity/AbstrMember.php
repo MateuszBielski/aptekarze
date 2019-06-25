@@ -139,7 +139,7 @@ abstract class AbstrMember
     public function getMyJobRateCached()
     {
         if ($this->optimized) return $this->myJobRateCached;
-        else return $this->job->getRate();
+        else if($this->job != null) return $this->job->getRate();
     }
     public function setMyJobRateCached($rate)
     {
