@@ -2,20 +2,24 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        <title>{% block title %}Składki izba aptekarska{% endblock %}</title>
+        {% block stylesheets %}
+            <link href="{{ asset('css/styl.css') }}" rel="stylesheet"/>
+        {% endblock %}
         {% block scripts %}{% endblock %}
     </head>
     <body>
-        <a href="{{ path('member_user_index') }}">członkowie</a>
-        <a href="{{ path('job_index') }}">stanowiska</a>
-        {# <a href="{{ path('contribution_new') }}">nowa wpłata</a> #}
-        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-            <a class="link" href="{{ path('app_logout') }}">wyloguj</a>
-        {% else %}
-            <a class="link" href="{{ path('app_login') }}">zaloguj się</a>
-        {% endif %}
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <div id="caly_div">
+            <a href="{{ path('member_user_index') }}">członkowie</a>
+            <a href="{{ path('job_index') }}">stanowiska</a>
+            {# <a href="{{ path('contribution_new') }}">nowa wpłata</a> #}
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <a class="link" href="{{ path('app_logout') }}">wyloguj</a>
+            {% else %}
+                <a class="link" href="{{ path('app_login') }}">zaloguj się</a>
+            {% endif %}
+            {% block body %}{% endblock %}
+            {% block javascripts %}{% endblock %}
+        </div>
     </body>
 </html>

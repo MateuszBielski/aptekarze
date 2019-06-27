@@ -1,4 +1,7 @@
 {
+    "symfony/asset": {
+        "version": "v4.3.2"
+    },
     "symfony/expression-language": {
         "version": "v4.3.1"
     },
