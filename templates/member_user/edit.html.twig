@@ -7,7 +7,10 @@
 
     {{ include('member_user/_form.html.twig', {'button_label': 'Zmień'}) }}
 
-    <a href="{{ path('member_user_index') }}">powrót do listy</a>
 
+{% endblock %}
+{% block belka_dol %}   
+    <a href="{{ path('member_user_index') }}">powrót do listy</a>
+    
     {{ include('member_user/_delete_form.html.twig') }}
 {% endblock %}

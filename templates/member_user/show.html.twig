@@ -67,10 +67,10 @@
     Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} zł <br>
     Suma wpłaconych składek {{ member_user.PaidContributionSum() }} zł <br>
 
-    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">nowa wpłata</a>
-    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
     
-    
-
+{% endblock %}
+{% block belka_dol %}   
+    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}" class="pole_belka_dol">nowa wpłata</a>
+    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}"  class="pole_belka_dol">edytuj</a>
     {{ include('member_user/_delete_form.html.twig') }}
 {% endblock %}

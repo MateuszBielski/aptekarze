@@ -8,23 +8,23 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                {# <th>Id</th> #}
                 <th>Nazwa</th>
                 <th>Wysokość składki</th>
-                <th>akcje</th>
+                {# <th>akcje</th> #}
             </tr>
         </thead>
         <tbody>
         {% for job in jobs %}
             <tr>
-                <td>{{ job.id }}</td>
+                {# <td>{{ job.id }}</td> #}
                 <td>{{ job.name }}</td>
                 <td>{{ job.rate }}</td>
-                <td>
+                {# <td> #}
                     {# <a href="{{ path('job_show', {'id': job.id}) }}">pokaż</a> #}
-                    <a href="{{ path('job_edit', {'id': job.id}) }}">edytuj</a>
-                    <a href="{{ path('job_id_serialize', {'id': job.id}) }}">csvSerialize</a>
-                </td>
+                    {# <a href="{{ path('job_edit', {'id': job.id}) }}">edytuj</a> #}
+                    {# <a href="{{ path('job_id_serialize', {'id': job.id}) }}">csvSerialize</a> #}
+                {# </td> #}
             </tr>
         {% else %}
             <tr>

@@ -14,10 +14,10 @@ class MemberUserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('telephone',null,['label' => 'telefon',])
-            ->add('email',null,['label' => 'adres email',])
-            ->add('firstName',null,['label' => 'imię',])
-            ->add('surname',null,['label' => 'nazwisko',])
+        ->add('firstName',null,['label' => 'imię',])
+        ->add('surname',null,['label' => 'nazwisko',])
+        ->add('telephone',null,['label' => 'telefon',])
+        ->add('email',null,['label' => 'adres email',])
             //->add('username',null,['label' => 'nazwa użytkownika',])
             // ->add('roles')
             // ->add('password')

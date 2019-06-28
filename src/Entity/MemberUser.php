@@ -48,6 +48,7 @@ class MemberUser extends AbstrMember implements UserInterface
     private $myHistoryCached = array();
     private $contributionsCached = array();
     private $stringCurrentAccount = 'nie obliczone';
+    private $currentAccuntValue;
     
     
 
@@ -221,6 +222,11 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->initialAccount = $initialAccount;
 
         return $this;
+    } 
+    
+    public function getCurrentAccuntValue()
+    {
+        return $this->currentAccuntValue;
     }
 
     public function createTempUsername()
@@ -400,7 +406,8 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         $sign = '';
         $account = $this->PaidContributionSum()-$this->CalculateAllDueContribution();
-        if ($account > 0) $sign = '+ ';
+        $this->currentAccuntValue = $account;
+        if ($account > 0) $sign = '+';
         // if ($account < 0) $sign = '- ';
         return $sign.strval($account)." zł";
     }
@@ -410,11 +417,12 @@ class MemberUser extends AbstrMember implements UserInterface
         return $this->stringCurrentAccount;
     }
 
+
+
     
     public function setStringCurrentAccount($stringCurrentAccount)
     {
         $this->stringCurrentAccount = $stringCurrentAccount;
-
         return $this;
     }
     public function test()

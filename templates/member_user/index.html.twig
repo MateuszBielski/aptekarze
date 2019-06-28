@@ -10,12 +10,17 @@
 
 {% block body %}
     <h3>Lista członków</h3>
-    <br>wyszukaj
-    <input id="input-find-user" type="tekst" value="nazwisko lub imię" size="30">
+    <div id="div_wyszukaj">
+        wyszukaj
+        <input id="input-find-user" type="tekst" value="nazwisko lub imię" size="30">
+    </div>
     {{ include('member_user/indexAjax.html.twig') }}
     
 
-    <a href="{{ path('member_user_new') }}">Utwórz nowy</a>
-    {# <a href="{{ path('member_users_zpliku') }}">Deserialize</a> #}
 
+{% endblock %}
+{% block belka_dol %}
+    <a href="{{ path('member_user_new') }}">Dodaj nową osobę</a>
+
+    {# <a href="{{ path('member_users_zpliku') }}">Deserialize</a> #}
 {% endblock %}

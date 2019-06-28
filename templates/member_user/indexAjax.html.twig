@@ -2,36 +2,41 @@
         <thead>
             <tr>
                 {# <th>Key</th> #}
-                <th>Id</th>
+                {# <th>Id</th> #}
                 <th>Imię</th>
                 <th>Nazwisko</th>
                 <th>Telefon</th>
                 <th>e-mail</th>
-                <th>Nazwa użytkownika</th>
+                {# <th>Nazwa użytkownika</th> #}
                 <th>bilans składek</th>
                 {# <th>Roles</th>
                 <th>Password</th> #}
-                <th>akcje</th>
+                <th>nowa wpłata</th>
             </tr>
         </thead>
         <tbody>
         {% for key,member_user in member_users %}
             <tr>
+                {% if member_user.getCurrentAccuntValue() < 0 %}
+                    {% set class_sign = 'class=minus_sign' %}
+                {% else %}
+                    {% set class_sign = 'class=plus_sign' %}
+                {% endif %}
                 {# <td>{{ key }}</td> #}
-                <td>{{ member_user.id }}</td>
-                <td>{{ member_user.firstName }}</td>
+                {# <td>{{ member_user.id }}</td> #}
+                <td><a href="{{ path('member_user_show', {'id': member_user.id}) }}">{{ member_user.firstName }}</a></td>
                 <td>{{ member_user.surname }}</td>
-                <td>{{ member_user.telephone }}</td>
-                <td>{{ member_user.email }}</td>
-                <td>{{ member_user.username }}</td>
+                <td class="td_mniejsze">{{ member_user.telephone }}</td>
+                <td class="td_mniejsze">{{ member_user.email }}</td>
+                {# <td>{{ member_user.username }}</td> #}
                 {# <td>{{ member_user.test }}</td> #}
-                <td>{{ member_user.getStringCurrentAccount() }}</td>
+                <td {{ class_sign }}>{{ member_user.getStringCurrentAccount() }}</td>
                 {# <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
                 <td>{{ member_user.password }}</td> #}
-                <td>
-                    <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
-                    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a>
-                    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">nowa wpłata</a>
+                <td class="td_mniejsze">
+                    {# <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
+                    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a> #}
+                    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">dodaj</a>
                 </td>
             </tr>
         {% else %}

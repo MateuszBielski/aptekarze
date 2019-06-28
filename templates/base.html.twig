@@ -10,15 +10,33 @@
     </head>
     <body>
         <div id="caly_div">
-            <a href="{{ path('member_user_index') }}">członkowie</a>
-            <a href="{{ path('job_index') }}">stanowiska</a>
-            {# <a href="{{ path('contribution_new') }}">nowa wpłata</a> #}
-            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                <a class="link" href="{{ path('app_logout') }}">wyloguj</a>
-            {% else %}
-                <a class="link" href="{{ path('app_login') }}">zaloguj się</a>
-            {% endif %}
+            <div id="belka_gora">
+                <div class="pole_belka_gora">
+                    <a href="{{ path('member_user_index') }}" >członkowie</a>
+                </div>
+                <div class="pole_belka_gora">
+                    <a href="{{ path('job_index') }}">stanowiska</a>
+                    {# <a href="{{ path('contribution_new') }}">nowa wpłata</a> #}
+                </div>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <div class="pole_belka_gora">
+                    <a href="{{ path('contribution_index') }}">składki</a>
+                </div>
+                <div class="pole_belka_gora">
+                    <a class="link" href="{{ path('app_logout') }}" >wyloguj</a>
+                </div>
+                {% else %}
+                <div class="pole_belka_gora">
+                    <a class="link" href="{{ path('app_login') }}" >zaloguj się</a>
+                </div>
+                {% endif %}
+            </div>
+            <div id="body_div">
             {% block body %}{% endblock %}
+            </div>
+            <div id="belka_dol">
+            {% block belka_dol %}{% endblock %}
+            </div>
             {% block javascripts %}{% endblock %}
         </div>
     </body>

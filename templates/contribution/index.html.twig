@@ -3,38 +3,40 @@
 {% block title %}zapłacone składki{% endblock %}
 
 {% block body %}
-    <h1>zapłacone składki</h1>
+    <h3>zapłacone składki</h3>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                {# <th>Id</th> #}
                 <th>Imię i Nazwisko</th>
                 <th>Kwota</th>
                 <th>Data wpłaty</th>
-                <th>actions</th>
+                {# <th>actions</th> #}
             </tr>
         </thead>
         <tbody>
         {% for contribution in contributions %}
             <tr>
-                <td>{{ contribution.id }}</td>
+                {# <td>{{ contribution.id }}</td> #}
                 {% set mu = contribution.myUser %}
                 <td>{{ mu.firstName }} {{ mu.surname }}</td>
                 <td>{{ contribution.value }}</td>
                 <td>{{ contribution.paymentDate ? contribution.paymentDate|date('Y-m-d') : '' }}</td>
-                <td>
+                {# <td>
                     <a href="{{ path('contribution_show', {'id': contribution.id}) }}">show</a>
                     <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">edit</a>
-                </td>
+                </td> #}
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">no records found</td>
+                <td colspan="4">brak danych</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('contribution_new') }}">Create new</a>
+{% endblock %}
+{% block belka_dol %}
+    <a href="{{ path('contribution_new') }}">dodaj nową wpłatę</a>
 {% endblock %}
