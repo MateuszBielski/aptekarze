@@ -34,7 +34,9 @@
         </tbody>
     </table>
 
-    <a href="{{ path('job_new') }}">Dodaj nowe stanowisko</a>
-    <a href="{{ path('job_zpliku') }}">Deserialize</a>
-    <a href="{{ path('job_serialize') }}">csvSerialize</a>
+{% endblock %}
+{% block belka_dol %}   
+    <a href="{{ path('job_new') }}" class="pole_belka_dol">Dodaj nowe stanowisko</a>
+    {# <a href="{{ path('job_zpliku') }}">Deserialize</a> #}
+    {# <a href="{{ path('job_serialize') }}">csvSerialize</a> #}
 {% endblock %}

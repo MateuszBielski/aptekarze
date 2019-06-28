@@ -49,7 +49,7 @@ div
 }
 #div_wyszukaj
 {
-    width: 35%;
+    width: 40%;
     height: 60px;
 }
 table, #div_wyszukaj
@@ -74,6 +74,9 @@ tr
 {
     height: 35px;
 }
+/* tr.member_user_row:hover {
+    background-color: #ffff99;
+} */
 .td_mniejsze
 {
     font-size: 16px;
@@ -95,4 +98,13 @@ h3,table
 .minus_sign
 {
     color: red;
+}
+#podsumowanie_div
+{
+    width: 35%;
+}
+#current_account_div
+{
+    /* border: none; */
+    text-align: right;
 }

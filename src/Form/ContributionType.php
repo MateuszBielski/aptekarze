@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\MemberUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class ContributionType extends AbstractType
 {
@@ -16,6 +17,12 @@ class ContributionType extends AbstractType
         $builder
             ->add('value',null,['label' => 'kwota'])
             ->add('paymentDate',null,['label' => 'data wpłaty'])
+            ->add('source',ChoiceType::class,[
+                'choices'  => [
+                    'gotówka'=> 1,
+                    'przelew' => 2,
+                ],'label' => 'rodzaj wpłaty'
+            ])
             ->add('myUser',EntityType::class,[
                 'class' => MemberUser::class,
                 'choice_label' => function(MemberUser $mu){return $mu->getNameAndValue();},

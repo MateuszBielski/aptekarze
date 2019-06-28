@@ -7,70 +7,94 @@
 
     <table class="table">
         <tbody>
-            <tr>
+            {# <tr>
                 <th>Id</th>
                 <td>{{ member_user.id }}</td>
-            </tr>
+            </tr> #}
             <tr>
-                <th>Telefon</th>
+                <td>Telefon</td>
                 <td>{{ member_user.telephone }}</td>
             </tr>
             <tr>
-                <th>E-mail</th>
+                <td>E-mail</td>
                 <td>{{ member_user.email }}</td>
             </tr>
             <tr>
-                <th>Imię</th>
+                <td>Imię</td>
                 <td>{{ member_user.firstName }}</td>
             </tr>
             <tr>
-                <th>Nazwisko</th>
+                <td>Nazwisko</td>
                 <td>{{ member_user.surname }}</td>
             </tr>
             <tr>
-                <th>Nazwa użytkownika</th>
+                <td>Nazwa użytkownika</td>
                 <td>{{ member_user.username }}</td>
             </tr>
             {# <tr>
-                <th>Roles</th>
+                <td>Roles</td>
                 <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
             </tr> #}
             {# <tr>
-                <th>Password</th>
+                <td>Password</td>
                 <td>{{ member_user.password }}</td>
             </tr> #}
             <tr>
-                <th>Dzień płatności</th>
-                <td>{{ member_user.paymentDayOfMonth }}</td>
+                <td>Dzień płatności</td>
+                <td>{{ member_user.paymentDayOfMonth() }}</td>
             </tr>
             <tr>
-                <th>Stanowisko/wysokość składki</th>
+                <td>Stanowisko/wysokość składki</td>
                 <td>{{ member_user.job.name }} / {{ member_user.job.rate }} zł</td>
             </tr>
-            {% if member_user.myHistory|length > 0 %}
+        </tbody>
+    </table>
+    
+    <br>
+    <div id="podsumowanie_div" >
+        {# <table id="podsumowanie_table">
+        <tr>
+            <td>Suma należnych składek:</td>
+            <td>{{ member_user.CalculateAllDueContribution() }} zł</td>
+        </tr>
+        <tr>
+            <td>Suma wpłaconych składek:</td>
+            <td>{{ member_user.PaidContributionSum() }} zł</td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>{{ member_user.StringCurrentAccount() }}</td>
+        </table> #}
+        <br>Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} 
+        <br>Suma wpłaconych składek: {{ member_user.PaidContributionSum() }} 
+        <hr>
+        <div id="current_account_div">
+            {{ member_user.StringCurrentAccount() }}
+        </div>
+    </div>
+    {% if member_user.myHistory|length > 0 %}
+    <br>
+    <table class="table">
+        <tbody>
             <tr>
-                <th>Historia zmian</th>
+                <th colspan="2">Historia zmian</th>
             </tr>
-                {% for history_row in member_user.myHistory|reverse %}
+            {% for history_row in member_user.myHistory|reverse %}
                 <tr>
                     <td>{{ history_row.date.format('d.m.y') }}</td>
                     <td>{{ history_row.getInfoChangeComparingToNext() }}</td>
                 </tr>
-                {% endfor %}
-
-            {% endif %}
-            
-
+            {% endfor %}
         </tbody>
     </table>
-    <br>
-    Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} zł <br>
-    Suma wpłaconych składek {{ member_user.PaidContributionSum() }} zł <br>
-
+    {% endif %}
     
 {% endblock %}
 {% block belka_dol %}   
     <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}" class="pole_belka_dol">nowa wpłata</a>
-    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}"  class="pole_belka_dol">edytuj</a>
+    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}"  class="pole_belka_dol">edytuj dane</a>
     {{ include('member_user/_delete_form.html.twig') }}
 {% endblock %}

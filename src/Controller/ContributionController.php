@@ -24,7 +24,8 @@ class ContributionController extends AbstractController
     public function index(ContributionRepository $contributionRepository): Response
     {
         return $this->render('contribution/index.html.twig', [
-            'contributions' => $contributionRepository->findAll(),
+            // 'contributions' => $contributionRepository->findAll(),
+            'contributions' => $contributionRepository->findBy([], ['paymentDate' => 'DESC']),
         ]);
     }
 

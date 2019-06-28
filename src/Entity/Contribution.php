@@ -89,4 +89,22 @@ class Contribution
 
         return $this;
     }
+    public function getType()
+    {
+        $result = '';
+        switch ($this->source) {
+            case 1: 
+            $result = 'gotówka';
+            break;
+            case 2: 
+            $result = 'przelew';
+            break;
+        }
+        return $result;
+    }
+    public function getOrCreateConfirmation()
+    {
+        //"wydrukowane dnia 
+        return "wydrukuj";
+    }
 }

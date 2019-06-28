@@ -12,6 +12,8 @@
                 <th>Imię i Nazwisko</th>
                 <th>Kwota</th>
                 <th>Data wpłaty</th>
+                <th>rodzaj</th>
+                <th>potwierdzenie</th>
                 {# <th>actions</th> #}
             </tr>
         </thead>
@@ -22,7 +24,9 @@
                 {% set mu = contribution.myUser %}
                 <td>{{ mu.firstName }} {{ mu.surname }}</td>
                 <td>{{ contribution.value }}</td>
-                <td>{{ contribution.paymentDate ? contribution.paymentDate|date('Y-m-d') : '' }}</td>
+                <td>{{ contribution.paymentDate ? contribution.paymentDate|date('d.m.Y') : '' }}</td>
+                <td class="td_mniejsze">{{ contribution.getType() }}</td>
+                <td class="td_mniejsze">{{ contribution.getOrCreateConfirmation() }}</td>
                 {# <td>
                     <a href="{{ path('contribution_show', {'id': contribution.id}) }}">show</a>
                     <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">edit</a>

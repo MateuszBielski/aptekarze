@@ -11,12 +11,13 @@
                 <th>bilans składek</th>
                 {# <th>Roles</th>
                 <th>Password</th> #}
+                <th>szczegóły</th>
                 <th>nowa wpłata</th>
             </tr>
         </thead>
         <tbody>
         {% for key,member_user in member_users %}
-            <tr>
+            <tr class="member_user_row">
                 {% if member_user.getCurrentAccuntValue() < 0 %}
                     {% set class_sign = 'class=minus_sign' %}
                 {% else %}
@@ -33,6 +34,9 @@
                 <td {{ class_sign }}>{{ member_user.getStringCurrentAccount() }}</td>
                 {# <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
                 <td>{{ member_user.password }}</td> #}
+                <td class="td_mniejsze">
+                    <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
+                </td>
                 <td class="td_mniejsze">
                     {# <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
                     <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a> #}
