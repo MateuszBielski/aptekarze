@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Contribution;
 use App\Form\ContributionType;
-use App\Repository\ContributionRepository;
+use App\Service\ContributionOptimizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,24 +14,32 @@ use App\Entity\MemberUser;
 
 /**
  * @Route("/contribution")
- * @Security("is_granted('ROLE_ADMIN')")
  */
 //
 class ContributionController extends AbstractController
 {
     /**
      * @Route("/", name="contribution_index", methods={"GET"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function index(ContributionRepository $contributionRepository): Response
+    public function index(ContributionOptimizer $conOpt): Response
     {
+        $conOpt->readRepositoryAndSetCollection();
+
         return $this->render('contribution/index.html.twig', [
-            // 'contributions' => $contributionRepository->findAll(),
-            'contributions' => $contributionRepository->findBy([], ['paymentDate' => 'DESC']),
-        ]);
+            'contributions' => $conOpt->getContributionList(),]);
     }
+    // public function index(ContributionRepository $contributionRepository): Response
+    // {
+    //     return $this->render('contribution/index.html.twig', [
+    //         // 'contributions' => $contributionRepository->findAll(),
+    //         'contributions' => $contributionRepository->findBy([], ['paymentDate' => 'DESC']),
+    //     ]);
+    // }
 
     /**
      * @Route("/new", name="contribution_new", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function new(Request $request): Response
     {
@@ -58,6 +66,7 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}", name="contribution_show", methods={"GET"})
+     * @Security("is_granted('ROLE_AUTOR')")
      */
     public function show(Contribution $contribution): Response
     {
@@ -68,6 +77,7 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}/new", name="contribution_new_forUser", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function newForUser(Request $request, MemberUser $memberUser): Response
     {
@@ -93,6 +103,7 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}/print", name="contribution_print", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function PrintConfirmation(Contribution $contribution): Response
     {
@@ -115,6 +126,7 @@ class ContributionController extends AbstractController
     }
     /**
      * @Route("/{id}/edit", name="contribution_edit", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_AUTOR')")
      */
     public function edit(Request $request, Contribution $contribution): Response
     {
@@ -137,6 +149,7 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}", name="contribution_delete", methods={"DELETE"})
+     * @Security("is_granted('ROLE_AUTOR')")
      */
     public function delete(Request $request, Contribution $contribution): Response
     {

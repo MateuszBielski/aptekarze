@@ -10,7 +10,7 @@ framework:
         handler_id: ~
         cookie_secure: auto
         cookie_samesite: lax
-        cookie_lifetime: 3600
+        cookie_lifetime: 7200
         # cookie_lifetime: 28800
 
     #esi: true

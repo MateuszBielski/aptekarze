@@ -53,6 +53,13 @@ class ContributionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findAllIndexedByIdOrderBy(string $field, string $direct)
+    {
+        return $this->createQueryBuilder('o','o.id')
+            ->orderBy($field, $direct)
+            ->getQuery()
+            ->getResult();
+    }
     public function findByUserIdIn(array $usersId)
     {
         return $this->createQueryBuilder('o','o.id')

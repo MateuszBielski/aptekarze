@@ -42,6 +42,9 @@ class Contribution
      */
     private $printed = null;
 
+    private $myUserCached;
+    private $optimized = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -79,8 +82,25 @@ class Contribution
     public function setMyUser(?MemberUser $myUser): self
     {
         $this->myUser = $myUser;
+        $this->myUserCached = $myUser;
 
         return $this;
+    }
+
+    public function setMyUserCached(MemberUser $mu)
+    {
+        $this->myUserCached = $mu;
+    }
+
+    public function setOptimized()
+    {
+        $this->optimized = true;
+    }
+
+    public function getMyUserCached()
+    {
+        if ($this->optimized) return $this->myUserCached;
+        else return $this->myUser;
     }
 
     public function getSource(): ?string
