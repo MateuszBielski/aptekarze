@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Wydruk potwierdzenia</title>
+        {# {% block stylesheets %} #}
+            <link href="{{ asset('css/styl.css') }}" rel="stylesheet"/>
+            <link href="{{ asset('css/stylpotwierdzenie.css') }}" rel="stylesheet"/>
+        {# {% endblock %} #}
+        {% block scripts %}{% endblock %}
+    </head>
+    <body>
+        <div id="caly_div">
+            <h3>Dowód wpłaty pokwitowanie<h3>
+            <table>
+                <tbody>
+                    {# <tr>
+                        <td>Numer</td>
+                        <td>{{ contribution.id }}</td>
+                    </tr> #}
+                    <tr>
+                        <td>Data</td>
+                        <td>{{ contribution.paymentDate.format('d.m.Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Od kogo</td>
+                        <td>{{ contribution.myUser.firstName }} {{ contribution.myUser.surname }}</td>
+                    </tr>
+                    <tr>
+                        <td>za co</td>
+                        <td>opłata składki członkowskiej</td>
+                    </tr>
+                    <tr>
+                        <td>kwota</td>
+                        <td>{{ contribution.value }}</td>
+                    </tr>
+                    <tr>
+                        <td>opłacono</td>
+                        <td>{{ contribution.getType() }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <a href="{{ path('contribution_index') }}">powrót do listy wpłat</a>
+        </div>
+    </body>
+</html>

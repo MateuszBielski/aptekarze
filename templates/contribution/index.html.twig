@@ -26,7 +26,11 @@
                 <td>{{ contribution.value }}</td>
                 <td>{{ contribution.paymentDate ? contribution.paymentDate|date('d.m.Y') : '' }}</td>
                 <td class="td_mniejsze">{{ contribution.getType() }}</td>
-                <td class="td_mniejsze">{{ contribution.getOrCreateConfirmation() }}</td>
+                <td class="td_mniejsze">
+                    <a href="{{ path('contribution_print', {'id': contribution.id}) }}">
+                        {{ contribution.getOrCreateConfirmation() }}
+                    </a>
+                </td>
                 {# <td>
                     <a href="{{ path('contribution_show', {'id': contribution.id}) }}">show</a>
                     <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">edit</a>

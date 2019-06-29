@@ -37,6 +37,11 @@ class Contribution
      */
     private $source;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $printed = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +110,26 @@ class Contribution
     public function getOrCreateConfirmation()
     {
         //"wydrukowane dnia 
-        return "wydrukuj";
+        $message = '';
+        if ($this->printed == null)
+        {
+            $message = "wydrukuj";
+        }
+        else {
+            $message = $this->printed->format('d.m.Y');
+        }
+        return $message;
+    }
+
+    public function getPrinted(): ?\DateTimeInterface
+    {
+        return $this->printed;
+    }
+
+    public function setPrinted(?\DateTimeInterface $printed): self
+    {
+        $this->printed = $printed;
+
+        return $this;
     }
 }

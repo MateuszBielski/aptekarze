@@ -8,15 +8,13 @@
         font-family: Courier New, monospace;
         font-size: 20px;
     }
-div
-{
 
-}
 
 #belka_gora
 {
     background-color: rgb(142, 239, 252);
     height: 45px;
+    display: block;
     
 }
 #body_div

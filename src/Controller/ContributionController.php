@@ -16,6 +16,7 @@ use App\Entity\MemberUser;
  * @Route("/contribution")
  * @Security("is_granted('ROLE_ADMIN')")
  */
+//
 class ContributionController extends AbstractController
 {
     /**
@@ -53,6 +54,8 @@ class ContributionController extends AbstractController
         ]);
     }
 
+    
+
     /**
      * @Route("/{id}", name="contribution_show", methods={"GET"})
      */
@@ -85,6 +88,29 @@ class ContributionController extends AbstractController
         return $this->render('contribution/new.html.twig', [
             'contribution' => $contribution,
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/print", name="contribution_print", methods={"GET","POST"})
+     */
+    public function PrintConfirmation(Contribution $contribution): Response
+    {
+        $template = '';
+        //można wydrukować tylko jeden raz
+
+        if($contribution->getPrinted() != null){
+            $template = 'contribution/confirmationPrinted.html.twig';
+        }
+        else {
+            $contribution->setPrinted(new \DateTime('now'));
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($contribution);
+            $entityManager->flush();
+            $template = 'contribution/confirmation.html.twig';
+        }
+        return $this->render($template, [
+            'contribution' => $contribution,
         ]);
     }
     /**
