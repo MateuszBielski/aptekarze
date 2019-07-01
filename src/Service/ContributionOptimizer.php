@@ -26,6 +26,20 @@ class ContributionOptimizer
 
         $this->setCollections();
     }
+
+    public function readRepositoryAndSetCollectionByDate(array $date_a)
+    {
+        $day = $date_a['day'];
+        if( $day == null or $day == '-'){
+            $day = '01';
+        }
+        $month = $date_a['month'];
+        $year = $date_a['year'];
+
+        $date = new \DateTime("$year-$month-$day");
+        $this->contributionList = $this->contrRep->findByDateIndexedById($date);//dodać order by: cokolwiek
+        $this->usersList = $this->userRep->findAllIndexedById();
+    }
     public function getContributionList()
     {
         return $this->contributionList;

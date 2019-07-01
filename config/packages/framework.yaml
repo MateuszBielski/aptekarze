@@ -11,6 +11,7 @@ framework:
         cookie_secure: auto
         cookie_samesite: lax
         cookie_lifetime: 7200
+        gc_maxlifetime: 10800
         # cookie_lifetime: 28800
 
     #esi: true
