@@ -7,10 +7,13 @@
 
     <table class="table">
         <tbody>
-            {# <tr>
+            {% if is_granted('ROLE_AUTOR') %}
+            <tr>
                 <th>Id</th>
                 <td>{{ member_user.id }}</td>
-            </tr> #}
+            </tr>
+            {% endif %} 
+            
             <tr>
                 <td>Telefon</td>
                 <td>{{ member_user.telephone }}</td>
@@ -27,10 +30,10 @@
                 <td>Nazwisko</td>
                 <td>{{ member_user.surname }}</td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td>Nazwa użytkownika</td>
                 <td>{{ member_user.username }}</td>
-            </tr>
+            </tr> -->
             {# <tr>
                 <td>Roles</td>
                 <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
@@ -52,22 +55,6 @@
     
     <br>
     <div id="podsumowanie_div" >
-        {# <table id="podsumowanie_table">
-        <tr>
-            <td>Suma należnych składek:</td>
-            <td>{{ member_user.CalculateAllDueContribution() }} zł</td>
-        </tr>
-        <tr>
-            <td>Suma wpłaconych składek:</td>
-            <td>{{ member_user.PaidContributionSum() }} zł</td>
-        </tr>
-        <tr>
-            <td colspan="2"><hr></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>{{ member_user.StringCurrentAccount() }}</td>
-        </table> #}
         <br>Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} 
         <br>Suma wpłaconych składek: {{ member_user.PaidContributionSum() }} 
         <hr>
@@ -75,7 +62,7 @@
             {{ member_user.StringCurrentAccount() }}
         </div>
     </div>
-    {% if member_user.myHistory|length > 0 %}
+    {% if member_user.myHistory|length > 0 and is_granted('ROLE_AUTOR') %}
     <br>
     <table class="table">
         <tbody>

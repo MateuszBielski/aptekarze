@@ -15,6 +15,7 @@
 
 {% block body %}
     <h3>zapłacone składki</h3>
+    {% if is_granted('ROLE_AUTOR') %}
     <div id="div_wyszukaj2">
         <div class="row_wyszukaj">
             <div class="col_wyszukaj">wyszukaj do daty: </div>
@@ -31,7 +32,7 @@
         
         
     </div>
-
+    {% endif %}
     {{ include('contribution/indexAjax.html.twig') }}
     
 
