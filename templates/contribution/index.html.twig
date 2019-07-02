@@ -2,47 +2,38 @@
 
 {% block title %}zapłacone składki{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/styl_contribution.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block scripts %}
+            <script type="text/javascript" src="../../js/jquery-2.1.3.min.js"></script>
+            <script type="text/javascript" src="../../js/jquery-ui.js"></script>
+            <script type="text/javascript" src="../../js/findContribution.js"></script>
+{% endblock %}
+
 {% block body %}
     <h3>zapłacone składki</h3>
+    <div id="div_wyszukaj2">
+        <div class="row_wyszukaj">
+            <div class="col_wyszukaj">wyszukaj do daty: </div>
+            <div class="col_wyszukaj">
+                <input id="input-find-bydate_day" class="input-find-date" type="tekst" value="{{ dateNow|date('d') }}" size="2">
+                <input id="input-find-bydate_month" class="input-find-date" type="tekst" value="{{ dateNow|date('m') }}" size="2">
+                <input id="input-find-bydate_year" class="input-find-date" type="tekst" value="{{ dateNow|date('Y') }}" size="4"></div>
+            </div>
+        <div class="row_wyszukaj">
+            <div class="col_wyszukaj"> </div>
+            <div id="nawias_d_m_r" class="col_wyszukaj" >(dzień miesiąc rok)</div>
+        </div>
+        
+        
+        
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                {# <th>Id</th> #}
-                <th>Imię i Nazwisko</th>
-                <th>Kwota</th>
-                <th>Data wpłaty</th>
-                <th>rodzaj</th>
-                <th>potwierdzenie</th>
-                {# <th>actions</th> #}
-            </tr>
-        </thead>
-        <tbody>
-        {% for contribution in contributions %}
-            <tr>
-                {# <td>{{ contribution.id }}</td> #}
-                {% set mu = contribution.myUser %}
-                <td>{{ mu.firstName }} {{ mu.surname }}</td>
-                <td>{{ contribution.value }}</td>
-                <td>{{ contribution.paymentDate ? contribution.paymentDate|date('d.m.Y') : '' }}</td>
-                <td class="td_mniejsze">{{ contribution.getType() }}</td>
-                <td class="td_mniejsze">
-                    <a href="{{ path('contribution_print', {'id': contribution.id}) }}">
-                        {{ contribution.getOrCreateConfirmation() }}
-                    </a>
-                </td>
-                {# <td>
-                    <a href="{{ path('contribution_show', {'id': contribution.id}) }}">show</a>
-                    <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">edit</a>
-                </td> #}
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">brak danych</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {{ include('contribution/indexAjax.html.twig') }}
+    
 
 {% endblock %}
 {% block belka_dol %}

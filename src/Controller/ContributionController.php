@@ -27,7 +27,8 @@ class ContributionController extends AbstractController
         $conOpt->readRepositoryAndSetCollection();
 
         return $this->render('contribution/index.html.twig', [
-            'contributions' => $conOpt->getContributionList(),]);
+            'contributions' => $conOpt->getContributionList(),'dateNow' => new \DateTime('now')]);
+            
     }
     // public function index(ContributionRepository $contributionRepository): Response
     // {
@@ -36,7 +37,19 @@ class ContributionController extends AbstractController
     //         'contributions' => $contributionRepository->findBy([], ['paymentDate' => 'DESC']),
     //     ]);
     // }
+    
+    /**
+     * @Route("/indexAjax", name="contribution_indexAjax", methods={"GET", "POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function indexAjax(Request $request,ContributionOptimizer $conOpt): Response
+    {
+        // $conOpt->readRepositoryAndSetCollectionByDate(['day'=>26, 'month'=>6, 'year'=>2019]);
+        $conOpt->readRepositoryAndSetCollectionByDate($request->query);
 
+        return $this->render('contribution/indexAjax.html.twig', [
+            'contributions' => $conOpt->getContributionList(),'dateNow' => new \DateTime('now')]);
+    }
     /**
      * @Route("/new", name="contribution_new", methods={"GET","POST"})
      * @Security("is_granted('ROLE_ADMIN')")

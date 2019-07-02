@@ -73,17 +73,14 @@ class ContributionRepository extends ServiceEntityRepository
     public function findByDateIndexedById(\Datetime $date)
     {
 
-        $from = new \DateTime($date->format("Y-m-d")." 00:00:00");
-        $to   = new \DateTime($date->format("Y-m-d")." 23:59:59");
+        $older = new \DateTime($date->format("Y-m-d")." 23:59:59");
     
-        $qb = $this->createQueryBuilder("e");
-        $qb
-            ->andWhere('e.date BETWEEN :from AND :to')
-            ->setParameter('from', $from )
-            ->setParameter('to', $to)
-        ;
-        $result = $qb->getQuery()->getResult();
-    
-        return $result;
+        return $this->createQueryBuilder("e")
+            ->where('e.paymentDate <= :older')
+            ->setParameter('older', $older )
+            ->orderBy('e.paymentDate', 'DESC')
+            ->setMaxResults(30)
+            ->getQuery()
+            ->getResult();
     }
 }

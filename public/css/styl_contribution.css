@@ -1,0 +1,22 @@
+.row_wyszukaj
+{
+    width: 100%;
+    height: 30px;
+}
+.col_wyszukaj
+{
+    width: 50%;
+    height: 30px;
+    float: left;
+}
+#div_wyszukaj2
+{
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    height: 90px;
+}
+#nawias_d_m_r
+{
+    font-size: 12px;
+}
