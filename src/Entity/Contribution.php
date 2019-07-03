@@ -124,6 +124,9 @@ class Contribution
             case 2: 
             $result = 'przelew';
             break;
+            case 3:
+            $result = 'brak danych';
+            break;
         }
         return $result;
     }

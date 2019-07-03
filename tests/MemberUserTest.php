@@ -64,7 +64,7 @@ class MemberUserTest extends TestCase
         $testMemberUser->setInitialAccount(264);
 
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('now'));
-        $this->assertEquals(264, $result);
+        $this->assertEquals(-264, $result);
     }
 
     public function test_1_CalculateAllDueContributionOn()

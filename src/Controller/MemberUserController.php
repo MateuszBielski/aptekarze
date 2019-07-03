@@ -91,33 +91,33 @@ class MemberUserController extends AbstractController
         ]);
     }
 
-    // /**
-    //  * @Route("/zpliku", name="member_users_zpliku", methods={"GET", "POST"})
-    //  */
-    // public function deserialize(JobRepository $jobRepository): Response
-    // {
-    //     $jobs = array();
-    //     foreach ($jobRepository->findAll() as $job) {
-    //         $jobs[$job->getRate()] = $job;
-    //     }
-    //     $encoders = [new CsvEncoder()];
-    //     $normalizers = [new ObjectNormalizer(), new ArrayDenormalizer()];
-    //     $serializer = new Serializer($normalizers, $encoders);
-    //     $file = '/home/mateusz/php/sfprojects/aptekarze/nazwiska.csv';
-    //     $data = file_get_contents($file);
-    //     $mus = $serializer->deserialize($data, 'App\Entity\UserMemberToSerialize[]', 'csv');
-    //     $entityManager = $this->getDoctrine()->getManager();
-    //     foreach ($mus as $mu) {
-    //         $memberUser = $mu->createMemberUser($jobs);
-    //         $entityManager->persist($memberUser);
-    //     }
-    //     //$entityManager->flush(); //<-nazwiska zapisano do bazy
-    //     // $response = new Response();
-    //     // $response->setContent(count($mus));
-    //     // return $response;
-    //     return $this->redirectToRoute('member_user_index');
+    /**
+     * @Route("/zpliku", name="member_users_zpliku", methods={"GET", "POST"})
+     */
+    public function deserialize(JobRepository $jobRepository): Response
+    {
+        $jobs = array();
+        foreach ($jobRepository->findAll() as $job) {
+            $jobs[$job->getRate()] = $job;
+        }
+        $encoders = [new CsvEncoder()];
+        $normalizers = [new ObjectNormalizer(), new ArrayDenormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+        $file = '../nazwiskaApt.csv';
+        $data = file_get_contents($file);
+        $mus = $serializer->deserialize($data, 'App\Entity\UserMemberToSerialize[]', 'csv');
+        $entityManager = $this->getDoctrine()->getManager();
+        foreach ($mus as $mu) {
+            $memberUser = $mu->createMemberUser($jobs);
+            $entityManager->persist($memberUser);
+        }
+        $entityManager->flush(); //<-nazwiska zapisano do bazy
+        // $response = new Response();
+        // $response->setContent(count($mus));
+        // return $response;
+        return $this->redirectToRoute('member_user_index');
         
-    // }
+    }
 
    
     // public function serialize(MemberUserRepository $memberUserRepository): Response

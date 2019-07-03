@@ -19,7 +19,7 @@ abstract class AbstrMember
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=14, nullable=true)
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     protected $telephone;
 
@@ -49,8 +49,20 @@ abstract class AbstrMember
      */
     protected $paymentDayOfMonth = 20;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $nrPrawaZawodu;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $nazwiskoPanienskie;
+
     protected $myJobRateCached;
     protected $optimized = false;
+
+    
 
     public function getId(): ?int
     {
@@ -149,5 +161,29 @@ abstract class AbstrMember
     public function setOptimizedTrue()
     {
         $this->optimized = true;
+    }
+
+    public function getNrPrawaZawodu(): ?string
+    {
+        return $this->nrPrawaZawodu;
+    }
+
+    public function setNrPrawaZawodu(?string $nrPrawaZawodu): self
+    {
+        $this->nrPrawaZawodu = $nrPrawaZawodu;
+
+        return $this;
+    }
+
+    public function getNazwiskoPanienskie(): ?string
+    {
+        return $this->nazwiskoPanienskie;
+    }
+
+    public function setNazwiskoPanienskie(?string $nazwiskoPanienskie): self
+    {
+        $this->nazwiskoPanienskie = $nazwiskoPanienskie;
+
+        return $this;
     }
 }

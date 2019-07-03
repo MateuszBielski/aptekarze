@@ -331,10 +331,11 @@ class MemberUser extends AbstrMember implements UserInterface
             $result += $interval_months[$i] * $valueRate[$i];
             // $okresy .= " + ".$interval_months[$i];
         }
-        $result += $this->initialAccount;
+
+        //nie dodaje tu stanu początkowego, bo będzie oddzielnie
 
         // return $okresy;
-        return $result;
+        return -$result;
         // $tempDate1 = $intervalStart->format('d.m.Y');
         // $tempDate2 = $intervalStop->format('d.m.Y');
         // return $tempDate1."   ".$tempDate2;
@@ -405,7 +406,7 @@ class MemberUser extends AbstrMember implements UserInterface
     public function StringCurrentAccount(): string
     {
         $sign = '';
-        $account = $this->PaidContributionSum()-$this->CalculateAllDueContribution();
+        $account = $this->PaidContributionSum()+$this->CalculateAllDueContribution()+$this->initialAccount;
         $this->currentAccuntValue = $account;
         if ($account > 0) $sign = '+';
         // if ($account < 0) $sign = '- ';

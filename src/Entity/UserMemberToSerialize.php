@@ -14,6 +14,8 @@ class UserMemberToSerialize
     private $job;
     private $paymentDayOfMonth = 20;
     private $jobRate;
+    private $nazwiskoPanienskie;
+    private $nrPrawaZawodu;
     //przydadzą się w przyszłości:
     //initial account
     //jakaś forma daty rejestracji wcześniejszej niż bieżąca
@@ -152,6 +154,30 @@ class UserMemberToSerialize
         $this->jobRate = $rate;
     }
 
+    public function getNrPrawaZawodu(): ?string
+    {
+        return $this->nrPrawaZawodu;
+    }
+
+    public function setNrPrawaZawodu(?string $nrPrawaZawodu): self
+    {
+        $this->nrPrawaZawodu = $nrPrawaZawodu;
+
+        return $this;
+    }
+
+    public function getNazwiskoPanienskie(): ?string
+    {
+        return $this->nazwiskoPanienskie;
+    }
+
+    public function setNazwiskoPanienskie(?string $nazwiskoPanienskie): self
+    {
+        $this->nazwiskoPanienskie = $nazwiskoPanienskie;
+
+        return $this;
+    }
+
     public function createMemberUser(array& $jobs)
     {
         $newMemberUser = new MemberUser();
@@ -160,6 +186,8 @@ class UserMemberToSerialize
         $newMemberUser->setFirstName($this->getFirstName());
         $newMemberUser->setSurname($this->getSurname());
         $newMemberUser->setPaymentDayOfMonth($this->getPaymentDayOfMonth());
+        $newMemberUser->setNazwiskoPanienskie($this->getNazwiskoPanienskie());
+        $newMemberUser->setNrPrawaZawodu($this->getNrPrawaZawodu());
 
         if (!array_key_exists($this->jobRate, $jobs))
         {

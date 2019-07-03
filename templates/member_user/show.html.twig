@@ -13,7 +13,14 @@
                 <td>{{ member_user.id }}</td>
             </tr>
             {% endif %} 
-            
+            <tr>
+                <td>Imię</td>
+                <td>{{ member_user.firstName }}</td>
+            </tr>
+            <tr>
+                <td>Nazwisko</td>
+                <td>{{ member_user.surname }}</td>
+            </tr>
             <tr>
                 <td>Telefon</td>
                 <td>{{ member_user.telephone }}</td>
@@ -23,12 +30,12 @@
                 <td>{{ member_user.email }}</td>
             </tr>
             <tr>
-                <td>Imię</td>
-                <td>{{ member_user.firstName }}</td>
+                <td>Nazwisko panieńskie</td>
+                <td>{{ member_user.nazwiskoPanienskie }}</td>
             </tr>
             <tr>
-                <td>Nazwisko</td>
-                <td>{{ member_user.surname }}</td>
+                <td>Nr pwz</td>
+                <td>{{ member_user.nrPrawaZawodu }}</td>
             </tr>
             <!-- <tr>
                 <td>Nazwa użytkownika</td>
@@ -41,11 +48,11 @@
             {# <tr>
                 <td>Password</td>
                 <td>{{ member_user.password }}</td>
-            </tr> #}
+            </tr> 
             <tr>
                 <td>Dzień płatności</td>
                 <td>{{ member_user.paymentDayOfMonth() }}</td>
-            </tr>
+            </tr>#}
             <tr>
                 <td>Stanowisko/wysokość składki</td>
                 <td>{{ member_user.job.name }} / {{ member_user.job.rate }} zł</td>
@@ -55,7 +62,8 @@
     
     <br>
     <div id="podsumowanie_div" >
-        <br>Suma należnych składek: {{ member_user.CalculateAllDueContribution() }} 
+        <br>Stan początkowy:         {{ member_user.initialAccount }}
+        <br>Suma należnych składek:  {{ member_user.CalculateAllDueContribution() }} 
         <br>Suma wpłaconych składek: {{ member_user.PaidContributionSum() }} 
         <hr>
         <div id="current_account_div">

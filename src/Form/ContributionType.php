@@ -21,6 +21,7 @@ class ContributionType extends AbstractType
                 'choices'  => [
                     'gotówka'=> 1,
                     'przelew' => 2,
+                    'brak danych' => 3,
                 ],'label' => 'rodzaj wpłaty'
             ])
             ->add('myUser',EntityType::class,[
