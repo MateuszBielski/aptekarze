@@ -29,8 +29,7 @@ class MemberUserType extends AbstractType
                 'class' => Job::class, 
                 'label' => 'stanowisko',
                 'choice_label' => 
-                // function(Pacjent $pc){return $pc->getImieInazwisko();} 
-                'name'
+                function(Job $job){return $job->getName()."  -  ".$job->getRate()." zł";} 
                 ])
             
         ;

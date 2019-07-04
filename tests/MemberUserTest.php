@@ -63,8 +63,8 @@ class MemberUserTest extends TestCase
         $testMemberUser = new MemberUser();
         $testMemberUser->setInitialAccount(264);
 
-        $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('now'));
-        $this->assertEquals(-264, $result);
+        $result = $testMemberUser->StringCurrentAccount();//(new \DateTime('now'))
+        $this->assertEquals('+264 zł', $result);
     }
 
     public function test_1_CalculateAllDueContributionOn()
@@ -72,7 +72,7 @@ class MemberUserTest extends TestCase
         $testMemberUser = $this->UserWithOne_JobRate_Date(10,new \DateTime('2000-01-03'));
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2000-08-02'));
         // 
-        $this->assertEquals(70, $result);
+        $this->assertEquals(-70, $result);
     }
     
     public function test_2_CalculateAllDueContributionOn()
@@ -81,7 +81,7 @@ class MemberUserTest extends TestCase
         $this->AddChangeRateTo($testMemberUser,20,new \DateTime('2000-08-02'));
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2000-10-02'));
        
-        $this->assertEquals(70+40, $result);
+        $this->assertEquals(-(70+40), $result);
     }
 
     public function test_3_CalculateAllDueContributionOn()
@@ -91,7 +91,7 @@ class MemberUserTest extends TestCase
         //$testMemberUser->setPaymentDayOfMonth(10);
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2000-10-21'));
        
-        $this->assertEquals(50 + 60, $result);
+        $this->assertEquals(-(50 + 60), $result);
     }
 
     public function test_4_CalculateAllDueContributionOn()
@@ -106,7 +106,7 @@ class MemberUserTest extends TestCase
         $this->AddChangeRateTo($testMemberUser,20,new \DateTime('2000-08-02'));
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2000-10-02'));
        
-        $this->assertEquals(50+40, $result);
+        $this->assertEquals(-(50+40), $result);
     }
 
     public function test_5_CalculateAllDueContributionOn()
@@ -114,7 +114,7 @@ class MemberUserTest extends TestCase
         $testMemberUser = $this->UserWithOne_JobRate_Date(10,new \DateTime('2000-07-15'));
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2000-08-02'));
         // 
-        $this->assertEquals(10, $result);
+        $this->assertEquals(-10, $result);
     }
     public function test_6_CalculateAllDueContributionOn()
     {
@@ -123,7 +123,7 @@ class MemberUserTest extends TestCase
         $testMemberUser->setPaymentDayOfMonth(3);
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2000-09-03'));
         // 
-        $this->assertEquals(10, $result);
+        $this->assertEquals(-10, $result);
     }
     
     public function test_7_CalculateAllDueContributionOn()
@@ -132,7 +132,7 @@ class MemberUserTest extends TestCase
         $testMemberUser->setPaymentDayOfMonth(3);
         $result = $testMemberUser->CalculateAllDueContributionOn(new \DateTime('2012-9-4'));
         // 
-        $this->assertEquals(30, $result);
+        $this->assertEquals(-30, $result);
     }
 
     public function test_8_CalculateAllDueContributionOn()

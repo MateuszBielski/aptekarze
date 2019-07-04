@@ -94,9 +94,12 @@ class ContributionController extends AbstractController
      */
     public function newForUser(Request $request, MemberUser $memberUser): Response
     {
-        $contribution = new Contribution();
+        // $contribution = new Contribution();
+        $contribution = $memberUser->getExpectedContribution();
         $contribution->setMyUser($memberUser);
-        $contribution->setPaymentDate(new \DateTime('now'));
+        if($contribution->getPaymentDate() == null ){
+            $contribution->setPaymentDate(new \DateTime('now'));
+        }
         $form = $this->createForm(ContributionType::class, $contribution);
         $form->handleRequest($request);
 

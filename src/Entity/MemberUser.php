@@ -434,7 +434,19 @@ class MemberUser extends AbstrMember implements UserInterface
         return $this->StringCurrentAccount();
         //return 'test';
     }
-    
+   
+    //dodać miesiąc do ostatnio wpłaconej raty
+    public function getExpectedContribution(): Contribution
+    {
+        if(!count($this->contributions)) return new Contribution;
+        // $lastContribution = end($this->contributions);
+        $lastContribution = $this->contributions->last();
+        $date = $lastContribution->getPaymentDate();
+        $date->modify('+1 month');
+        $nextContribution = clone $lastContribution;
+        $nextContribution->setPaymentDate($date);
+        return $nextContribution;
+    }
     
 }
 
