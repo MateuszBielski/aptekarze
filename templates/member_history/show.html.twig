@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MemberHistory{% endblock %}
+
+{% block body %}
+    <h1>MemberHistory</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ member_history.id }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ member_history.telephone }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ member_history.email }}</td>
+            </tr>
+            <tr>
+                <th>FirstName</th>
+                <td>{{ member_history.firstName }}</td>
+            </tr>
+            <tr>
+                <th>Surname</th>
+                <td>{{ member_history.surname }}</td>
+            </tr>
+            <tr>
+                <th>PaymentDayOfMonth</th>
+                <td>{{ member_history.paymentDayOfMonth }}</td>
+            </tr>
+            <tr>
+                <th>NrPrawaZawodu</th>
+                <td>{{ member_history.nrPrawaZawodu }}</td>
+            </tr>
+            <tr>
+                <th>NazwiskoPanienskie</th>
+                <td>{{ member_history.nazwiskoPanienskie }}</td>
+            </tr>
+            <tr>
+                <th>BeginDate</th>
+                <td>{{ member_history.beginDate ? member_history.beginDate|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>InitialAccount</th>
+                <td>{{ member_history.initialAccount }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ member_history.date ? member_history.date|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('member_history_index') }}">back to list</a>
+
+    <a href="{{ path('member_history_edit', {'id': member_history.id}) }}">edit</a>
+
+    {{ include('member_history/_delete_form.html.twig') }}
+{% endblock %}

@@ -9,3 +9,11 @@
 
     {# <a href="{{ path('contribution_index') }}">powrót do listy</a> #}
 {% endblock %}
+{% block belka_dol %}
+    <div class="pole_belka_dol">
+        <a href="{{ path('contribution_index') }}">rezygnuj</a>
+    </div>
+    <div class="pole_belka_dol">
+        <label for="submit-form" class="submit_label">zapisz</label>{# tabindex="0" #}
+    </div>
+{% endblock %}

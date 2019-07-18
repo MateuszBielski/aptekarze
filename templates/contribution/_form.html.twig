@@ -1,4 +1,5 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Zatwierdź') }}</button>
+    {# <button class="btn">{{ button_label|default('Zatwierdź') }}</button> #}
+    <input type="submit" id="submit-form" class="hidden" />
 {{ form_end(form) }}

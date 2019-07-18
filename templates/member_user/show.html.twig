@@ -21,21 +21,29 @@
                 <td>Nazwisko</td>
                 <td>{{ member_user.surname }}</td>
             </tr>
-            <tr>
+            {# <tr>
                 <td>Telefon</td>
                 <td>{{ member_user.telephone }}</td>
             </tr>
             <tr>
                 <td>E-mail</td>
                 <td>{{ member_user.email }}</td>
-            </tr>
+            </tr> 
             <tr>
                 <td>Nazwisko panieńskie</td>
                 <td>{{ member_user.nazwiskoPanienskie }}</td>
-            </tr>
+            </tr> #}
             <tr>
                 <td>Nr pwz</td>
                 <td>{{ member_user.nrPrawaZawodu }}</td>
+            </tr>
+            <tr>
+                <td>Od tej daty liczymy składki</td>
+                <td>{{ member_user.beginDate.format('d.m.Y') }}</td>
+            </tr>
+            <tr>
+                <td>Suma wpłacona od daty powyżej</td>
+                <td>{{ member_user.initialAccount }}</td>
             </tr>
             <!-- <tr>
                 <td>Nazwa użytkownika</td>
@@ -59,28 +67,65 @@
             </tr>
         </tbody>
     </table>
-    
+    {{ include('member_user/_monthsReckoning.html.twig') }}
+
+    {% if member_user.contributions|length > 0 or member_user.initialAccount != null %}
     <br>
-    <div id="podsumowanie_div" >
-        <br>Stan początkowy:         {{ member_user.initialAccount }}
-        <br>Suma należnych składek:  {{ member_user.CalculateAllDueContribution() }} 
-        <br>Suma wpłaconych składek: {{ member_user.PaidContributionSum() }} 
-        <hr>
-        <div id="current_account_div">
-            {{ member_user.StringCurrentAccount() }}
-        </div>
-    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th colspan="5">wpłacone składki</th>
+            </tr>
+            <tr>
+                <td>kwota</td>
+                <td>data</td>
+                <td>rodzaj</td>
+                <td>potwierdzenie</td>
+                <td></td>
+            </tr>
+            {% if member_user.initialAccount != null %}
+                <tr>
+                    <td>{{ member_user.initialAccount }}</td>
+                    <td>stan początkowy</td>
+                    <td></td>
+                    <td colspan="2"></td>
+                </tr>
+            {% endif %}
+            {% for contribution in member_user.contributions %}
+            <tr>
+                <td>{{ contribution.value }}</td>
+                <td>{{ contribution.paymentDate ? contribution.paymentDate|date('d.m.Y') : '' }}</td>
+                <td class="td_mniejsze">{{ contribution.getType() }}</td>
+                <td class="td_mniejsze">
+                    <a href="{{ path('contribution_print', {'id': contribution.id}) }}">
+                        {{ contribution.getOrCreateConfirmation() }}
+                    </a>
+                </td>
+                {# {% if is_granted('ROLE_AUTOR') %} #}
+                <td>
+                    <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">zmiana</a>
+                </td>    
+                
+                {# {% endif %} #}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    
+    
     {% if member_user.myHistory|length > 0 and is_granted('ROLE_AUTOR') %}
     <br>
     <table class="table">
         <tbody>
             <tr>
-                <th colspan="2">Historia</th>
+                <th colspan="3">Historia</th>
             </tr>
             {% for history_row in member_user.myHistory|reverse %}
                 <tr>
-                    <td>{{ history_row.date.format('d.m.y') }}</td>
+                    <td>{{ history_row.date.format('d.m.Y') }}</td>
                     <td>{{ history_row.getInfoChangeComparingToNext() }}</td>
+                    <td><a href="{{ path('member_history_edit', {'id': history_row.id}) }}">zmień</a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -88,8 +133,19 @@
     {% endif %}
     
 {% endblock %}
-{% block belka_dol %}   
-    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}" class="pole_belka_dol">nowa wpłata</a>
-    <a href="{{ path('member_user_edit', {'id': member_user.id}) }}"  class="pole_belka_dol">edytuj dane</a>
+{% block belka_dol %} 
+<div class="pole_belka_dol">
+    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">nowa składka miesięczna</a>
+</div>
+<div class="pole_belka_dol">
+    <a href="{{ path('member_user_setRight', {'id': member_user.id}) }}">edytuj dane</a>
+</div>
+{% if is_granted('ROLE_AUTOR') %}
+    <div class="pole_belka_dol">
+        <a href="{{ path('member_user_change', {'id': member_user.id}) }}">późniejsza zmiana</a>
+    </div>
+{% endif %}
+<div class="pole_belka_dol">
     {{ include('member_user/_delete_form.html.twig') }}
+</div>  
 {% endblock %}

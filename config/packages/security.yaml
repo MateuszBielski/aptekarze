@@ -22,6 +22,7 @@ security:
                     - App\Security\AdminUserAuthenticator
             logout:
                 path:   app_logout
+                target: app_login
 
             access_denied_handler: App\Security\AccessDeniedHandler
 

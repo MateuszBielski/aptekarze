@@ -1,0 +1,28 @@
+<table>
+    <tbody>
+        {# <tr>
+            <td>Numer</td>
+            <td>{{ contribution.id }}</td>
+        </tr> #}
+        <tr>
+            <td>Data wpłaty</td>
+            <td>{{ contribution.paymentDate.format('d.m.Y') }}</td>
+        </tr>
+        <tr>
+            <td>Od kogo</td>
+            <td>{{ contribution.myUser.firstName }} {{ contribution.myUser.surname }}</td>
+        </tr>
+        <tr>
+            <td>za co</td>
+            <td>opłata składki członkowskiej</td>
+        </tr>
+        <tr>
+            <td>kwota</td>
+            <td>{{ contribution.value }} PLN</td>
+        </tr>
+        <tr>
+            <td>opłacono</td>
+            <td>{{ contribution.getType() }}</td>
+        </tr>
+    </tbody>
+</table>

@@ -78,7 +78,7 @@ class MemberUserOptimizer
     {
 
     }
-    public function setCurrentAccounts()
+    public function CalculateAndSetCurrentAccounts()
     {       
         foreach ($this->usersList as  $user) {
             $user->setStringCurrentAccount($user->StringCurrentAccount());

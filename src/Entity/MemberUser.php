@@ -40,6 +40,7 @@ class MemberUser extends AbstrMember implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Contribution", mappedBy="myUser", cascade = {"persist","remove"})
+     * @ORM\OrderBy({"paymentDate" = "DESC"})
      */
     private $contributions;
 
@@ -49,18 +50,13 @@ class MemberUser extends AbstrMember implements UserInterface
     private $contributionsCached = array();
     private $stringCurrentAccount = 'nie obliczone';
     private $currentAccuntValue;
-    
-    
-
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private $initialAccount = 0;
+    private $montsReckoning;
 
     public function __construct()
     {
         $this->myHistory = new ArrayCollection();
         $this->contributions = new ArrayCollection();
+        $this->beginDate = new \DateTime('now');
     }
 
     /**
@@ -212,17 +208,6 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         $this->contributionsCached[] = $contr;
     }
-    public function getInitialAccount(): ?float
-    {
-        return $this->initialAccount;
-    }
-
-    public function setInitialAccount(?float $initialAccount): self
-    {
-        $this->initialAccount = $initialAccount;
-
-        return $this;
-    } 
     
     public function getCurrentAccuntValue()
     {
@@ -279,54 +264,14 @@ class MemberUser extends AbstrMember implements UserInterface
     /* metoda obliczająca wszystkie należne składki od daty zarejestrowania + kwota(bilans - bo może być na minusie) początkowa */
     public function CalculateAllDueContributionOn(\DateTimeInterface $day)
     {
-        if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
-        $interval_months = array();
-        $valueRate = array();
-
-        $intervalStart = $day;//gdyby historia była pusta
-        $intervalStop = $day;
-        //oddzielny przypadek dla sytuacji bez daty rejestracji?
-        //jeżeli w pierwszym i drugim wpisie są inne stanowiska to dla okresu między nimi
-        //przyjęta jest stawka z drugiego wpisu.
-        $capture = '';
-        if (count($this->getMyHistoryCached())) {
-            // $intervalStart = clone $this->myHistoryCached[0]->getDate();
-            //$intervalStart->modify('first day of next month');
-            //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
-            $intervalStart = clone $this->getMyHistoryCached()[0]->getDateRoundToMonthAccordingToDayOfChange();
-        }
-        foreach($this->getMyHistoryCached() as $h_row) {
-            if ($h_row->changeJob) {
-                //$intervalStop = clone $h_row->getDateRoundToNextMonth();
-                //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
-                $intervalStop = clone $h_row->getDateRoundToMonthAccordingToDayOfChange();
-                // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
-                $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
-                $valueRate[] = $h_row->getMyJobRateCached();
-                $intervalStart = clone $intervalStop;
-            }
-        }
-        // $capture = $intervalStart->format('d.m.Y');
-        $result = 0;
-        //ostatni okres to porównanie do zakończonego miesiąca + sprawdzenie, czy w tym miesiącu jesteśmy po dniu płatności
-        
-        $begThisMonth =  clone $day;
-        $begThisMonth->modify('first day of this month');
-        $begNextMonth = clone $day;
-        $begNextMonth->modify('first day of next month');
-        $intervalStop = $this->AfterPaymentDay($day) ? $begNextMonth : $begThisMonth;
-
-        //sytuacja: zarejestrowany po 15: w dniu rejestracji jest taka sytuacja:
-        //intervalStop < intervalStart, więc:
-        if ($intervalStop < $intervalStart) $intervalStop = clone $intervalStart;
-
-        // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
-        $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
-        $valueRate[] = ($this->getMyJobRateCached() == null) ? 0 : $this->getMyJobRateCached();
-
+       
+        $intervalsAndRates = $this->ExtractIntervalsAndRates($day);
+        $interval_months = $intervalsAndRates['intervals'];
+        $valueRate = $intervalsAndRates['rates'];
         $numbOfIntervals = count($interval_months);
         // $okresy = '';
         $i = 0;
+        $result = 0;
         for($i ; $i < $numbOfIntervals ; $i++) {
             $result += $interval_months[$i] * $valueRate[$i];
             // $okresy .= " + ".$interval_months[$i];
@@ -343,7 +288,61 @@ class MemberUser extends AbstrMember implements UserInterface
         // return $stopStartWynik;
 
     }
+    public function ExtractIntervalsAndRates(\DateTimeInterface $day)
+    {
+        if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
+        
+        $interval_months = array();
+        $valueRate = array();
+        $intervalStart = $day;
+        $intervalStop = $day;
+        //oddzielny przypadek dla sytuacji bez daty rejestracji?
+        //jeżeli w pierwszym i drugim wpisie są inne stanowiska to dla okresu między nimi
+        //przyjęta jest stawka z drugiego wpisu.
+        $capture = '';
+        if (count($this->getMyHistoryCached())) {
+            // $intervalStart = clone $this->myHistoryCached[0]->getDate();
+            //$intervalStart->modify('first day of next month');
+            //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
+            $intervalStart = clone $this->getMyHistoryCached()[0]->getDateRoundToMonthAccordingToDayOfChange();
+        }
+        if($this->beginDate != null ){
+            $intervalStart = $this->getBeginDateRoundToMonthAccordingToDayOfChange();
+        } 
+        foreach($this->getMyHistoryCached() as $h_row) {
+            $afterIntervalStart = $h_row->getDateRoundToMonthAccordingToDayOfChange() >= $intervalStart;
+            if ($h_row->changeJob && $afterIntervalStart) {
+                //$intervalStop = clone $h_row->getDateRoundToNextMonth();
+                //powyższe było przy założeniu, że stawka obowiązuje od następnego miesiąca
+                $intervalStop = clone $h_row->getDateRoundToMonthAccordingToDayOfChange();
+                // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
+                $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
+                $valueRate[] = $h_row->getMyJobRateCached();
+                $intervalStart = clone $intervalStop;
+            }
+        }
+        // $capture = $intervalStart->format('d.m.Y');
+        
+        //ostatni okres to porównanie do zakończonego miesiąca + sprawdzenie, czy w tym miesiącu jesteśmy po dniu płatności
+        
+        $begThisMonth =  clone $day;
+        $begThisMonth->modify('first day of this month');
+        $begNextMonth = clone $day;
+        $begNextMonth->modify('first day of next month');
+        $intervalStop = $this->AfterPaymentDay($day) ? $begNextMonth : $begThisMonth;
 
+        //sytuacja: zarejestrowany po 15: w dniu rejestracji jest taka sytuacja:
+        //intervalStop < intervalStart, więc:
+        if ($intervalStop < $intervalStart) $intervalStop = clone $intervalStart;
+
+        // $stopStartWynik .= "+ ".$intervalStart->format('d.m.y')." -> ".$intervalStop->format('d.m.y');
+        $interval_months[] = $this->DatesDiffToMonth($intervalStart, $intervalStop);
+        $valueRate[] = ($this->getMyJobRateCached() == null) ? 0 : $this->getMyJobRateCached();
+        $arrayResult = array();
+        $arrayResult['intervals'] = $interval_months;
+        $arrayResult['rates'] = $valueRate;
+        return $arrayResult;
+    }
     public static function IntervalToMonths(\DateInterval $interval) {
         $years = intval($interval->format('%Y'));
         $remainingMonths = intval($interval->format('%M'));
@@ -412,6 +411,16 @@ class MemberUser extends AbstrMember implements UserInterface
         // if ($account < 0) $sign = '- ';
         return $sign.strval($account)." zł";
     }
+    
+    public function HistoryDatesToString()
+    {
+        $result = '';
+        foreach($this->getMyHistoryCached() as $hr)
+        {
+            $result .= $hr->getDate()->format('d.m.Y').'   ';
+        }
+        return $result;
+    }
 
     public function getStringCurrentAccount()
     {
@@ -426,27 +435,98 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->stringCurrentAccount = $stringCurrentAccount;
         return $this;
     }
-    public function test()
-    {
-        // return count($this->myHistoryCached);
-        // return $this->myJobRateCached;
-        // return $this->CalculateAllDueContribution();
-        return $this->StringCurrentAccount();
-        //return 'test';
-    }
-   
+    // public function test()
+    // {
+    //     // return count($this->myHistoryCached);
+    //     // return $this->myJobRateCached;
+    //     // return $this->CalculateAllDueContribution();
+    //     return $this->StringCurrentAccount();
+    //     //return 'test';
+    // }
+
     //dodać miesiąc do ostatnio wpłaconej raty
-    public function getExpectedContribution(): Contribution
+    public function getExpectedContribution(\DateTime $date = null): Contribution
     {
         if(!count($this->contributions)) return new Contribution;
         // $lastContribution = end($this->contributions);
         $lastContribution = $this->contributions->last();
-        $date = $lastContribution->getPaymentDate();
-        $date->modify('+1 month');
+        if($date == null){
+            $date = $lastContribution->getPaymentDate();
+            $date->modify('+1 month');
+        }
         $nextContribution = clone $lastContribution;
         $nextContribution->setPaymentDate($date);
         return $nextContribution;
     }
-    
+
+    public function getRegistrationPoint()
+    {
+        if(!count($this->myHistory)) return null;
+        
+        $first = $this->myHistory->first();
+
+        if(count($this->myHistory) == 1)$second = $this;
+        else $second = $this->myHistory->next();
+        return $first->isRegistrationPointComaparedTo($second) ? $first : null;
+             
+    }
+   
+    public function getRegistrationDate()
+    {
+        $registrationPoint = $this->getRegistrationPoint();
+        
+        return $registrationPoint != null ? $registrationPoint->getDate() : new \DateTime('now');
+    }
+
+    //nie używać bo miesza
+    public function createIfneededAndSetRegistrationDate(\DateTime $date)
+    {
+        $registrationPoint = $this->getRegistrationPoint();
+        if ( $registrationPoint == null ) {
+            $registrationPoint = new MemberHistory($this);
+            $this->addMyHistory($registrationPoint);
+        }
+        $registrationPoint->setDate($date);
+        return;
+    }
+    public function getBeginDateRoundToMonthAccordingToDayOfChange()
+    {
+        return $this->DateRoundToMonthAccordingToDayOfChange($this->beginDate);
+    }
+    public function getMonthsReckoning()
+    {
+        return $this->montsReckoning;
+    }
+    public function GenerateMonthsReckoning()  
+    {
+        $this->montsReckoning = new MonthsReckoning();
+        $this->montsReckoning->takeIntervalsAndRates($this->ExtractIntervalsAndRates(new \DateTime('now')));
+        $this->montsReckoning->takeAllPaidSum($this->PaidContributionSum()+$this->initialAccount);
+        $this->montsReckoning->takeBeginDate($this->getBeginDate());
+        $this->montsReckoning->GenerateArrayYearsMonths();
+        
+    }
+    private function InMyFirstHitorySetChanges()
+    {
+        switch(count($this->myHistory)){
+            case 1:
+                $this->myHistory[0]->CopyData($this);
+                break;
+            case 0:
+                $this->addMyHistory(new MemberHistory($this));
+                break;
+        }
+       
+    }
+    public function ArchiveChanges(MemberHistory $beforeChanges = null)
+    {
+        if($beforeChanges != null)
+        {
+            $this->addMyHistory($beforeChanges);
+            return;
+        }
+        $this->InMyFirstHitorySetChanges();
+    }
+   
 }
 

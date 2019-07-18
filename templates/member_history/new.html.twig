@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New MemberHistory{% endblock %}
+
+{% block body %}
+    <h1>Create new MemberHistory</h1>
+
+    {{ include('member_history/_form.html.twig') }}
+
+    <a href="{{ path('member_history_index') }}">back to list</a>
+{% endblock %}

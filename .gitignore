@@ -1,4 +1,6 @@
-
+zapas*.sql
+.env
+.gitignore
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
