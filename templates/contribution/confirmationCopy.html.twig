@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Wydruk potwierdzenia</title>
+        <title>Wydruk kopii potwierdzenia</title>
         {# {% block stylesheets %} #}
             <link href="{{ asset('css/styl.css') }}" rel="stylesheet"/>
             <link href="{{ asset('css/stylpotwierdzenie.css') }}" rel="stylesheet"/>
@@ -11,7 +11,7 @@
     </head>
     <body onload="window.print()">
         <div id="caly_div">
-            <h3>Dowód wpłaty pokwitowanie nr {{ contribution.GenerateUniqueNumber() }}<h3>
+            <h3>kopia dowodu wpłaty nr {{ contribution.GenerateUniqueNumber() }}<h3>
             {{ include('contribution/_confContent.html.twig') }}
             <a href="{{ path('contribution_index') }}">powrót do listy wpłat</a>
         </div>

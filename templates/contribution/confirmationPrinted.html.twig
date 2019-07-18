@@ -6,3 +6,9 @@
     <h3>Potwierdzenie zostało wydrukowane {{ contribution.printed.format('d.m.Y') }}</h3>
 
 {% endblock %}
+
+{% block belka_dol %}   
+    <div class="pole_belka_dol">
+        <a href="{{ path('contribution_copy_print', {'id': contribution.id}) }}">wydrukuj kopię potwierdzenia</a>
+    </div>
+{% endblock %}

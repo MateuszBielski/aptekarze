@@ -21,6 +21,7 @@ class MemberHistory extends AbstrMember
     private $myUser;
 
     private $infoChangeComparingToNext;
+    
 
     public $changeJob = false;
 
@@ -67,6 +68,10 @@ class MemberHistory extends AbstrMember
         $this->setSurname($memberUser->getSurname());
         $this->setJob($memberUser->getJob());
         $this->setPaymentDayOfMonth($memberUser->getPaymentDayOfMonth());
+        $this->setBeginDate($memberUser->getBeginDate());
+        $this->setInitialAccount($memberUser->getInitialAccount());
+        $this->setNazwiskoPanienskie($memberUser->getNazwiskoPanienskie());
+        $this->setNrPrawaZawodu($memberUser->getNrPrawaZawodu());
         $this->setMyUser($memberUser);
     }
 
@@ -102,6 +107,15 @@ class MemberHistory extends AbstrMember
         if ($this->paymentDayOfMonth != $compared->getPaymentDayOfMonth()) {
             $result .= "dzień płatności $this->paymentDayOfMonth";
         };
+        if ($this->beginDate != $compared->getBeginDate())
+        {
+            $result .= "data początkowa ".$this->beginDate->format('d.m.Y');
+        }
+        if ($this->initialAccount != $compared->getInitialAccount())
+        {
+            if($this->initialAccount == null)$this->initialAccount = 0;
+            $result .= "kwota początkowa ".$this->initialAccount;
+        }
         if (!strlen($result)) {
             $result = "data rejestracji";
         } else {
@@ -135,10 +149,7 @@ class MemberHistory extends AbstrMember
     //jeśli zmiana była do 15 dnia miesiąca to już należy płacić wg nowej stawki
     public function getDateRoundToMonthAccordingToDayOfChange()
     {
-        $roundDate = clone $this->date;
-        $day = intval($this->date->format('d'));
-        $roundDate = ($day > 15) ? $roundDate->modify('first day of next month') : $roundDate->modify('first day of this month');
-        return $roundDate;
+        return $this->DateRoundToMonthAccordingToDayOfChange($this->date);
     }
 
     public function AddMyArchievedRatesToCollection(ArrayCollection& $userHistory)
@@ -164,5 +175,9 @@ class MemberHistory extends AbstrMember
 
         return $this;
     }
-    
+    public function isRegistrationPointComaparedTo(AbstrMember $next)
+    {   
+        $this->GenerateInfoChangeComparingToNext($next);
+        return $this->getInfoChangeComparingToNext() == 'data rejestracji';
+    }
 }

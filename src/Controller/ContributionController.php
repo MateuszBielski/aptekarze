@@ -15,12 +15,12 @@ use App\Entity\MemberUser;
 /**
  * @Route("/contribution")
  */
-//
+//@Security("is_granted('ROLE_ADMIN')")
 class ContributionController extends AbstractController
 {
     /**
      * @Route("/", name="contribution_index", methods={"GET"})
-     * @Security("is_granted('ROLE_ADMIN')")
+     * 
      */
     public function index(ContributionOptimizer $conOpt): Response
     {
@@ -40,7 +40,6 @@ class ContributionController extends AbstractController
     
     /**
      * @Route("/indexAjax", name="contribution_indexAjax", methods={"GET", "POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function indexAjax(Request $request,ContributionOptimizer $conOpt): Response
     {
@@ -52,7 +51,6 @@ class ContributionController extends AbstractController
     }
     /**
      * @Route("/new", name="contribution_new", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function new(Request $request): Response
     {
@@ -66,7 +64,7 @@ class ContributionController extends AbstractController
             $entityManager->persist($contribution);
             $entityManager->flush();
 
-            return $this->redirectToRoute('contribution_index');
+            return $this->redirectToRoute('member_user_show', ['id' => $contribution->getMyUser()->getId()]);
         }
 
         return $this->render('contribution/new.html.twig', [
@@ -79,7 +77,6 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}", name="contribution_show", methods={"GET"})
-     * @Security("is_granted('ROLE_AUTOR')")
      */
     public function show(Contribution $contribution): Response
     {
@@ -90,12 +87,11 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}/new", name="contribution_new_forUser", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function newForUser(Request $request, MemberUser $memberUser): Response
     {
         // $contribution = new Contribution();
-        $contribution = $memberUser->getExpectedContribution();
+        $contribution = $memberUser->getExpectedContribution(new \DateTime('now'));
         $contribution->setMyUser($memberUser);
         if($contribution->getPaymentDate() == null ){
             $contribution->setPaymentDate(new \DateTime('now'));
@@ -119,7 +115,6 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}/print", name="contribution_print", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function PrintConfirmation(Contribution $contribution): Response
     {
@@ -141,9 +136,19 @@ class ContributionController extends AbstractController
         ]);
     }
     /**
-     * @Route("/{id}/edit", name="contribution_edit", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_AUTOR')")
+     * @Route("/{id}/copyPrint", name="contribution_copy_print", methods={"GET","POST"})
      */
+    public function PrintConfirmationCopy(Contribution $contribution): Response
+    {
+        return $this->render('contribution/confirmationCopy.html.twig', [
+            'contribution' => $contribution,
+        ]);
+    }
+    /**
+     * @Route("/{id}/edit", name="contribution_edit", methods={"GET","POST"})
+     * 
+     */
+    //@Security("is_granted('ROLE_AUTOR')")
     public function edit(Request $request, Contribution $contribution): Response
     {
         $form = $this->createForm(ContributionType::class, $contribution);
@@ -152,8 +157,8 @@ class ContributionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('contribution_index', [
-                'id' => $contribution->getId(),
+            return $this->redirectToRoute('member_user_show', [
+                'id' => $contribution->getMyUser()->getId(),
             ]);
         }
 
@@ -165,8 +170,9 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}", name="contribution_delete", methods={"DELETE"})
-     * @Security("is_granted('ROLE_AUTOR')")
+     * 
      */
+    //@Security("is_granted('ROLE_AUTOR')")
     public function delete(Request $request, Contribution $contribution): Response
     {
         if ($this->isCsrfTokenValid('delete'.$contribution->getId(), $request->request->get('_token'))) {

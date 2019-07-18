@@ -155,4 +155,9 @@ class Contribution
 
         return $this;
     }
+    public function GenerateUniqueNumber(): string
+    {
+        $number = $this->paymentDate->format('ymd');
+        return $number.$this->id;
+    }
 }

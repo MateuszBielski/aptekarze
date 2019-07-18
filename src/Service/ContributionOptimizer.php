@@ -22,7 +22,7 @@ class ContributionOptimizer
     {
         // $this->contributionList = $this->contrRep->findAllIndexedById();
         // $this->contributionList = $this->contrRep->findAllIndexedByIdOrderBy('o.paymentDate','DESC');
-        $this->contributionList = $this->contrRep->findAllIndexedByIdOrderBy('o.value','DESC');
+        $this->contributionList = $this->contrRep->findAllIndexedByIdOrderBy('o.paymentDate','DESC');
         $this->usersList = $this->userRep->findAllIndexedById();
 
         $this->setCollections();

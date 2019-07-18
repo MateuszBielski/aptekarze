@@ -6,8 +6,22 @@
     <h3>Edytuj składkę</h3>
 
     {{ include('contribution/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('contribution_index') }}">back to list</a>
-
     {{ include('contribution/_delete_form.html.twig') }}
 {% endblock %}
+
+{% block belka_dol %}
+    <div class="pole_belka_dol">
+        <a href="{{ path('contribution_index') }}">powrót do listy</a>
+    </div>
+    <div class="pole_belka_dol">
+        <a href="{{ path('member_user_show', {'id': contribution.myUser.id}) }}">
+        dane użytkownika</a></div>
+    <div class="pole_belka_dol">
+        <label for="submit-form" class="submit_label">zatwierdź zmiany</label>{# tabindex="0" #}
+    </div>
+    <div class="pole_belka_dol">
+            <label for="submit-delete" class="submit_label">usuń wpłatę</label>
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MemberHistory index{% endblock %}
+
+{% block body %}
+    <h1>MemberHistory index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Telephone</th>
+                <th>Email</th>
+                <th>FirstName</th>
+                <th>Surname</th>
+                <th>PaymentDayOfMonth</th>
+                <th>NrPrawaZawodu</th>
+                <th>NazwiskoPanienskie</th>
+                <th>BeginDate</th>
+                <th>InitialAccount</th>
+                <th>Date</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for member_history in member_histories %}
+            <tr>
+                <td>{{ member_history.id }}</td>
+                <td>{{ member_history.telephone }}</td>
+                <td>{{ member_history.email }}</td>
+                <td>{{ member_history.firstName }}</td>
+                <td>{{ member_history.surname }}</td>
+                <td>{{ member_history.paymentDayOfMonth }}</td>
+                <td>{{ member_history.nrPrawaZawodu }}</td>
+                <td>{{ member_history.nazwiskoPanienskie }}</td>
+                <td>{{ member_history.beginDate ? member_history.beginDate|date('Y-m-d') : '' }}</td>
+                <td>{{ member_history.initialAccount }}</td>
+                <td>{{ member_history.date ? member_history.date|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('member_history_show', {'id': member_history.id}) }}">show</a>
+                    <a href="{{ path('member_history_edit', {'id': member_history.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="12">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('member_history_new') }}">Create new</a>
+{% endblock %}

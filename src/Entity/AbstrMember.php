@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Service\Functions;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AbstrMemberRepository")
@@ -61,6 +63,16 @@ abstract class AbstrMember
 
     protected $myJobRateCached;
     protected $optimized = false;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    protected $beginDate = null;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    protected $initialAccount = 0;
 
     
 
@@ -185,5 +197,37 @@ abstract class AbstrMember
         $this->nazwiskoPanienskie = $nazwiskoPanienskie;
 
         return $this;
+    }
+
+    public function getBeginDate(): ?\DateTimeInterface
+    {
+        if($this->beginDate == null)
+        return new \DateTime('now');
+        return $this->beginDate;
+    }
+
+    public function setBeginDate(?\DateTimeInterface $beginDate): self
+    {
+        $this->beginDate = $beginDate;
+
+        return $this;
+    }
+
+    public function getInitialAccount(): ?float
+    {
+        return $this->initialAccount;
+    }
+
+    public function setInitialAccount(?float $initialAccount): self
+    {
+        $this->initialAccount = $initialAccount;
+
+        return $this;
+    } 
+    
+    protected function DateRoundToMonthAccordingToDayOfChange(\DateTime $date)
+    {
+        return Functions::f_DateRoundToMonthAccordingToDayOfChange($date);
+        // DateRound($date);
     }
 }

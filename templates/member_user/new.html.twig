@@ -9,5 +9,10 @@
 
 {% endblock %}
 {% block belka_dol %}   
-    <a href="{{ path('member_user_index') }}">powrót do listy</a>
+    <div class="pole_belka_dol">
+        <a href="{{ path('member_user_index') }}">powrót do listy</a>
+    </div>
+    <div class="pole_belka_dol">
+        <label for="submit-form" class="submit_label">Dodaj użytkownika</label>{# tabindex="0" #}
+    </div>
 {% endblock %}

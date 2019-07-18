@@ -70,7 +70,7 @@ class MemberUserRepository extends ServiceEntityRepository
             ->setParameter('string1', '%'.$string[1].'%'); 
        } else {
         $result = $result
-            ->where('o.firstName LIKE :string or o.surname LIKE :string')
+            ->where('o.firstName LIKE :string OR o.surname LIKE :string OR o.nrPrawaZawodu LIKE :string')
             ->setParameter('string', '%'.$stringToExplode.'%');
        }
        $result = $result
@@ -83,6 +83,7 @@ class MemberUserRepository extends ServiceEntityRepository
     public function findAllIndexedById()
     {
         return $this->createQueryBuilder('o','o.id')
+            ->orderBy('o.surname', 'ASC')
             ->getQuery()
             ->getResult();
     }

@@ -64,4 +64,46 @@ class MemberHistoryTest extends TestCase
         $numberOfHistoryRecords = count($mu->getMyHistory());
         $this->assertEquals(3,$numberOfHistoryRecords);
     }
+
+    public function testGetRegistrationDate_NoInitialHistory()
+    {
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+
+        $newJob0 = new Job();
+        $newJob0->setRate(24);
+        $mu->setJob($newJob0);
+        $result = new \DateTime('now');
+        $this->assertEquals($result->format('d.m.Y'),$mu->getRegistrationDate()->format('d.m.Y'));
+    }
+
+    public function testSetRegistrationDate_No_InitialHistory()
+    {
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+
+        $newJob0 = new Job();
+        $newJob0->setRate(24);
+        $mu->setJob($newJob0);
+        $mu->createIfneededAndSetRegistrationDate(new \DateTime('2003-12-04'));
+        $this->assertEquals('04.12.2003',$mu->getRegistrationDate()->format('d.m.Y'));
+    }
+
+    public function testSetRegistrationDate_With_InitialHistory()
+    {
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+
+        $newJob0 = new Job();
+        $newJob0->setRate(24);
+        $mu->setJob($newJob0);
+
+        $mh2 = new MemberHistory($mu);
+        $mh2->setDate(new \DateTime('2000-08-06'));
+        $mu->addMyHistory($mh2);
+
+        $mu->createIfneededAndSetRegistrationDate(new \DateTime('2003-12-04'));
+        $this->assertEquals('04.12.2003',$mu->getRegistrationDate()->format('d.m.Y'));
+    
+    }
 }
