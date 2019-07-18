@@ -527,6 +527,30 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $this->InMyFirstHitorySetChanges();
     }
-   
+    public function InsertWithModifyNeighbors(MemberHistory $newHistory)
+    {
+        
+        /*
+         * czyli nowa historia przyjmuje dane od najbliższego wpisu z prawej p1(późniejszego)
+        a ten wpis dostaje nowe dane
+        jeżeli p1 jest datą rejestracji zamiana nie następuje, nowa historia dostaje nowe dane,
+        a p1 pozostaje bez zmian
+        jeżeli p1 po zmianie stał się taki jak jeszcze kolejny  (p2), 
+        to p2 usuwamy, bo p1 stałby się drugą datą rejstracji
+        
+        zasada: jeżeli dwa kolejne wpisy różnią się tylko datą - pierwszy z nich
+        traktowany jako data rejestracji
+        
+        działanie:
+        nowy wpis dodać do kolekcji
+        posortować datami
+        znaleźć p1 i p2 
+        dokonać modyfikacji jak wyżej
+        */
+        if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
+
+        $jobHistory = $this->getMyHistoryCached();
+        $jobHistory[] = $newHistory;
+    }
 }
 

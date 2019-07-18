@@ -1,11 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New MemberHistory{% endblock %}
+{% block title %}Zmiana danych użytkownika{% endblock %}
 
 {% block body %}
-    <h1>Create new MemberHistory</h1>
+    <h3>Zmiana danych użytkownika</h3>
 
     {{ include('member_history/_form.html.twig') }}
 
-    <a href="{{ path('member_history_index') }}">back to list</a>
+{% endblock %}
+{% block belka_dol %}   
+    <div class="pole_belka_dol">
+        <a href="{{ app.request.headers.get('referer') }}">powrót</a>
+    </div>
+    <div class="pole_belka_dol">
+        <label for="submit-form" class="submit_label">Dodaj zmianę</label>
+    </div>
 {% endblock %}

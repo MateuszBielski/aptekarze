@@ -18,6 +18,8 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use App\Repository\JobRepository;
 use App\Service\MemberUserOptimizer;
+use App\Form\MemberHistoryJobAndDateType;
+
 
 /**
  * @Route("/member/user")
@@ -219,8 +221,9 @@ class MemberUserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/addJobHistory", name="member_user_addJobHistory", methods={"POST"})
+     * @Route("/{id}/addJobHistory", name="member_user_addJobHistory", methods={"GET"})
      */
+    //,"POST"
     public function addJobHistory(Request $request, MemberUser $memberUser): Response
     {
         # code...
@@ -230,9 +233,34 @@ class MemberUserController extends AbstractController
         //sprawdzić co z pierwszym wpisem (,żeby nie był poźniejszy niż ta zmiana)
         //ten history ma mieć joba wcześniejszego niż aktualny i tak też należy zmienić pierwszy wpis
         //najlepiej pierwszy ustawić na nowo z datą równą dacie początkowej
+        //id  w template edit delete warunkowo, bo przecież na początku nie ma id
         //
-        return $this->redirectToRoute('member_user_show', [
-            'id' => $memberUser->getId(),
+
+        /*logika:
+        aby zachować logikę z ze zmianami wprowadzanymi w na bieżąco
+        nowe dane należy traktować tak, że zaczynają obowiązywać:
+        OD daty zmiany a nie DO daty
+        opis działania w funkcji: InsertWithModifyNeighbors
+        */
+        $changeJob = new MemberHistory($memberUser);
+        
+        $form = $this->createForm(MemberHistoryJobAndDateType::class, $changeJob);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $memberUser->InsertWithModifyNeighbors($changeJob);
+            $em->persist($memberUser);
+            $em->flush();
+
+            return $this->redirectToRoute('member_user_show', [
+                'id' => $memberUser->getId(),
+            ]);
+        }
+        return $this->render('member_history/new.html.twig', [
+            'member_history' => $changeJob,
+            'form' => $form->createView(),
         ]);
     }
 
