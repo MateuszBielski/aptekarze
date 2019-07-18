@@ -18,22 +18,24 @@
                     <a href="{{ path('job_index') }}">stanowiska</a>
                     {# <a href="{{ path('contribution_new') }}">nowa wpłata</a> #}
                 </div>
-                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                 <div class="pole_belka_gora">
                     <a href="{{ path('contribution_index') }}">składki</a>
                 </div>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                 <div class="pole_belka_gora">
                     <a class="link" href="{{ path('app_logout') }}" >wyloguj</a>
                 </div>
+                <div class="pole_belka_gora_doprawej">zalogowany jako: {{ app.user.username }}</div>
                 {% else %}
                 <div class="pole_belka_gora">
                     <a class="link" href="{{ path('app_login') }}" >zaloguj się</a>
                 </div>
                 {% endif %}
-            </div>
+                </div>
             <div id="body_div">
             {% block body %}{% endblock %}
             </div>
+            <br>
             <div id="belka_dol">
             {% block belka_dol %}{% endblock %}
             </div>

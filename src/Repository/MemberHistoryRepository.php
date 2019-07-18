@@ -59,6 +59,7 @@ class MemberHistoryRepository extends ServiceEntityRepository
         ->leftJoin('o.myUser','user')
         ->where("user.id IN(:usersIds)")
         ->setParameter('usersIds',array_values($usersId))
+        ->orderBy('o.date','ASC')
         ->getQuery()
         ->getResult();
     }

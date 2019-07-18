@@ -24,7 +24,7 @@
 #belka_dol
 {
     background-color: rgb(142, 239, 252);
-    height: 45px;
+    height: 60px;
 }
 .pole_belka_gora,.pole_belka_dol
 {
@@ -43,8 +43,33 @@
     border-style: none none solid none;
     border-width: 4px;
     border-color: rgb(100, 100, 100);
+    font: rgb(31, 85, 31)
+    
     /* background-color: ; */
 }
+.pole_belka_gora_doprawej
+{
+    margin-top: 10px;
+    font-size: 15px;
+    font: rgb(31, 85, 31);
+    text-align: center;
+    width: 16%;
+    height: 80%;
+    margin: 4px;
+    float: right;
+    /* transform: translate(0, -50%); */
+}
+.hidden
+{
+    visibility: hidden;
+}
+.submit_label
+{
+    cursor: pointer;
+    text-align: center;
+    
+}
+
 #div_wyszukaj
 {
     width: 40%;
@@ -56,10 +81,12 @@ table, #div_wyszukaj
     margin-right: auto;
 }
 
-table,td
+table,th,td
 {
     border-collapse: collapse;
     border: 1px solid rgb(160, 160, 160);
+    table-layout: fixed;
+    width: 90%;
     /* border: 3px solid black; */
     /* border: 3px;
     border-color: dimgray; */
@@ -72,9 +99,7 @@ tr
 {
     height: 35px;
 }
-/* tr.member_user_row:hover {
-    background-color: #ffff99;
-} */
+
 .td_mniejsze
 {
     font-size: 16px;

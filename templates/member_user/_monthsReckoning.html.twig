@@ -1,0 +1,30 @@
+<div id="month_reckoning_div">
+    <br>
+    {# {% for month in member_user.monthsreckoning.months %}
+    <br>{{ month }}
+    {% endfor %} #}
+    <table class="table_months">
+        <th></th>
+        {% for yearName in member_user.monthsreckoning.monthRomanNumbers %}
+        <th>{{ yearName }}</th>
+        {% endfor %}
+        {% for year,months in member_user.monthsreckoning.getYearMonthsArray %}
+            <tr>
+                <td>{{ year }}</td>
+                {% for month in months %}
+                <td>{{ month | raw }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <div id="podsumowanie_div" >
+        <br>Stan początkowy:         {{ member_user.initialAccount }}
+        <br>Suma należnych składek:  {{ member_user.CalculateAllDueContribution() }} 
+        <br>Suma wpłaconych składek: {{ member_user.PaidContributionSum() }} 
+        <hr>
+        <div id="current_account_div">
+            {{ member_user.StringCurrentAccount() }}
+        </div>
+    </div>
+</div>

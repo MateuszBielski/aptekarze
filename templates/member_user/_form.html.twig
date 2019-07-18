@@ -1,4 +1,31 @@
-{{ form_start(form) }}
+{# {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Zatwierdź') }}</button>
-{{ form_end(form) }}
+    <input type="submit" id="submit-form" class="hidden" />
+{{ form_end(form) }} #}
+
+{# powyższe działało #}
+<table>
+
+    {{ form_start(form) }}
+    {% for pole in form %}
+        {# {% if pole == form.token %}
+        token #}
+        {% if pole == form.myJobHistory %}
+            <tr><td colspan="2">zmiany stanowisk</td>/tr>
+            {% for f_jobHistory in pole  %}
+            <tr>
+                <td>{{ form_widget(f_jobHistory.date) }}</td>
+                <td>{{ form_widget(f_jobHistory.job) }}</td>
+            </tr>
+            {% endfor %}
+        
+        {% else %}
+        <tr>
+            <td>{{ form_label(pole) }}</td>
+            <td>{{ form_widget(pole) }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+    <input type="submit" id="submit-form" class="hidden" />
+    {{ form_end(form, {'render_rest': false}) }}
+</table>

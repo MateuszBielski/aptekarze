@@ -5,14 +5,14 @@
                 {# <th>Id</th> #}
                 <th>Imię</th>
                 <th>Nazwisko</th>
-                <th>Telefon</th>
-                <th>e-mail</th>
+                {# <th>Telefon</th>
+                <th>e-mail</th> #}
                 {# <th>Nazwa użytkownika</th> #}
                 <th>bilans składek</th>
                 {# <th>Roles</th>
                 <th>Password</th> #}
                 <th>szczegóły</th>
-                <th>nowa wpłata</th>
+                <th>nowa składka miesięczna</th>
             </tr>
         </thead>
         <tbody>
@@ -27,21 +27,27 @@
                 {# <td>{{ member_user.id }}</td> #}
                 <td><a href="{{ path('member_user_show', {'id': member_user.id}) }}">{{ member_user.firstName }}</a></td>
                 <td>{{ member_user.surname }}</td>
-                <td class="td_mniejsze">{{ member_user.telephone }}</td>
-                <td class="td_mniejsze">{{ member_user.email }}</td>
+                {# <td class="td_mniejsze">{{ member_user.telephone }}</td>
+                <td class="td_mniejsze">{{ member_user.email }}</td> #}
                 {# <td>{{ member_user.username }}</td> #}
                 {# <td>{{ member_user.test }}</td> #}
                 <td {{ class_sign }}>{{ member_user.getStringCurrentAccount() }}</td>
                 {# <td>{{ member_user.roles ? member_user.roles|json_encode : '' }}</td>
                 <td>{{ member_user.password }}</td> #}
-                <td class="td_mniejsze">
-                    <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
-                </td>
-                <td class="td_mniejsze">
+                {% if member_user.job.rate > 0 %}
+                    <td class="td_mniejsze">
+                        <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
+                    </td>
+                    <td class="td_mniejsze">
                     {# <a href="{{ path('member_user_show', {'id': member_user.id}) }}">pokaż</a>
                     <a href="{{ path('member_user_edit', {'id': member_user.id}) }}">edytuj</a> #}
-                    <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">dodaj</a>
-                </td>
+                        <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">dodaj</a>
+                    </td>
+                {% else %}
+                    <td class="td_mniejsze" colspan="2">
+                    <a href="{{ path('member_user_setRight', {'id': member_user.id}) }}">ustal wysokość składki i sumę początkową</a>
+                    </td>
+                {% endif %}
             </tr>
         {% else %}
             <tr>

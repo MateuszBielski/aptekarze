@@ -7,7 +7,9 @@
                 <th>Data wpłaty</th>
                 <th>rodzaj</th>
                 <th>potwierdzenie</th>
-                {# <th>actions</th> #}
+                {% if is_granted('ROLE_AUTOR') %}
+                    <th>actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -15,7 +17,9 @@
             <tr>
                 {# <td>{{ contribution.id }}</td> #}
                 {% set mu = contribution.myUser %}
-                <td>{{ mu.firstName }} {{ mu.surname }}</td>
+                <td><a href="{{ path('member_user_show',{'id':mu.id}) }}">
+                    {{ mu.firstName }} {{ mu.surname }}
+                </a></td>
                 <td>{{ contribution.value }}</td>
                 <td>{{ contribution.paymentDate ? contribution.paymentDate|date('d.m.Y') : '' }}</td>
                 <td class="td_mniejsze">{{ contribution.getType() }}</td>
@@ -26,8 +30,13 @@
                 </td>
                 {# <td>
                     <a href="{{ path('contribution_show', {'id': contribution.id}) }}">show</a>
-                    <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">edit</a>
                 </td> #}
+                {% if is_granted('ROLE_AUTOR') %}
+                <td>
+                    <a href="{{ path('contribution_edit', {'id': contribution.id}) }}">edit</a>
+                </td>    
+                
+                {% endif %}
             </tr>
         {% else %}
             <tr>

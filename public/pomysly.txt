@@ -1,5 +1,10 @@
 Widok członka: w dolnym pasku wyświetl składki, wyswietl historię, tylko dla ROle_autor
 zrobić ROle_autor zawiera w sobie role admin
 zmiana stawki powoduje dodanie wpisów historii dla wszystkich użytkowników, którzy mają to stanowisko - do przemyślenia,
-wpłaty: wprowadzić wyszukiwanie za pomocą dnnia, miesiąca, roku.
+wpłaty: wprowadzić wyszukiwanie za pomocą dnia, miesiąca, roku.
 nowa wpłata wyszukiwanie ajaxem po nazwisku lub/i imieniu
+kodowanie farmaceutów DOS/OS2-852
+Datę początkową wszystkim ustawić na 1.1.2018
+Zapytanie do bazy jest gotowe
+Edycja daty początkowej d-m-r (miesiące po polsku)
+Edytuj Dane member Zatwierdź - duży przycisk

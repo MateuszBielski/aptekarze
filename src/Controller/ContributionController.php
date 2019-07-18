@@ -15,12 +15,12 @@ use App\Entity\MemberUser;
 /**
  * @Route("/contribution")
  */
-//
+//@Security("is_granted('ROLE_ADMIN')")
 class ContributionController extends AbstractController
 {
     /**
      * @Route("/", name="contribution_index", methods={"GET"})
-     * @Security("is_granted('ROLE_ADMIN')")
+     * 
      */
     public function index(ContributionOptimizer $conOpt): Response
     {
@@ -40,7 +40,6 @@ class ContributionController extends AbstractController
     
     /**
      * @Route("/indexAjax", name="contribution_indexAjax", methods={"GET", "POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function indexAjax(Request $request,ContributionOptimizer $conOpt): Response
     {
@@ -52,7 +51,6 @@ class ContributionController extends AbstractController
     }
     /**
      * @Route("/new", name="contribution_new", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function new(Request $request): Response
     {
@@ -79,7 +77,6 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}", name="contribution_show", methods={"GET"})
-     * @Security("is_granted('ROLE_AUTOR')")
      */
     public function show(Contribution $contribution): Response
     {
@@ -90,7 +87,6 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}/new", name="contribution_new_forUser", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function newForUser(Request $request, MemberUser $memberUser): Response
     {
@@ -119,7 +115,6 @@ class ContributionController extends AbstractController
 
     /**
      * @Route("/{id}/print", name="contribution_print", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function PrintConfirmation(Contribution $contribution): Response
     {
