@@ -527,30 +527,72 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $this->InMyFirstHitorySetChanges();
     }
+
+    
+    /*
+     * czyli nowa historia przyjmuje dane od najbliższego wpisu z prawej p1(późniejszego)
+    a ten wpis dostaje nowe dane
+    jeżeli p1 jest datą rejestracji zamiana nie następuje, nowa historia dostaje nowe dane,
+    a p1 pozostaje bez zmian
+    jeżeli p1 po zmianie stał się taki jak jeszcze kolejny  (p2), 
+    to p2 usuwamy, bo p1 stałby się drugą datą rejstracji
+    
+    zasada: jeżeli dwa kolejne wpisy różnią się tylko datą - pierwszy z nich
+    traktowany jako data rejestracji
+    
+    działanie:
+    nowy wpis dodać do kolekcji
+    posortować datami
+    wyciągnąć te, w których zmienia się job
+    znaleźć p1 i p2 
+    dokonać modyfikacji jak wyżej
+    połączyć ze wszystkimi
+    przypisać do pierwotnej kolekcji (myHistory)
+    pojawi się sytuacja, że do istniejącej kolekcji dodane są więcej niż jeden wpisy(np po docelowej edycji użytkownika ajaxem i jquery), a inne usunięte
+    trzeba sprawdzić, które to i odpowiednio ich sąsiadów oznaczyć
+    wg analizy nazw i dostępności funkcji dla CollectionType: nie jest używana metoda setCollection lecz addToCollection( $rekord)
+    analogicznie remove.
+    czyli każdy wpis dodawany oddzielnie do już isniejących, z tego wynika całą powyższą procedurę trzeba przeprowadzić za każdym razem przy dodawaniu
+    odwrotnie przy odejmowaniu.
+    */
     public function InsertWithModifyNeighbors(MemberHistory $newHistory)
     {
         
-        /*
-         * czyli nowa historia przyjmuje dane od najbliższego wpisu z prawej p1(późniejszego)
-        a ten wpis dostaje nowe dane
-        jeżeli p1 jest datą rejestracji zamiana nie następuje, nowa historia dostaje nowe dane,
-        a p1 pozostaje bez zmian
-        jeżeli p1 po zmianie stał się taki jak jeszcze kolejny  (p2), 
-        to p2 usuwamy, bo p1 stałby się drugą datą rejstracji
-        
-        zasada: jeżeli dwa kolejne wpisy różnią się tylko datą - pierwszy z nich
-        traktowany jako data rejestracji
-        
-        działanie:
-        nowy wpis dodać do kolekcji
-        posortować datami
-        znaleźć p1 i p2 
-        dokonać modyfikacji jak wyżej
-        */
         if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
 
-        $jobHistory = $this->getMyHistoryCached();
-        $jobHistory[] = $newHistory;
+        $jobHistory = array();
+        $indexNew = -1;
+        $i = 0;
+        //zakładamy, że myHistoryCached jest posortowana
+        //zamiast sortowania newHistory trzeba od razu wstawić we właściwe miejsce
+        foreach($this->getMyHistoryCached() as $h)
+        {
+            if($h->changeJob){
+                if($indexNew < 0 && $newHistory->getDate() < $h[$i]->getDate())
+                {
+                    $jobHistory[] = $newHistory;
+                    $indexNew = $i++;
+                }
+                $jobHistory[] =  $h;
+                $i++;
+            }
+        }
+        if($indexNew < 0){
+            $jobHistory[] = $newHistory;
+            $indexNew = $i++;
+        } 
+        $numbOfRecord = $i;
+        $p1 = ($indexNew + 1 < $numbOfRecord) ? $jobHistory[$indexNew + 1] : null;
+        $p2 = ($indexNew + 2 < $numbOfRecord) ? $jobHistory[$indexNew + 2] : null;
+        if ($p1 != null)
+        {
+            //tu zrobić podmiankę 
+        }
+        if ($p2 != null)
+        {
+            //sprawdzić czy $p1 == $p2 wtedy 
+        }
+        $this->myHistory = $jobHistory;
     }
 }
 
