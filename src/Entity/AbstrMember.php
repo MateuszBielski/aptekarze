@@ -230,4 +230,17 @@ abstract class AbstrMember
         return Functions::f_DateRoundToMonthAccordingToDayOfChange($date);
         // DateRound($date);
     }
+    public function CopyData(AbstrMember $from)
+    {
+        $this->setTelephone($from->getTelephone());
+        $this->setEmail($from->getEmail());
+        $this->setFirstName($from->getFirstName());
+        $this->setSurname($from->getSurname());
+        $this->setJob($from->getJob());
+        $this->setPaymentDayOfMonth($from->getPaymentDayOfMonth());
+        $this->setBeginDate($from->getBeginDate());
+        $this->setInitialAccount($from->getInitialAccount());
+        $this->setNazwiskoPanienskie($from->getNazwiskoPanienskie());
+        $this->setNrPrawaZawodu($from->getNrPrawaZawodu());
+    }
 }

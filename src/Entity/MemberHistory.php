@@ -60,18 +60,20 @@ class MemberHistory extends AbstrMember
         return $this;
     }
     
-    public function CopyData(MemberUser $memberUser)
+    public function CopyData(AbstrMember $memberUser)
     {
-        $this->setTelephone($memberUser->getTelephone());
-        $this->setEmail($memberUser->getEmail());
-        $this->setFirstName($memberUser->getFirstName());
-        $this->setSurname($memberUser->getSurname());
-        $this->setJob($memberUser->getJob());
-        $this->setPaymentDayOfMonth($memberUser->getPaymentDayOfMonth());
-        $this->setBeginDate($memberUser->getBeginDate());
-        $this->setInitialAccount($memberUser->getInitialAccount());
-        $this->setNazwiskoPanienskie($memberUser->getNazwiskoPanienskie());
-        $this->setNrPrawaZawodu($memberUser->getNrPrawaZawodu());
+        // $this->setTelephone($memberUser->getTelephone());
+        // $this->setEmail($memberUser->getEmail());
+        // $this->setFirstName($memberUser->getFirstName());
+        // $this->setSurname($memberUser->getSurname());
+        // $this->setJob($memberUser->getJob());
+        // $this->setPaymentDayOfMonth($memberUser->getPaymentDayOfMonth());
+        // $this->setBeginDate($memberUser->getBeginDate());
+        // $this->setInitialAccount($memberUser->getInitialAccount());
+        // $this->setNazwiskoPanienskie($memberUser->getNazwiskoPanienskie());
+        // $this->setNrPrawaZawodu($memberUser->getNrPrawaZawodu());
+        parent::CopyData($memberUser);
+        if($memberUser instanceof MemberUser)
         $this->setMyUser($memberUser);
     }
 
@@ -179,5 +181,22 @@ class MemberHistory extends AbstrMember
     {   
         $this->GenerateInfoChangeComparingToNext($next);
         return $this->getInfoChangeComparingToNext() == 'data rejestracji';
+    }
+    public function IsRegisterDate()
+    {
+        return $this->infoChangeComparingToNext == "data rejestracji";
+    }
+    public function ReplaceDataWith(AbstrMember $other)
+    {
+        if($other->IsRegisterDate())return;
+        $myDate = $this->date;
+        $temporary = new MemberUser();
+        $temporary->CopyData($other);
+        $other->CopyData($this);
+        $this->CopyData($temporary);
+        //dla pewności:
+        $this->date = $myDate;
+        //other może być memberUserem i nie ma daty
+        
     }
 }

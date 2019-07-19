@@ -221,9 +221,8 @@ class MemberUserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/addJobHistory", name="member_user_addJobHistory", methods={"GET"})
+     * @Route("/{id}/addJobHistory", name="member_user_addJobHistory", methods={"GET","POST"})
      */
-    //,"POST"
     public function addJobHistory(Request $request, MemberUser $memberUser): Response
     {
         # code...
@@ -250,7 +249,7 @@ class MemberUserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $memberUser->InsertWithModifyNeighbors($changeJob);
+            $memberUser->addMyJobHistory($changeJob);
             $em->persist($memberUser);
             $em->flush();
 

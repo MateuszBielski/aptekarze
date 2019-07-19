@@ -56,7 +56,8 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         $this->myHistory = new ArrayCollection();
         $this->contributions = new ArrayCollection();
-        $this->beginDate = new \DateTime('now');
+        //poniższe wyłączone bo 5 testów nie wychodziło 19 lip 2019
+        // $this->beginDate = new \DateTime('now');
     }
 
     /**
@@ -502,7 +503,7 @@ class MemberUser extends AbstrMember implements UserInterface
         $this->montsReckoning = new MonthsReckoning();
         $this->montsReckoning->takeIntervalsAndRates($this->ExtractIntervalsAndRates(new \DateTime('now')));
         $this->montsReckoning->takeAllPaidSum($this->PaidContributionSum()+$this->initialAccount);
-        $this->montsReckoning->takeBeginDate($this->getBeginDate());
+        $this->montsReckoning->takeBeginDate($this->beginDate);
         $this->montsReckoning->GenerateArrayYearsMonths();
         
     }
@@ -555,12 +556,12 @@ class MemberUser extends AbstrMember implements UserInterface
     czyli każdy wpis dodawany oddzielnie do już isniejących, z tego wynika całą powyższą procedurę trzeba przeprowadzić za każdym razem przy dodawaniu
     odwrotnie przy odejmowaniu.
     */
-    public function InsertWithModifyNeighbors(MemberHistory $newHistory)
+    public function addMyJobHistory(MemberHistory $newHistory)
     {
         
         if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
 
-        $jobHistory = array();
+        $jobHistory = new ArrayCollection();
         $indexNew = -1;
         $i = 0;
         //zakładamy, że myHistoryCached jest posortowana
@@ -582,17 +583,23 @@ class MemberUser extends AbstrMember implements UserInterface
             $indexNew = $i++;
         } 
         $numbOfRecord = $i;
-        $p1 = ($indexNew + 1 < $numbOfRecord) ? $jobHistory[$indexNew + 1] : null;
+        $p1 = ($indexNew + 1 < $numbOfRecord) ? $jobHistory[$indexNew + 1] : $this;
         $p2 = ($indexNew + 2 < $numbOfRecord) ? $jobHistory[$indexNew + 2] : null;
-        if ($p1 != null)
-        {
-            //tu zrobić podmiankę 
-        }
+        $jobHistory[$indexNew]->ReplaceDataWith($p1);
         if ($p2 != null)
         {
-            //sprawdzić czy $p1 == $p2 wtedy 
+            $dateOfRegister = "data rejestracji";
+            $notDateRegBefore = $p1->getInfoChangeComparingToNext() != $dateOfRegister;
+            $p1->GenerateInfoChangeComparingToNext($p2);
+            $dateRegAfter = $p1->getInfoChangeComparingToNext() == $dateOfRegister;
+            if($notDateRegBefore && $dateRegAfter)$jobHistory->removeElement($p1);
         }
         $this->myHistory = $jobHistory;
+    }
+    public function IsRegisterDate()
+    {
+        return false;
+        //na potrzeby MemberHistory::ReplaceDataWith
     }
 }
 
