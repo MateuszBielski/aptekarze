@@ -34,6 +34,12 @@
                     <a href="{{ path('member_user_setRight', {'id': member_user.id}) }}">ustal wysokość składki i sumę początkową</a>
                     </td>
                 {% endif %}
+                {% if is_granted('ROLE_AUTOR') %}
+                <td>
+                    {{ member_user.myHistoryCached|length }}
+                </td>
+                {% endif %}
+                
             </tr>
         {% else %}
             <tr>

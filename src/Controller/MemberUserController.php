@@ -249,7 +249,8 @@ class MemberUserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $memberUser->addMyJobHistory($changeJob);
+            $content = $memberUser->addMyJobHistory($changeJob);
+            // return new Response($content);
             $em->persist($memberUser);
             $em->flush();
 

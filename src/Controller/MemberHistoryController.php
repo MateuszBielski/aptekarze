@@ -67,9 +67,22 @@ class MemberHistoryController extends AbstractController
      */
     public function delete(Request $request, MemberHistory $memberHistory): Response
     {
-        $memberUserId = $memberHistory->getMyUser()->getId();
+        // $memberUserId = $memberHistory->getMyUser()->getId();
+        // if ($this->isCsrfTokenValid('delete'.$memberHistory->getId(), $request->request->get('_token'))) {
+        //     $entityManager = $this->getDoctrine()->getManager();
+        //     $entityManager->remove($memberHistory);
+        //     $entityManager->flush();
+        // }
+        // return $this->redirectToRoute('member_user_show', [
+        //     'id' => $memberUserId,
+        // ]);
+        $memberUser = $memberHistory->getMyUser();
+        $memberUserId = $memberUser->getId();
         if ($this->isCsrfTokenValid('delete'.$memberHistory->getId(), $request->request->get('_token'))) {
+            $memberUser->removeMyJobHistory($memberHistory);
+            // return new Response($content);
             $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($memberUser);
             $entityManager->remove($memberHistory);
             $entityManager->flush();
         }

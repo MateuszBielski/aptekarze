@@ -124,7 +124,7 @@
             {% for history_row in member_user.myHistory|reverse %}
                 <tr>
                     <td>{{ history_row.date.format('d.m.Y') }}</td>
-                    <td>{{ history_row.getInfoChangeComparingToNext() }}</td>
+                    <td>{{ history_row.getInfoChangeComparingToNext() }} isRegisterDate {{ history_row.IsRegisterDate() }}</td>
                     <td><a href="{{ path('member_history_edit', {'id': history_row.id}) }}">zmień</a></td>
                 </tr>
             {% endfor %}

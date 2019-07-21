@@ -33,6 +33,7 @@ class MemberHistory extends AbstrMember
     public function __construct(MemberUser $memberUser)
     {
         $this->CopyData($memberUser);
+        $this->myUser = $memberUser;
         $this->setDate(new \DateTime('now'));
     }
     
@@ -60,23 +61,6 @@ class MemberHistory extends AbstrMember
         return $this;
     }
     
-    public function CopyData(AbstrMember $memberUser)
-    {
-        // $this->setTelephone($memberUser->getTelephone());
-        // $this->setEmail($memberUser->getEmail());
-        // $this->setFirstName($memberUser->getFirstName());
-        // $this->setSurname($memberUser->getSurname());
-        // $this->setJob($memberUser->getJob());
-        // $this->setPaymentDayOfMonth($memberUser->getPaymentDayOfMonth());
-        // $this->setBeginDate($memberUser->getBeginDate());
-        // $this->setInitialAccount($memberUser->getInitialAccount());
-        // $this->setNazwiskoPanienskie($memberUser->getNazwiskoPanienskie());
-        // $this->setNrPrawaZawodu($memberUser->getNrPrawaZawodu());
-        parent::CopyData($memberUser);
-        if($memberUser instanceof MemberUser)
-        $this->setMyUser($memberUser);
-    }
-
     public function GenerateInfoChangeComparingToNext(AbstrMember $compared)
     {
         //zwrócić jako gotowy do wyświetlenia string
@@ -188,7 +172,7 @@ class MemberHistory extends AbstrMember
     }
     public function ReplaceDataWith(AbstrMember $other)
     {
-        if($other->IsRegisterDate())return;
+        // if($other->IsRegisterDate())return;
         $myDate = $this->date;
         $temporary = new MemberUser();
         $temporary->CopyData($other);

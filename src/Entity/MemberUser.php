@@ -32,9 +32,13 @@ class MemberUser extends AbstrMember implements UserInterface
     private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", mappedBy="myUser", cascade = {"persist","remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\MemberHistory", 
+     * mappedBy="myUser", 
+     * cascade = {"persist","remove"})
+     * 
      * @ORM\OrderBy({"date" = "ASC"})
      */
+    //orphanRemoval=true)
     //w widoku jest odwrócenie kolejności
     private $myHistory;
 
@@ -512,6 +516,7 @@ class MemberUser extends AbstrMember implements UserInterface
         switch(count($this->myHistory)){
             case 1:
                 $this->myHistory[0]->CopyData($this);
+                $this->myHistory[0]->setMyUser($this);
                 break;
             case 0:
                 $this->addMyHistory(new MemberHistory($this));
@@ -562,21 +567,25 @@ class MemberUser extends AbstrMember implements UserInterface
         if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
 
         $jobHistory = new ArrayCollection();
+        $NoJobHistory = array();
         $indexNew = -1;
         $i = 0;
         //zakładamy, że myHistoryCached jest posortowana
         //zamiast sortowania newHistory trzeba od razu wstawić we właściwe miejsce
+        $result = 'pierwotnie '.count($this->getMyHistoryCached());
         foreach($this->getMyHistoryCached() as $h)
         {
             if($h->changeJob){
-                if($indexNew < 0 && $newHistory->getDate() < $h[$i]->getDate())
+                if($indexNew < 0 && $newHistory->getDate() < $h->getDate())
                 {
                     $jobHistory[] = $newHistory;
                     $indexNew = $i++;
                 }
                 $jobHistory[] =  $h;
                 $i++;
+                continue;
             }
+            $NoJobHistory[] = $h;
         }
         if($indexNew < 0){
             $jobHistory[] = $newHistory;
@@ -585,16 +594,55 @@ class MemberUser extends AbstrMember implements UserInterface
         $numbOfRecord = $i;
         $p1 = ($indexNew + 1 < $numbOfRecord) ? $jobHistory[$indexNew + 1] : $this;
         $p2 = ($indexNew + 2 < $numbOfRecord) ? $jobHistory[$indexNew + 2] : null;
+        if($p1->IsRegisterDate()){
+            $p2->CopyData($jobHistory[$indexNew]);
+        }
         $jobHistory[$indexNew]->ReplaceDataWith($p1);
         if ($p2 != null)
         {
-            $dateOfRegister = "data rejestracji";
-            $notDateRegBefore = $p1->getInfoChangeComparingToNext() != $dateOfRegister;
+            
+            $notDateRegBefore = !$p1->IsRegisterDate();
             $p1->GenerateInfoChangeComparingToNext($p2);
-            $dateRegAfter = $p1->getInfoChangeComparingToNext() == $dateOfRegister;
-            if($notDateRegBefore && $dateRegAfter)$jobHistory->removeElement($p1);
+            $dateRegAfter = $p1->IsRegisterDate();
+            // if($notDateRegBefore && $dateRegAfter)$jobHistory->removeElement($p1);
         }
+        foreach ($NoJobHistory as $njh) {
+            $jobHistory[] = $njh;
+        }
+
         $this->myHistory = $jobHistory;
+        $result .= 'na koniec '.count($this->myHistory );
+        return $result;
+    }
+
+    public function removeMyJobHistory(MemberHistory $history)
+    {
+        if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
+
+        $jobHistory = new ArrayCollection();
+        $indexToDelete = -1;
+        $i = 0;
+        
+        foreach($this->myHistory as $h)
+        {
+            if($h->changeJob){
+                $jobHistory[] =  $h;
+                if($history->getId() == $h->getId()){
+                    $indexToDelete = $i; 
+                }
+                $i++;
+            }
+        }
+        if($indexToDelete < 0)return;
+        $numbOfRecord = $i;
+        $p1 = ($indexToDelete + 1 < $numbOfRecord) ? $jobHistory[$indexToDelete + 1] : $this;
+        // $content = $p1->getJob()->getRate();
+        $history->ReplaceDataWith($p1);
+        // $content .='po replace: '.$p1->getJob()->getRate();
+       
+        $this->myHistory->removeElement($history);
+        
+        // return $content;
     }
     public function IsRegisterDate()
     {
