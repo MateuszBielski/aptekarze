@@ -8,16 +8,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Job;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class MemberUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $extended = true;
-        $job = $builder->getData()->getJob();
-        if ($job != null )
-        $extended = $job->getRate() > 0;
+        $extended = $builder->getData()->getJob()->getRate() > 0;
         if($extended){
             $builder
             ->add('firstName',null,['label' => 'imię',])
@@ -41,7 +39,7 @@ class MemberUserType extends AbstractType
             // ->add('password')
         ->add('job',EntityType::class,[
             'class' => Job::class, 
-            'label' => 'stanowisko',
+            'label' => 'obecne stanowisko',
             'choice_label' => 
             function(Job $job){return $job->getName()."  -  ".$job->getRate()." zł";},
             'choice_value' => function (Job $entity = null) {
@@ -49,8 +47,22 @@ class MemberUserType extends AbstractType
             },
             'attr' => ['class' =>'input-generate-months',], 
             ])
+        ->add('myJobHistory',CollectionType::class,[
+                'entry_type' => MemberHistoryJobAndDateType::class,
+                'label' => 'zmiany stanowisk',
+                'allow_add' => true,
+                'allow_delete' =>true,
+                'by_reference' =>true,
+                // 'prototype_data' => $options['prototype_data_opt'],
+            ])
         ;
-        
+        // ->add('dawki',CollectionType::class,[
+        //     'entry_type' => DawkaType::class,
+        //     'allow_add' => true,
+        //     'allow_delete' =>true,
+        //     'by_reference' =>true,
+        //     'prototype_data' => $options['prototype_data_opt'],
+        //     ])
     }
 
     public function configureOptions(OptionsResolver $resolver)

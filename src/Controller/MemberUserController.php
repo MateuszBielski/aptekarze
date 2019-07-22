@@ -248,11 +248,14 @@ class MemberUserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $content = $memberUser->addMyJobHistory($changeJob);
-            // return new Response($content);
-            $em->persist($memberUser);
-            $em->flush();
+            $now = new \DateTime('now');
+            if($changeJob->getDate() < $now){
+                $em = $this->getDoctrine()->getManager();
+                $content = $memberUser->addMyJobHistory($changeJob);
+                // return new Response($content);
+                $em->persist($memberUser);
+                $em->flush();
+            }
 
             return $this->redirectToRoute('member_user_show', [
                 'id' => $memberUser->getId(),

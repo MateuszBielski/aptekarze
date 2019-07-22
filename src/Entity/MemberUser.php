@@ -145,6 +145,16 @@ class MemberUser extends AbstrMember implements UserInterface
         if ($this->optimized) return $this->myHistoryCached;
         else return $this->myHistory;
     }
+    public function getMyJobHistory(): array
+    {
+        if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
+        $jobHistory = array();
+        foreach ($this->getMyHistoryCached() as $h_row) {
+            if($h_row->changeJob)
+            $jobHistory[] = $h_row;
+        }
+        return $jobHistory;
+    }
 
     public function addMyHistory(MemberHistory $myHistory): self
     {
