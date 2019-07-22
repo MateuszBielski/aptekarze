@@ -8,16 +8,18 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Job;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class MemberHistoryJobAndDateType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('date',null,['label' => false,'format'=> 'd.M.y',])
+            ->add('date',DateType::class,['label' => 'od kiedy:',
+            'format'=> 'd.M.y'])
             ->add('job',EntityType::class,[
                 'class' => Job::class, 
-                'label' => false,
+                'label' => 'jakie stanowisko:',
                 'choice_label' => 
                 function(Job $job){return $job->getName()."  -  ".$job->getRate()." zł";} 
                 ])

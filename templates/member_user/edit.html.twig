@@ -22,11 +22,11 @@
     <div class="pole_belka_dol">
         <label for="submit-form" class="submit_label">Zatwierdź zmiany</label>{# tabindex="0" #}
     </div>
-        {% if is_granted('ROLE_AUTOR') %}
+        {# {% if is_granted('ROLE_AUTOR') %} #}
         <div class="pole_belka_dol">
             <a href="{{ path('member_user_addJobHistory', {'id': member_user.id}) }}">dodaj zmianę stanowiska</a>
         </div>
-        {% endif %}
+        {# {% endif %} #}
         
     <div class="pole_belka_dol">
         <label for="submit-delete" class="submit_label">usuń użytkownika</label>

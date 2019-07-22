@@ -105,7 +105,7 @@ class MemberHistory extends AbstrMember
         if (!strlen($result)) {
             $result = "data rejestracji";
         } else {
-            $result = "zmiana: ".$result;
+            $result = "zmiana z: ".$result;
         }
         $this->infoChangeComparingToNext = $result;
     }

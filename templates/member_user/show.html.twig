@@ -114,7 +114,7 @@
     {% endif %}
     
     
-    {% if member_user.myHistory|length > 0 and is_granted('ROLE_AUTOR') %}
+    {% if member_user.myHistory|length > 0 %}{# and is_granted('ROLE_AUTOR') #}
     <br>
     <table class="table">
         <tbody>
@@ -124,7 +124,7 @@
             {% for history_row in member_user.myHistory|reverse %}
                 <tr>
                     <td>{{ history_row.date.format('d.m.Y') }}</td>
-                    <td>{{ history_row.getInfoChangeComparingToNext() }} isRegisterDate {{ history_row.IsRegisterDate() }}</td>
+                    <td>{{ history_row.getInfoChangeComparingToNext() }}</td>
                     <td><a href="{{ path('member_history_edit', {'id': history_row.id}) }}">zmień</a></td>
                 </tr>
             {% endfor %}
@@ -138,11 +138,11 @@
     <a href="{{ path('contribution_new_forUser', {'id': member_user.id}) }}">nowa składka miesięczna</a>
 </div>
 <div class="pole_belka_dol">
-    <a href="{{ path('member_user_setRight', {'id': member_user.id}) }}">edytuj dane</a>
+    <a href="{{ path('member_user_setRight', {'id': member_user.id}) }}">zmiana w przeszłości</a>
 </div>
 {% if is_granted('ROLE_AUTOR') %}
     <div class="pole_belka_dol">
-        <a href="{{ path('member_user_change', {'id': member_user.id}) }}">późniejsza zmiana</a>
+        <a href="{{ path('member_user_change', {'id': member_user.id}) }}">zmiana na przyszłość</a>
     </div>
 {% endif %}
 <div class="pole_belka_dol">

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/member/history")
- *  @Security("is_granted('ROLE_AUTOR')")
+ *  @Security("is_granted('ROLE_ADMIN')")
  */
 class MemberHistoryController extends AbstractController
 {
@@ -79,8 +79,8 @@ class MemberHistoryController extends AbstractController
         $memberUser = $memberHistory->getMyUser();
         $memberUserId = $memberUser->getId();
         if ($this->isCsrfTokenValid('delete'.$memberHistory->getId(), $request->request->get('_token'))) {
-            $memberUser->removeMyJobHistory($memberHistory);
-            // return new Response($content);
+            $content = $memberUser->removeMyJobHistory($memberHistory);
+            //return new Response($content);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($memberUser);
             $entityManager->remove($memberHistory);
