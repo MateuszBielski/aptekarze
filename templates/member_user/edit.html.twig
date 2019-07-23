@@ -10,6 +10,7 @@
 
 {% block body %}
     <h3>Edytuj dane członka</h3>
+    <h4>{{ member_user.firstname }} {{ member_user.surname }}</h4>
     {{ include('member_user/_form.html.twig', {'button_label': 'Zatwierdź zmiany'}) }}
     {{ include('member_user/_monthsReckoning.html.twig') }}
     {{ include('member_user/_delete_form.html.twig') }}
@@ -22,12 +23,11 @@
     <div class="pole_belka_dol">
         <label for="submit-form" class="submit_label">Zatwierdź zmiany</label>{# tabindex="0" #}
     </div>
-        {# {% if is_granted('ROLE_AUTOR') %} #}
+    {% if member_user.job.rate > 0 %}
         <div class="pole_belka_dol">
-            <a href="{{ path('member_user_addJobHistory', {'id': member_user.id}) }}">dodaj zmianę stanowiska</a>
+            <a href="{{ path('member_user_addJobHistory', {'id': member_user.id}) }}" style="font-size: 12px">dodaj zmianę stanowiska w przeszłości</a>
         </div>
-        {# {% endif %} #}
-        
+    {% endif %}
     <div class="pole_belka_dol">
         <label for="submit-delete" class="submit_label">usuń użytkownika</label>
     </div>

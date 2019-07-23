@@ -123,19 +123,20 @@
             </tr>
             {% for history_row in member_user.myHistory|reverse %}
                 <tr>
+                    {% set counter = ( counter | default(0) ) + 1 %}
                     <td>{{ history_row.date.format('d.m.Y') }}</td>
                     <td>{{ history_row.getInfoChangeComparingToNext() }}</td>
                     <td>
                         {% if is_granted('ROLE_AUTOR') %}
                             <a href="{{ path('member_history_edit', {'id': history_row.id}) }}">zmień</a>
-                        {% else %}
+                        {% elseif history_row.IsRegisterDate() == false %}
                             <form method="post" action="{{ path('member_history_delete', {'id': history_row.id}) }}" onsubmit="return confirm('Czy napewno usunąć wpis?');">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ history_row.id) }}">
                                 {# <button class="btn">Delete</button> #}
-                                <input type="submit" id="submit-delete" class="hidden" />
+                                <input type="submit" id="submit-delete-{{ counter }}" class="hidden" />
                             </form>    
-                            <label for="submit-delete" class="submit_label">usuń zmianę</label>
+                            <label for="submit-delete-{{ counter }}" class="submit_label">usuń zmianę</label>
                         {% endif %}
                         
                     </td>

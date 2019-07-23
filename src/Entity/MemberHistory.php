@@ -69,43 +69,43 @@ class MemberHistory extends AbstrMember
         
         $result = '';
         if ($this->email != $compared->getEmail()) {
-            $result .= "e-mail $this->email";
+            $result .= "e-mail ".$compared->getEmail();//$this->email
         };
         if ($this->telephone != $compared->getTelephone()) {
-            $result .= "telefon $this->telephone";
+            $result .= "telefon ".$compared->getTelephone();//$this->telephone
         };
         if ($this->firstName != $compared->getFirstName()) {
-            $result .= "imię $this->firstName";
+            $result .= "imię ".$compared->getFirstName();//$this->firstName
         };
         if ($this->surname != $compared->getSurname()) {
-            $result .= "nazwisko $this->surname";
+            $result .= "nazwisko ".$compared->getSurname();//$this->surname
         };
         //if ($this->job != $compared->getJob()) {
         //poniższe jest przygotowaniem do historycznego różnicowania stawek
         if ($this->job->getRate() != $compared->getJob()->getRate()) {
             //$job = $this->job;
-            $name = $this->job->getName();
-            $rate = $this->job->getRate();
+            $name = $compared->getJob()->getName();//$this->job
+            $rate = $compared->getJob()->getRate();//$this->job
             $result .= "stanowisko $name $rate zł";
 
             $this->changeJob = true;
         };
         if ($this->paymentDayOfMonth != $compared->getPaymentDayOfMonth()) {
-            $result .= "dzień płatności $this->paymentDayOfMonth";
+            $result .= "dzień płatności ".$compared->getPaymentDayOfMonth();//$this->paymentDayOfMonth
         };
         if ($this->beginDate != $compared->getBeginDate())
         {
-            $result .= "data początkowa ".$this->beginDate->format('d.m.Y');
+            $result .= "data początkowa ".$compared->getBeginDate()->format('d.m.Y');//$this->beginDate->
         }
         if ($this->initialAccount != $compared->getInitialAccount())
         {
             if($this->initialAccount == null)$this->initialAccount = 0;
-            $result .= "kwota początkowa ".$this->initialAccount;
+            $result .= "kwota początkowa ".$compared->getInitialAccount();//.$this->initialAccount;
         }
         if (!strlen($result)) {
             $result = "data rejestracji";
         } else {
-            $result = "zmiana z: ".$result;
+            $result = "zmiana na: ".$result;
         }
         $this->infoChangeComparingToNext = $result;
     }

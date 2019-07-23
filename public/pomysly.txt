@@ -9,3 +9,4 @@ Zapytanie do bazy jest gotowe
 Edycja daty początkowej d-m-r (miesiące po polsku)
 Edytuj Dane member Zatwierdź - duży przycisk
 PHP Intelephense 1.1.5 Ben Mewburn
+Jeżeli nie ma żadnej daty rejestracji to dodać tą datę przy jekiejkolwiek modyfikacji użytkownika - do przemyślenia

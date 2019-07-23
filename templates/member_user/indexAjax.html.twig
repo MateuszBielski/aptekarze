@@ -10,6 +10,7 @@
             </tr>
         </thead>
         <tbody>
+            
         {% for key,member_user in member_users %}
             <tr class="member_user_row">
                 {% if member_user.getCurrentAccuntValue() < 0 %}
@@ -17,6 +18,7 @@
                 {% else %}
                     {% set class_sign = 'class=plus_sign' %}
                 {% endif %}
+                
                 <td><a href="{{ path('member_user_show', {'id': member_user.id}) }}">
                     {{ member_user.surname }}</a></td>
                 <td>{{ member_user.firstName }}</td>
@@ -34,11 +36,11 @@
                     <a href="{{ path('member_user_setRight', {'id': member_user.id}) }}">ustal wysokość składki i sumę początkową</a>
                     </td>
                 {% endif %}
-                {% if is_granted('ROLE_AUTOR') %}
+                {# {% if is_granted('ROLE_AUTOR') %}
                 <td>
                     {{ member_user.myHistoryCached|length }}
                 </td>
-                {% endif %}
+                {% endif %} #}
                 
             </tr>
         {% else %}
