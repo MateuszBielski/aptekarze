@@ -1,15 +1,14 @@
-{# {{ form_start(form) }}
+{{ form_start(form) }}
     {{ form_widget(form) }}
     <input type="submit" id="submit-form" class="hidden" />
-{{ form_end(form) }} #}
+{{ form_end(form) }}
 
 {# powyższe działało #}
-<table>
+{# <table>
 
     {{ form_start(form) }}
     {% for pole in form %}
-        {# {% if pole == form.token %}
-        token #}
+       
         {% if pole == form.myJobHistory %}
             <tr><td colspan="2">zmiany stanowisk</td></tr>
             {% for f_jobHistory in pole  %}
@@ -28,4 +27,4 @@
     {% endfor %}
     <input type="submit" id="submit-form" class="hidden" />
     {{ form_end(form, {'render_rest': false}) }}
-</table>
+</table> #}

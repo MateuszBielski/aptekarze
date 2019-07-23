@@ -125,7 +125,20 @@
                 <tr>
                     <td>{{ history_row.date.format('d.m.Y') }}</td>
                     <td>{{ history_row.getInfoChangeComparingToNext() }}</td>
-                    <td><a href="{{ path('member_history_edit', {'id': history_row.id}) }}">zmień</a></td>
+                    <td>
+                        {% if is_granted('ROLE_AUTOR') %}
+                            <a href="{{ path('member_history_edit', {'id': history_row.id}) }}">zmień</a>
+                        {% else %}
+                            <form method="post" action="{{ path('member_history_delete', {'id': history_row.id}) }}" onsubmit="return confirm('Czy napewno usunąć wpis?');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ history_row.id) }}">
+                                {# <button class="btn">Delete</button> #}
+                                <input type="submit" id="submit-delete" class="hidden" />
+                            </form>    
+                            <label for="submit-delete" class="submit_label">usuń zmianę</label>
+                        {% endif %}
+                        
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -47,22 +47,16 @@ class MemberUserType extends AbstractType
             },
             'attr' => ['class' =>'input-generate-months',], 
             ])
-        ->add('myJobHistory',CollectionType::class,[
-                'entry_type' => MemberHistoryJobAndDateType::class,
-                'label' => 'zmiany stanowisk',
-                'allow_add' => true,
-                'allow_delete' =>true,
-                'by_reference' =>true,
-                // 'prototype_data' => $options['prototype_data_opt'],
-            ])
-        ;
-        // ->add('dawki',CollectionType::class,[
-        //     'entry_type' => DawkaType::class,
-        //     'allow_add' => true,
-        //     'allow_delete' =>true,
-        //     'by_reference' =>true,
-        //     'prototype_data' => $options['prototype_data_opt'],
+        // ->add('myJobHistory',CollectionType::class,[
+        //         'entry_type' => MemberHistoryJobAndDateType::class,
+        //         'label' => 'zmiany stanowisk',
+        //         'allow_add' => true,
+        //         'allow_delete' =>true,
+        //         'by_reference' =>true,
+        //         // 'prototype_data' => $options['prototype_data_opt'],
         //     ])
+        ;
+        
     }
 
     public function configureOptions(OptionsResolver $resolver)
