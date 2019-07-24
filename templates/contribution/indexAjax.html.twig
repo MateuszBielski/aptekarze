@@ -2,7 +2,7 @@
         <thead>
             <tr>
                 {# <th>Id</th> #}
-                <th>Imię i Nazwisko</th>
+                <th style="width: 220%">Imię i Nazwisko</th>
                 <th>Kwota</th>
                 <th>Data wpłaty</th>
                 <th>rodzaj</th>
@@ -17,9 +17,10 @@
             <tr>
                 {# <td>{{ contribution.id }}</td> #}
                 {% set mu = contribution.myUser %}
-                <td><a href="{{ path('member_user_show',{'id':mu.id}) }}">
-                    {{ mu.firstName }} {{ mu.surname }}
-                </a></td>
+                <td >
+                    <a href="{{ path('member_user_show',{'id':mu.id}) }}">
+                        {{ mu.firstName }} {{ mu.surname }}</a>
+                </td>
                 <td>{{ contribution.value }}</td>
                 <td>{{ contribution.paymentDate ? contribution.paymentDate|date('d.m.Y') : '' }}</td>
                 <td class="td_mniejsze">{{ contribution.getType() }}</td>

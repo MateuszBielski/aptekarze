@@ -19,7 +19,8 @@ use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use App\Repository\JobRepository;
 use App\Service\MemberUserOptimizer;
 use App\Form\MemberHistoryJobAndDateType;
-
+use App\Form\MemberUserWithoutStartDataType;
+use Symfony\Component\Form\Form;
 
 /**
  * @Route("/member/user")
@@ -158,9 +159,8 @@ class MemberUserController extends AbstractController
         ]);
     }
 
-    private function edit(Request $request, MemberUser $memberUser, MemberHistory $previousUserData = null): Response
+    private function edit(Request $request, MemberUser $memberUser,Form $form, MemberHistory $previousUserData = null): Response
     {
-        $form = $this->createForm(MemberUserType::class, $memberUser);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -186,8 +186,9 @@ class MemberUserController extends AbstractController
      */
     public function setRight(Request $request, MemberUser $memberUser)
     {
+        $form = $this->createForm(MemberUserType::class, $memberUser);
         //poprawia dane (również w historii, ale nie dodaje historii)
-        return $this->edit($request,$memberUser);
+        return $this->edit($request,$memberUser,$form);
     }
 
     /**
@@ -198,7 +199,8 @@ class MemberUserController extends AbstractController
         //nie zmienia historii, lecz dodaje nową
         $previousUserData = new MemberHistory($memberUser);
         $previousUserData->setWhoMadeChange($this->getUser());
-        return $this->edit($request,$memberUser,$previousUserData);
+        $form = $this->createForm(MemberUserWithoutStartDataType::class,$memberUser);
+        return $this->edit($request,$memberUser,$form,$previousUserData);
     }
     /**
     *@Route("/{id}/table_months_ajax", name="table_months_ajax", methods={"GET","POST"})
