@@ -19,7 +19,7 @@
                     {% set class_sign = 'class=plus_sign' %}
                 {% endif %}
                 
-                <td><a href="{{ path('member_user_show', {'id': member_user.id}) }}">
+                <td hidden_id="{{ member_user.id }}"><a href="{{ path('member_user_show', {'id': member_user.id}) }}">
                     {{ member_user.surname }}</a></td>
                 <td>{{ member_user.firstName }}</td>
                 <td>{{ member_user.nrPrawaZawodu }}</td>
