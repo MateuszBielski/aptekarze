@@ -15,7 +15,9 @@ class MemberUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $extended = $builder->getData()->getJob()->getRate() > 0;
+        $extended = true;
+        $memberUser = $builder->getData();
+        if($memberUser != null && $memberUser->getJob() != null)$extended = $memberUser->getJob()->getRate() > 0;
         if($extended){
             $builder
             ->add('firstName',null,['label' => 'imię',])
