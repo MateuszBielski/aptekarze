@@ -10,6 +10,7 @@ use App\Entity\Job;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class MemberUserType extends AbstractType
 {
@@ -26,7 +27,12 @@ class MemberUserType extends AbstractType
             ->add('email',null,['label' => 'adres email',])
             ->add('nazwiskoPanienskie',null,['label' => 'nazwisko panieńskie',])
             ->add('nrPrawaZawodu',null,['label' => 'nr pwz',])
-            ->add('paymentDayOfMonth',null,['label' => 'dzień płatności',]);
+            ->add('paymentDayOfMonth',null,['label' => 'dzień płatności',])
+            /* poniższe wymaga wydzielenia w widoku wiersza form.roles*/
+            // ->add('roles',CollectionType::class,[
+            //     'entry_type' => TextType::class
+            // ])
+            ;
         }
         $builder
         ->add('beginDate',null,[
