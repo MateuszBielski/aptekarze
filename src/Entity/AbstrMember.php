@@ -201,8 +201,8 @@ abstract class AbstrMember
 
     public function getBeginDate(): ?\DateTimeInterface
     {
-        if($this->beginDate == null)
-        return new \DateTime('now');
+        if($this->beginDate == null) 
+        return new \DateTime('9999-09-01');//czasem wyrzuca błąd na null->format()
         return $this->beginDate;
     }
 

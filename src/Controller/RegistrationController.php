@@ -22,6 +22,7 @@ class RegistrationController extends AbstractController
         $user = new MemberUser();
         $user->CreateDummyData();
         $user->createTempUsername();
+        $user->setBeginDate(new \DateTime('now')); // nie ustawiam w konstruktorze, bo w testach miesza
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 

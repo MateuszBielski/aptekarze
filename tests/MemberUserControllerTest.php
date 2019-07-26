@@ -24,11 +24,11 @@ class MemberUserControllerTest extends WebTestCase
     //     $crawler = $client->request('GET', '/member/user/new');
     //     $this->assertResponseIsSuccessful();
     // }
-    public function __construct(MemberUserRepository $memberUserRepository, EntityManagerInterface $entityManager)
-    {
-        $this->memRep = $memberUserRepository;
-        $this->em = $entityManager;
-    }
+    // public function __construct(MemberUserRepository $memberUserRepository, EntityManagerInterface $entityManager)
+    // {
+    //     $this->memRep = $memberUserRepository;
+    //     $this->em = $entityManager;
+    // }
 
     public function testPersistNewMemberUser()
     {
@@ -45,7 +45,6 @@ class MemberUserControllerTest extends WebTestCase
         // submit the form
         //powinno przekierować do mem us Index
         $crawler = $client->submit($form);
-        $entityManager = $this->getDoctrine()->getManager();
 
         // $this->assertTrue($client->getResponse()->isRedirect('/member/user/'));
         // $this->assertCount(1, $crawler->filter('td:contains("testNazwisko")'));

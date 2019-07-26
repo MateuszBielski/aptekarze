@@ -66,6 +66,7 @@ class MemberUserController extends AbstractController
     public function new(Request $request): Response
     {
         $memberUser = new MemberUser();
+        $memberUser->setBeginDate(new \DateTime('now')); // nie ustawiam w konstruktorze, bo w testach miesza
         $form = $this->createForm(MemberUserType::class, $memberUser);
         $form->handleRequest($request);
 

@@ -17,3 +17,5 @@ zapas*.sql
 .phpunit
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+errorTest.html
+services.txt

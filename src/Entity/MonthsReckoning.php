@@ -75,6 +75,7 @@ class MonthsReckoning
     }
     public function GenerateArrayYearsMonths()
     {
+        if($this->beginDate == null)return;
         $this->GenerateArrayOfMonthWithoutYear();
         $beginDate = Functions::f_DateRoundToMonthAccordingToDayOfChange($this->beginDate);
         $startYear = intval($beginDate->format('Y'));
@@ -129,7 +130,7 @@ class MonthsReckoning
         $this->paidSum = $sum;
     }
 
-    public function takeBeginDate(\DateTime $beginDate)
+    public function takeBeginDate(\DateTime $beginDate = null)
     {
         $this->beginDate = $beginDate;
     }
