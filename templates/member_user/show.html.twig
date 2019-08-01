@@ -159,6 +159,12 @@
         </tbody>
     </table>
     {% endif %}
+    {% if is_granted('ROLE_AUTOR') %}
+        {% for role in member_user.roles %}
+            {{ role }}
+        {% endfor %}
+    {% endif %}
+    
     
 {% endblock %}
 {% block belka_dol %} 

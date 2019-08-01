@@ -63,39 +63,73 @@ class MemberUserControllerTest extends WebTestCase
 
 
     }
-    public function testDeleteMemberUser()
-    {
-        $client = static::createClient();
-        $route = "/member/user/6004";
-        // $crawler = $client->request('DELETE',$route );
-        // $this->assertResponseIsSuccessful();
-    }
+    
     
     public function testRegisterNewUser()
     {   
         $client = static::createClient();
+        /*
         $crawler = $client->request('GET', '/register');
 
-        // $container = self::$container;
-        // $entityManager = $container->get('doctrine.orm.entity_manager');
-        $entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
-        $entityManager->getConnection()->setAutoCommit(false);//ważne
-        $entityManager->getConnection()->beginTransaction();
+        $num = '7757';
+        
         $form = $crawler->selectButton('submit-form')->form();
-        $form['registration_form[firstname]'] = 'test4AdminImie';
-        $form['registration_form[surname]'] = 'testAdminNazwisko';
-        $form['registration_form[username]'] = 'testAdmin7764';
+        $form['registration_form[firstname]'] = 'test'.$num.'AdminImie';
+        $form['registration_form[surname]'] = 'testAdmin'.$num.'Nazwisko';
+        $form['registration_form[username]'] = 'testAdmin'.$num;
         $form['registration_form[plainPassword]'] = 'passwordTest';
         $crawler = $client->submit($form);
+        
+        $container = self::$container;
+        $memRep = $container->get('App\Repository\MemberUserRepository');
+        $toFind = "testAdmin".$num;
+        $mu = $memRep->findOneBy(['username' => $toFind,]);
+        
+        $mu->setRoles(["ROLE_ADMIN"]);
+        
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        $entityManager->persist($mu);
+        $entityManager->flush();
+        
         $this->assertResponseRedirects('/member/user/', 302);
+
+        $toFind = 'testAdmin'.$num.'Nazwisko';
+        $link = $crawler->filter('a:contains("'.$toFind.")')->link();
+        $crawler = $client->click($link);
         
-        // $memRep = $container->get('App\Repository\MemberUserRepository');
-        // $mu = $memRep->findOneBy(['username' => "testAdmin7768",]);
-        // $mu->setRoles(["ROLE_ADMIN"]);
+        $this->assertResponseIsSuccessful();
+        */
+        $crawler = $client->request('GET', '/login');
+        $form = $crawler->selectButton('form')->form();//->selectButton('submit')
+        $form['username'] = 'użytkregister';
+        $form['password'] = '87654321';
         
-        // $entityManager->persist($mu);
-        // $entityManager->flush();
-        $entityManager->getConnection()->rollback();
+        $toFind = 'testAdminNazwisko';
+        $crawler = $client->request('GET', '/member/user/');
+        $link = $crawler->filter('a:contains("'.$toFind.'")')
+        ->eq(0)
+        ->link();
+        
+        $crawler = $client->click($link);
+        
+        $this->assertResponseIsSuccessful();
+
+        $filtered = $crawler->filter('a:contains("zmiana od dziś na przyszłość")');
+        $this->assertGreaterThan(0,$filtered->count());
+        $link = $filtered->eq(0)->link();
+
+        $crawler = $client->click($link);
+        
+        $this->assertResponseIsSuccessful();//jesteśmy na stronie /member/user/*/change
+
+        //klikniemy na usuń użytkownika
+        $form = $crawler->selectButton('submit-delete')->form();
+        $crawler = $client->submit($form);
+
+        // $this->assertResponseRedirects('/member/user/', 302);
+
     }
+
+
     /*zrobić index i indexAjax podobnie ze składkami */
 }
