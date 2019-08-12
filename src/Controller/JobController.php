@@ -15,6 +15,7 @@ use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Serializer;
+use App\Form\JobChangeRateType;
 
 /**
  * @Route("/job")
@@ -152,6 +153,42 @@ class JobController extends AbstractController
             'job' => $job,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/{id}/updateRate", name="job_update_rate", methods={"GET", "POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function UpdateRate(Request $request, Job $oldJob)// , JobOptimizer $jo
+    {
+        $newJob = new Job($oldJob);
+        $form = $this->createForm(JobChangeRateType::class,$newJob);
+        $form->handleRequest($request);
+        
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if($newJob->getRate() == $oldJob->getRate()){
+                return $this->redirectToRoute('job_show', [
+                    'id' => $oldJob->getId(),
+                ]);
+            }
+            $archiveJob = new ArchiveJob($oldJob);
+            $archiveJob->setDateOfChange(new \DateTime('1982-02-05'));
+            
+
+            
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($archiveJob);
+            // $entityManager->persist($newJob);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('job_index');
+        }
+        return $this->render('job/new.html.twig', [
+            'job' => $newJob,
+            'form' => $form->createView(),
+        ]);
+        //w nazwie dodać nieaktualn od (data)
     }
 
     /**

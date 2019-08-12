@@ -33,8 +33,10 @@ class Job
      */
     private $archiveJobs;
 
-    public function __construct()
+    public function __construct(Job $job)
     {
+        $this->name = $job->getName();
+        $this->rate = $job->getRate();
         $this->archiveJobs = new ArrayCollection();
     }
 

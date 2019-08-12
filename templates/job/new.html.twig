@@ -3,9 +3,15 @@
 {% block title %}Nowe stanowisko{% endblock %}
 
 {% block body %}
-    <h1>Utwórz nowe stanowisko</h1>
+    <h3>Utwórz nowe stanowisko</h3>
 
     {{ include('job/_form.html.twig') }}
-
-    <a href="{{ path('job_index') }}">powót do listy</a>
+{% endblock %}
+{% block belka_dol %}
+    <div class="pole_belka_dol">
+        <a href="{{ path('contribution_index') }}">powrót do listy</a>
+    </div>
+    <div class="pole_belka_dol">
+        <label for="submit-form" class="submit_label">zatwierdź zmiany</label>{# tabindex="0" #}
+    </div>
 {% endblock %}

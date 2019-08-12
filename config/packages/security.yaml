@@ -1,7 +1,7 @@
 security:
     encoders:
         App\Entity\MemberUser:
-            algorithm: bcrypt
+            algorithm: auto
             cost: 12
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
