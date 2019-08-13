@@ -5,17 +5,18 @@ namespace App\Controller;
 use App\Entity\Job;
 use App\Form\JobType;
 use App\Repository\JobRepository;
+use App\Repository\ActiveJobRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\ArchiveJob;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Serializer;
 use App\Form\JobChangeRateType;
+use App\Service\JobOptimizer;
 
 /**
  * @Route("/job")
@@ -25,7 +26,7 @@ class JobController extends AbstractController
     /**
      * @Route("/", name="job_index", methods={"GET"})
      */
-    public function index(JobRepository $jobRepository): Response
+    public function index(ActiveJobRepository $jobRepository): Response
     {
         return $this->render('job/index.html.twig', [
             'jobs' => $jobRepository->findAll(),
@@ -136,8 +137,8 @@ class JobController extends AbstractController
      */
     public function edit(Request $request, Job $job): Response
     {
-        $archiveJob = new ArchiveJob($job);
-        $job->addArchiveJob($archiveJob);
+        // $archiveJob = new ArchiveJob($job);
+        // $job->addArchiveJob($archiveJob);
         $form = $this->createForm(JobType::class, $job);
         $form->handleRequest($request);
 
@@ -159,7 +160,7 @@ class JobController extends AbstractController
      * @Route("/{id}/updateRate", name="job_update_rate", methods={"GET", "POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function UpdateRate(Request $request, Job $oldJob)// , JobOptimizer $jo
+    public function UpdateRate(Request $request, Job $oldJob, JobOptimizer $jo)// 
     {
         $newJob = new Job($oldJob);
         $form = $this->createForm(JobChangeRateType::class,$newJob);
@@ -172,19 +173,17 @@ class JobController extends AbstractController
                     'id' => $oldJob->getId(),
                 ]);
             }
-            $archiveJob = new ArchiveJob($oldJob);
-            $archiveJob->setDateOfChange(new \DateTime('1982-02-05'));
-            
-
+            $jo->ReplaceOldByNewInAdequateUsers($oldJob,$newJob);
             
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($archiveJob);
+            //$entityManager->persist($archiveJob);
             // $entityManager->persist($newJob);
             $entityManager->flush();
 
             return $this->redirectToRoute('job_index');
         }
         return $this->render('job/new.html.twig', [
+            'title' => "zmiana wysokości stawki",
             'job' => $newJob,
             'form' => $form->createView(),
         ]);

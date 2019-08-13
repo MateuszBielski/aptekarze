@@ -16,28 +16,36 @@ class Job
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    protected $name;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $rate;
+    protected $rate;
+
+    // /**
+    //  * @ORM\OneToMany(targetEntity="App\Entity\ArchiveJob", mappedBy="myCurrentJob", orphanRemoval=true)
+    //  */
+    //protected $archiveJobs;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ArchiveJob", mappedBy="myCurrentJob", orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="App\Entity\Job")
      */
-    private $archiveJobs;
+    //, cascade={"persist", "remove"} - raczej nie będzie potrzebne
+    protected $replacedBy;
 
-    public function __construct(Job $job)
+    public function __construct(Job $job = null)
     {
-        $this->name = $job->getName();
-        $this->rate = $job->getRate();
-        $this->archiveJobs = new ArrayCollection();
+        if($job != null){
+            $this->name = $job->getName();
+            $this->rate = $job->getRate();
+        }
+        //$this->archiveJobs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,33 +77,45 @@ class Job
         return $this;
     }
 
-    /**
-     * @return Collection|ArchiveJob[]
-     */
-    public function getArchiveJobs(): Collection
+    // /**
+    //  * @return Collection|ArchiveJob[]
+    //  */
+    // public function getArchiveJobs(): Collection
+    // {
+    //     return $this->archiveJobs;
+    // }
+
+    // public function addArchiveJob(ArchiveJob $archiveJob): self
+    // {
+    //     if (!$this->archiveJobs->contains($archiveJob)) {
+    //         $this->archiveJobs[] = $archiveJob;
+    //         $archiveJob->setMyCurrentJob($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeArchiveJob(ArchiveJob $archiveJob): self
+    // {
+    //     if ($this->archiveJobs->contains($archiveJob)) {
+    //         $this->archiveJobs->removeElement($archiveJob);
+    //         // set the owning side to null (unless already changed)
+    //         if ($archiveJob->getMyCurrentJob() === $this) {
+    //             $archiveJob->setMyCurrentJob(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
+    public function getReplacedBy(): ?self
     {
-        return $this->archiveJobs;
+        return $this->replaces;
     }
 
-    public function addArchiveJob(ArchiveJob $archiveJob): self
+    public function setReplacedBy(?self $replacedBy): self
     {
-        if (!$this->archiveJobs->contains($archiveJob)) {
-            $this->archiveJobs[] = $archiveJob;
-            $archiveJob->setMyCurrentJob($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArchiveJob(ArchiveJob $archiveJob): self
-    {
-        if ($this->archiveJobs->contains($archiveJob)) {
-            $this->archiveJobs->removeElement($archiveJob);
-            // set the owning side to null (unless already changed)
-            if ($archiveJob->getMyCurrentJob() === $this) {
-                $archiveJob->setMyCurrentJob(null);
-            }
-        }
+        $this->replacedBy = $replacedBy;
 
         return $this;
     }

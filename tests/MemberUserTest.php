@@ -177,5 +177,23 @@ class MemberUserTest extends TestCase
         $mu->setJob($job);
     }
 
+    public function testInsertJobAsSetRight()
+    {
+        $job1 = new Job();
+        $job1->setRate(34);
+
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+        $mu->setJob($job1);
+
+        $job2 = new Job();
+        $job2->setRate(93);
+        $this->assertEquals(0,count($mu->getMyHistoryCached()));
+        $mu->InsertJobAsChange($job2);
+
+        $this->assertEquals(93, $mu->getJob()->getRate());
+        $this->assertEquals(1,count($mu->getMyHistoryCached()));
+
+    }
     //zrobić GenerateInfoChangeComparingToNext (historia)
 }

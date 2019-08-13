@@ -683,5 +683,13 @@ class MemberUser extends AbstrMember implements UserInterface
         return false;
         //na potrzeby MemberHistory::ReplaceDataWith
     }
+
+    public function InsertJobAsChange(Job $newJob)
+    {
+        $previousUserData = new MemberHistory($this);
+        $this->job = $newJob;
+        $this->ArchiveChanges($previousUserData);
+
+    }
 }
 

@@ -11,7 +11,11 @@
                 {# <th>Id</th> #}
                 <th>Nazwa</th>
                 <th>Wysokość składki</th>
-                {# <th>akcje</th> #}
+                {% if is_granted('ROLE_AUTOR') %}
+                    <th>akcje</th>
+                
+                {% endif %}
+                
             </tr>
         </thead>
         <tbody>
@@ -20,11 +24,13 @@
                 {# <td>{{ job.id }}</td> #}
                 <td>{{ job.name }}</td>
                 <td>{{ job.rate }}</td>
-                {# <td> #}
-                    {# <a href="{{ path('job_show', {'id': job.id}) }}">pokaż</a> #}
-                    {# <a href="{{ path('job_edit', {'id': job.id}) }}">edytuj</a> #}
-                    {# <a href="{{ path('job_id_serialize', {'id': job.id}) }}">csvSerialize</a> #}
-                {# </td> #}
+                {% if is_granted('ROLE_AUTOR') %}
+                    <td>
+                        <a href="{{ path('job_show', {'id': job.id}) }}">pokaż</a>
+                        <a href="{{ path('job_edit', {'id': job.id}) }}">edytuj</a>
+                        {# <a href="{{ path('job_id_serialize', {'id': job.id}) }}">csvSerialize</a> #}
+                    </td>
+                {% endif %}
             </tr>
         {% else %}
             <tr>

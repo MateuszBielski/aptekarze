@@ -7,10 +7,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Job;
+use App\Repository\JobRepository;
+
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 
 class MemberUserType extends AbstractType
 {
@@ -53,7 +53,10 @@ class MemberUserType extends AbstractType
             'choice_value' => function (Job $entity = null) {
                 return $entity ? $entity->getId() : '';
             },
-            'attr' => ['class' =>'input-generate-months',], 
+            'attr' => ['class' =>'input-generate-months',],
+            'query_builder' => function (JobRepository $er) {
+                return $er->createQueryBuilder('o')
+                ->where('o.replacedBy is null');},
             ])
         // ->add('myJobHistory',CollectionType::class,[
         //         'entry_type' => MemberHistoryJobAndDateType::class,

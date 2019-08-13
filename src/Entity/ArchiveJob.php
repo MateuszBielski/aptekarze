@@ -15,7 +15,7 @@ class ArchiveJob extends Job
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     
     /**
@@ -23,11 +23,11 @@ class ArchiveJob extends Job
      */
     private $dateOfChange;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Job", inversedBy="archiveJobs")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $myCurrentJob;
+    // /**
+    //  * @ORM\ManyToOne(targetEntity="App\Entity\Job", inversedBy="archiveJobs")
+    //  * @ORM\JoinColumn(nullable=false)
+    //  */
+    // private $myCurrentJob;
 
     public function __construct(Job $job)
     {
