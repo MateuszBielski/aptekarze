@@ -93,7 +93,7 @@ class MemberUserControllerTest extends WebTestCase
         $form['member_user[firstName]'] = $user->getFirstName();;
         $form['member_user[surname]'] = $user->getSurname();
         $form['member_user[telephone]'] = $user->getTelephone();
-        $form['member_user[job]']->select(6);//nie ma znaczenia
+        $form['member_user[job]']->select(2);//nie ma znaczenia
 
         //powinno przekierować do mem us Index
         $crawler = $client->submit($form);
