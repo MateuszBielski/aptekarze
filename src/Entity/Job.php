@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JobRepository")
@@ -118,5 +119,15 @@ class Job
         $this->replacedBy = $replacedBy;
 
         return $this;
+    }
+
+    public function IsAvaliableCancelUpdateRate(): bool
+    {
+        //musi być jedno stanowisko, które ma moje id w kolumnie replacedBy
+        //wśród uzytkowników wyszukać styki historii stare job_id/nowe_id muszą to być ostatnie styki, tzn później nie może być już zmiany
+        //lub wszystkie historyczne z nową stawką Job muszą mieć jednkową datę, nie ma sensu cofać zmiany stawki, jeśli ktoś już ma celowo wybraną później,
+        //zapewne omyłkowa zmiana stawki cofana jest tego samego dnia
+        $result = false;
+        return $result;
     }
 }

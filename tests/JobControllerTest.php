@@ -46,4 +46,9 @@ class JobControllerTest extends WebTestCase
         $jobs = $jobRep->findAll();
         return $jobs[0];
     }
+
+    /* pomysł na testowanie metody updateRate
+    sprawdzić, czy dla każdej osoby, która aktualnie miała stanowisko będące przedmiotem aktualizacji ceny ilość wpisów hist zwiększyła się o jeden.
+    w bazie umieścić osobę, która w przeszłości miała w/w stanowisko, u niej nie powinno zmienić się ilość wpisów hist
+     */
 }

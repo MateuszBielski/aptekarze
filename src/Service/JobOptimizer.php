@@ -31,7 +31,7 @@ class JobOptimizer
 
     public function getMembersNowOn(Job $job)
     {
-        return $this->memUsRep->findBy(['job_id'=> $job->getId(),]);
+        return $this->memUsRep->findBy(['job'=> $job->getId(),]);
     }
 
     public function ReplaceOldByNewInAdequateUsers(Job $old, Job $new)

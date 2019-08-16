@@ -176,8 +176,7 @@ class JobController extends AbstractController
             $jo->ReplaceOldByNewInAdequateUsers($oldJob,$newJob);
             
             $entityManager = $this->getDoctrine()->getManager();
-            //$entityManager->persist($archiveJob);
-            // $entityManager->persist($newJob);
+            //dziwne, że nie trzeba robić persist
             $entityManager->flush();
 
             return $this->redirectToRoute('job_index');
@@ -188,6 +187,19 @@ class JobController extends AbstractController
             'form' => $form->createView(),
         ]);
         //w nazwie dodać nieaktualn od (data)
+    }
+
+    /**
+     * @Route("/{id}/cancelUpdateRate", name="job_cancel_update_rate", methods={"GET", "POST"})
+     */
+    public function CancelUpdateRate(Job $job)
+    {
+        if(!$job->IsAvaliableCancelUpdateRate())return $this->redirectToRoute('job_index');
+        //znaleźć wszystkie wpisy historyczne, gdzie jako następny występuje wycofywany job
+        //zrobić usunięcie ich, powinna już być odpowiednia funkcja
+        //znaleźć stary job
+        //usunąć interesujący job,
+        //a w starym usunąć replacedBy
     }
 
     /**
