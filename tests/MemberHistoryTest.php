@@ -7,6 +7,7 @@ use App\Entity\MemberHistory;
 use App\Entity\MemberUser;
 use App\Entity\Job;
 use App\Entity\ArchiveJob;
+use Doctrine\Common\Collections\Collection;
 
 class MemberHistoryTest extends TestCase
 {
@@ -75,5 +76,45 @@ class MemberHistoryTest extends TestCase
         $mu->setJob($newJob0);
         $result = new \DateTime('now');
         $this->assertEquals($result->format('d.m.Y'),$mu->getRegistrationDate()->format('d.m.Y'));
+    }
+
+    public function testAddMyJobHistory()
+    {
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+
+        $job1 = new Job();
+        $job1->setRate(1);
+
+        $mu->setJob($job1);
+        $muRegistration = new MemberHistory($mu);
+        $muRegistration->setDate(new \DateTime('2013-04-05'));
+
+        $mu->addMyHistory($muRegistration);
+        $this->assertEquals('01',$this->GenerateStrigFromRatesOfArray($mu->getMyHistory()));
+
+        $job2 = new Job();
+        $job3 = new Job();
+
+        $job2->setRate(2);
+        $job3->setRate(3);
+
+        $h2 = new MemberHistory($mu);
+        $h2->setDate(new \DateTime('2012-03-07'));
+        $h2->setJob($job2);
+
+        $mu->addMyJobHistory($h2);
+        $this->assertEquals('021',$this->GenerateStrigFromRatesOfArray($mu->getMyHistory()));
+    }
+
+    private function GenerateStrigFromRatesOfArray(Collection $history)
+    {
+        $result = '0';
+        foreach($history as $h)
+        {
+            $result .= $h->getJob()->getRate();
+        }
+
+        return $result;
     }
 }

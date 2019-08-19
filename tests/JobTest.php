@@ -2,6 +2,8 @@
 
 namespace App\Tests;
 
+use App\Entity\Job;
+use App\Entity\MemberUser;
 use PHPUnit\Framework\TestCase;
 
 class JobTest extends TestCase
@@ -10,4 +12,5 @@ class JobTest extends TestCase
     // {
     //     $this->assertTrue(true);
     // }
+    
 }
