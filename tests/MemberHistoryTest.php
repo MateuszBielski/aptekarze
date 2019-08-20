@@ -7,6 +7,7 @@ use App\Entity\MemberHistory;
 use App\Entity\MemberUser;
 use App\Entity\Job;
 use App\Entity\ArchiveJob;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 
 class MemberHistoryTest extends TestCase
@@ -87,34 +88,96 @@ class MemberHistoryTest extends TestCase
         $job1->setRate(1);
 
         $mu->setJob($job1);
-        $muRegistration = new MemberHistory($mu);
-        $muRegistration->setDate(new \DateTime('2013-04-05'));
-
+        $muRegistration = $this->GenerateFilledHistory('2013-04-05',1.0,$mu);
         $mu->addMyHistory($muRegistration);
-        $this->assertEquals('01',$this->GenerateStrigFromRatesOfArray($mu->getMyHistory()));
+        
+        
+        
+        $h2 = $this->GenerateFilledHistory('2012-03-07',2.0,$mu);
+        $h3 = $this->GenerateFilledHistory('2011-03-07',3.0,$mu);
 
-        $job2 = new Job();
-        $job3 = new Job();
-
-        $job2->setRate(2);
-        $job3->setRate(3);
-
-        $h2 = new MemberHistory($mu);
-        $h2->setDate(new \DateTime('2012-03-07'));
-        $h2->setJob($job2);
-
+        
+        
+        
+        //testowana funkcja dokonuje podmiany danych z sąsiadującym wpisem lub nie dokonuje podmiany, należy właśnie to sprawdzić.
         $mu->addMyJobHistory($h2);
-        $this->assertEquals('021',$this->GenerateStrigFromRatesOfArray($mu->getMyHistory()));
+        $this->assertEquals(2,$muRegistration->getJob()->getRate());
+        $this->assertEquals(2,$mu->getJob()->getRate());
+        $this->assertEquals(1,$h2->getJob()->getRate());
+
+        $mu->addMyJobHistory($h3);
+        $this->assertEquals(2,$muRegistration->getJob()->getRate());
+        $this->assertEquals(2,$mu->getJob()->getRate());
+        $this->assertEquals(3,$h2->getJob()->getRate());
+        $this->assertEquals(1,$h3->getJob()->getRate());
+        // $this->assertEquals('021',$this->GenerateStringFromRatesOfArray($mu->getMyHistory()));
+        $h4 = $this->GenerateFilledHistory('2013-06-07',4.0,$mu);
+        $mu->addMyJobHistory($h4);
+        $this->assertEquals(2,$h4->getJob()->getRate());
+        $this->assertEquals(4,$mu->getJob()->getRate());
     }
 
-    private function GenerateStrigFromRatesOfArray(Collection $history)
+    public function testRemoveMyJobHistory()
+    {
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+
+        $job1 = new Job();
+        $job1->setRate(1);
+
+        $mu->setJob($job1);
+        $muRegistration = $this->GenerateFilledHistory('2013-04-05',2.0,$mu);
+        $mu->addMyHistory($muRegistration);
+
+        $mu->getJob()->setRate(4);
+        
+        $h2 = $this->GenerateFilledHistory('2012-03-07',3.0,$mu);
+        $h3 = $this->GenerateFilledHistory('2011-03-07',1.0,$mu);
+        $h4 = $this->GenerateFilledHistory('2013-06-07',2.0,$mu);
+
+        //wprowadzamy bezpośrednio, bez użycia addMyJobHistory
+        $mu->addMyHistory($h2);
+        $mu->addMyHistory($h3);
+        $mu->addMyHistory($h4);
+
+        $this->assertEquals(2,$muRegistration->getJob()->getRate());
+        $this->assertEquals(4,$mu->getJob()->getRate());
+        $this->assertEquals(3,$h2->getJob()->getRate());
+        $this->assertEquals(1,$h3->getJob()->getRate());
+
+        $mu->removeMyJobHistory($h2);
+        $this->assertEquals(3,count($mu->getMyHistoryCached()));
+        $this->assertEquals('021',$this->GenerateStringFromRatesOfArray($mu->getMyHistory()));
+        $this->assertEquals(3,$h3->getJob()->getRate());
+        $this->assertEquals(3,$h4->getJob()->getRate());
+        
+    }
+
+
+
+    private function GenerateStringFromRatesOfArray(Collection $history)
     {
         $result = '0';
         foreach($history as $h)
         {
+            $result .= ' ';
             $result .= $h->getJob()->getRate();
+            $result .= $h->getDate()->format('Y.m.d');
         }
 
         return $result;
     }
+
+    private function GenerateFilledHistory(string $date, float $rate, MemberUser $mu)
+    {
+        
+        $mh = new MemberHistory($mu);
+        $job = new Job();
+        $job->setRate($rate);
+        $mh->setDate(new \DateTime($date));
+        $mh->setJob($job);
+        return $mh;
+    }
+
+
 }
