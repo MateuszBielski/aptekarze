@@ -179,7 +179,7 @@ class MemberHistory extends AbstrMember
         $other->CopyData($this);
         $this->CopyData($temporary);
         //dla pewności:
-        $this->date = $myDate;
+        //$this->date = $myDate;
         //other może być memberUserem i nie ma daty
         
     }

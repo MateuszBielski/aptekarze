@@ -144,13 +144,29 @@ class MemberHistoryTest extends TestCase
         $this->assertEquals(4,$mu->getJob()->getRate());
         $this->assertEquals(3,$h2->getJob()->getRate());
         $this->assertEquals(1,$h3->getJob()->getRate());
+        $this->assertEquals(4,count($mu->getMyHistoryCached()));
 
-        $mu->removeMyJobHistory($h2);
+        $result = $mu->removeMyJobHistory($h2);
         $this->assertEquals(3,count($mu->getMyHistoryCached()));
+        $this->assertEquals('021',$result);
         $this->assertEquals('021',$this->GenerateStringFromRatesOfArray($mu->getMyHistory()));
         $this->assertEquals(3,$h3->getJob()->getRate());
         $this->assertEquals(3,$h4->getJob()->getRate());
         
+    }
+    public function testIsRegisterDate()
+    {
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+
+        $job1 = new Job();
+        $job1->setRate(2);
+
+        $mu->setJob($job1);
+        $muRegistration = $this->GenerateFilledHistory('2013-04-05',2.0,$mu);
+        $mu->addMyHistory($muRegistration);
+        $mu->KindOfHistoryChanges();
+        $this->assertTrue($muRegistration->IsRegisterDate());
     }
 
 

@@ -653,7 +653,7 @@ class MemberUser extends AbstrMember implements UserInterface
         {
             if($h->changeJob || $h->IsRegisterDate()){
                 $jobHistory[] =  $h;
-                if($history->getId() == $h->getId()){
+                if($history->getId() == $h->getId() && $history->getDate() == $h->getDate()){
                     $indexToDelete = $i; 
                 }
                 $i++;
@@ -668,9 +668,9 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $history->ReplaceDataWith($p1);
         // $content .='po replace: '.$p1->getJob()->getRate();
-        
+        $this->myHistory = $jobHistory;
         $this->myHistory->removeElement($history);
-        $content = '';
+        $content = 'numbOfRecord '.$numbOfRecord.', indexToDelete '.$indexToDelete;
         foreach($this->myHistory as $h){
             $content .= ' '.$h->getDate()->format('d.m.Y').' '.$h->getJob()->getRate();
 
