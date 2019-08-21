@@ -105,6 +105,8 @@ class MemberHistoryTest extends TestCase
         $this->assertEquals(2,$mu->getJob()->getRate());
         $this->assertEquals(1,$h2->getJob()->getRate());
 
+        //funkcja poniższa nie zawiera sortowania po datach, 
+        //użycie tutaj, bez bazy, nie jest zależne od braku sortowania
         $mu->addMyJobHistory($h3);
         $this->assertEquals(2,$muRegistration->getJob()->getRate());
         $this->assertEquals(2,$mu->getJob()->getRate());

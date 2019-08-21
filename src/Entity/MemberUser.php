@@ -145,6 +145,31 @@ class MemberUser extends AbstrMember implements UserInterface
         if ($this->optimized) return $this->myHistoryCached;
         else return $this->myHistory;
     }
+
+    public function getMyHistoryCachedSorted()
+    {
+        // $iterator = $this->getMyHistoryCached()->getIterator();
+        // $iterator->uasort(function($aj, $bj) {
+        //     $date_a = $aj->getDate();
+        //     $date_b = $bj->getDate();
+        //     return ($date_a < $date_b) ? 1 : -1;
+        // });
+        // return new ArrayCollection(iterator_to_array($iterator));
+        
+        $history = array();
+        // foreach($this->getMyHistoryCached() as $h)
+        // {
+        //     $history[] = $h;
+        // }
+        uasort($history,function($a, $b) {
+            if ($a->getDate() == $b->getDate()) {
+                return 0;
+            }
+            return ($a->getDate() < $b->getDate()) ? 1 : -1;
+        });
+
+        return $history;
+    }
     public function getMyJobHistory(): array
     {
         if (!$this->historyChangesChecked) $this->KindOfHistoryChanges();
@@ -275,6 +300,8 @@ class MemberUser extends AbstrMember implements UserInterface
         });
         return new ArrayCollection(iterator_to_array($iterator));
     }
+
+
 
     /* metoda obliczająca wszystkie należne składki od daty zarejestrowania + kwota(bilans - bo może być na minusie) początkowa */
     public function CalculateAllDueContributionOn(\DateTimeInterface $day)
@@ -649,10 +676,12 @@ class MemberUser extends AbstrMember implements UserInterface
         $indexToDelete = -1;
         $i = 0;
         
-        foreach($this->myHistory as $h)
+        //w testach, bez użycia bazy danych historia musi być jawnie posortowana
+        foreach($this->getMyHistoryCachedSorted() as $h)
         {
             if($h->changeJob || $h->IsRegisterDate()){
                 $jobHistory[] =  $h;
+                //w testach history nie mają unikalnego id
                 if($history->getId() == $h->getId() && $history->getDate() == $h->getDate()){
                     $indexToDelete = $i; 
                 }
@@ -668,13 +697,13 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $history->ReplaceDataWith($p1);
         // $content .='po replace: '.$p1->getJob()->getRate();
-        $this->myHistory = $jobHistory;
-        $this->myHistory->removeElement($history);
+        // $this->myHistory = $jobHistory;
         $content = 'numbOfRecord '.$numbOfRecord.', indexToDelete '.$indexToDelete;
         foreach($this->myHistory as $h){
             $content .= ' '.$h->getDate()->format('d.m.Y').' '.$h->getJob()->getRate();
-
+            
         }
+        $this->myHistory->removeElement($history);
         
         return $content;
     }
