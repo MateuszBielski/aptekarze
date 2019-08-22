@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Repository\MemberUserRepository;
 use App\Repository\MemberHistoryRepository;
-use App\Repository\JobRepository;
+use App\Repository\ActiveJobRepository;
 use App\Repository\ContributionRepository;
 // use Symfony\Component\Serializer\Encoder\CsvEncoder;
 // use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -23,7 +23,7 @@ class MemberUserOptimizer
     private $contrList;
 
     
-    public function __construct(MemberUserRepository $mur, MemberHistoryRepository $mhr, JobRepository $jr, ContributionRepository $cr)
+    public function __construct(MemberUserRepository $mur, MemberHistoryRepository $mhr, ActiveJobRepository $jr, ContributionRepository $cr)
     {
         $this->memUsRep = $mur;
         $this->memHistRep = $mhr;
@@ -59,6 +59,7 @@ class MemberUserOptimizer
         {
             $jobId = $us->getJob()->getId();
             $us->setMyJobRateCached($this->jobList[$jobId]->getRate());
+            // $us->setMyJobRateCached(21);
             $us->setOptimizedTrue();
         }
         foreach($this->historyList as $h)

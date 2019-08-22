@@ -150,7 +150,11 @@ class MemberUser extends AbstrMember implements UserInterface
     public function SortMyHistoryCached()
     {
         if ($this->myHistoryCachedSorted) return;
-        $history = $this->getMyHistoryCached()->toArray();
+        $history = $this->getMyHistoryCached();
+        if(!is_array($history)){
+            $history = $history->toArray();
+        }
+
         uasort($history,function($a, $b) {
             if ($a->getDate() == $b->getDate()) {
                 return 0;
@@ -163,13 +167,19 @@ class MemberUser extends AbstrMember implements UserInterface
         {
             $historyCollection[] = $h;
         }
-        $this->myHistoryCached = $historyCollection;
+        if($this->optimized){
+            $this->myHistoryCached = $historyCollection;
+        }else{
+            $this->myHistory = $historyCollection;
+        }
+        
         $this->myHistoryCachedSorted = true;
     }
     public function getMyHistoryCachedSorted()
     {
         if (!$this->myHistoryCachedSorted) $this->SortMyHistoryCached();
-        return $this->myHistoryCached;
+        
+        return $this->optimized ? $this->myHistoryCached : $this->myHistory;
     }
     public function getMyJobHistory(): array
     {
