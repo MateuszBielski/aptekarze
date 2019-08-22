@@ -141,17 +141,20 @@ class MemberHistoryTest extends TestCase
         $mu->addMyHistory($h2);
         $mu->addMyHistory($h3);
         $mu->addMyHistory($h4);
-
+        $mu->KindOfHistoryChanges();
+        
         $this->assertEquals(2,$muRegistration->getJob()->getRate());
         $this->assertEquals(4,$mu->getJob()->getRate());
         $this->assertEquals(3,$h2->getJob()->getRate());
         $this->assertEquals(1,$h3->getJob()->getRate());
         $this->assertEquals(4,count($mu->getMyHistoryCached()));
+        $this->assertEquals(4,$muRegistration->getInfoChangeComparingToNext());
+        $this->assertTrue($muRegistration->IsRegisterDate());
 
-        $result = $mu->removeMyJobHistory($h2);
+        $result = $mu->removeMyJobHistory($h2);//result <- informacje, które były potrzebne na etapie szukania błędów
         $this->assertEquals(3,count($mu->getMyHistoryCached()));
-        $this->assertEquals('021',$result);
-        $this->assertEquals('021',$this->GenerateStringFromRatesOfArray($mu->getMyHistory()));
+        // $this->assertEquals('021',$result);
+        $this->assertEquals('021',$this->GenerateStringFromRatesAndDates($mu->getMyHistory()));
         $this->assertEquals(3,$h3->getJob()->getRate());
         $this->assertEquals(3,$h4->getJob()->getRate());
         
@@ -171,6 +174,33 @@ class MemberHistoryTest extends TestCase
         $this->assertTrue($muRegistration->IsRegisterDate());
     }
 
+    public function testSortingMyHistory()
+    {
+        
+        $mu = new MemberUser();
+        $mu->CreateDummyData();
+
+        $job1 = new Job();
+        $job1->setRate(1);
+
+        $mu->setJob($job1);
+        $muRegistration = $this->GenerateFilledHistory('2013-04-05',3.0,$mu);
+        $mu->addMyHistory($muRegistration);
+
+        $mu->getJob()->setRate(4);
+        
+        $h2 = $this->GenerateFilledHistory('2012-03-07',2.0,$mu);
+        $h3 = $this->GenerateFilledHistory('2011-03-07',1.0,$mu);
+        $h4 = $this->GenerateFilledHistory('2013-06-07',4.0,$mu);
+
+        //wprowadzamy bezpośrednio, bez użycia addMyJobHistory
+        $mu->addMyHistory($h2);
+        $mu->addMyHistory($h3);
+        $mu->addMyHistory($h4);
+
+        $this->assertEquals('01234',$this->GenerateStringFromRatesOfArray($mu->getMyHistoryCachedSorted()));
+    }
+
 
 
     private function GenerateStringFromRatesOfArray(Collection $history)
@@ -178,8 +208,23 @@ class MemberHistoryTest extends TestCase
         $result = '0';
         foreach($history as $h)
         {
+            // $result .= ' ';
+            $result .= $h->getJob()->getRate();
+            // $result .= ',';
+            // $result .= $h->getDate()->format('Y.m.d');
+        }
+
+        return $result;
+    }
+
+    private function GenerateStringFromRatesAndDates(Collection $history)
+    {
+        $result = '0';
+        foreach($history as $h)
+        {
             $result .= ' ';
             $result .= $h->getJob()->getRate();
+            $result .= ',';
             $result .= $h->getDate()->format('Y.m.d');
         }
 

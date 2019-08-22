@@ -50,6 +50,7 @@ class MemberUser extends AbstrMember implements UserInterface
 
     private $historyChangesChecked = false;
     private $archiveRatesAdded = false;
+    private $myHistoryCachedSorted = false;
     private $myHistoryCached = array();
     private $contributionsCached = array();
     private $stringCurrentAccount = 'nie obliczone';
@@ -146,29 +147,29 @@ class MemberUser extends AbstrMember implements UserInterface
         else return $this->myHistory;
     }
 
-    public function getMyHistoryCachedSorted()
+    public function SortMyHistoryCached()
     {
-        // $iterator = $this->getMyHistoryCached()->getIterator();
-        // $iterator->uasort(function($aj, $bj) {
-        //     $date_a = $aj->getDate();
-        //     $date_b = $bj->getDate();
-        //     return ($date_a < $date_b) ? 1 : -1;
-        // });
-        // return new ArrayCollection(iterator_to_array($iterator));
-        
-        $history = array();
-        // foreach($this->getMyHistoryCached() as $h)
-        // {
-        //     $history[] = $h;
-        // }
+        if ($this->myHistoryCachedSorted) return;
+        $history = $this->getMyHistoryCached()->toArray();
         uasort($history,function($a, $b) {
             if ($a->getDate() == $b->getDate()) {
                 return 0;
             }
-            return ($a->getDate() < $b->getDate()) ? 1 : -1;
+            return ($a->getDate() < $b->getDate()) ? -1 : 1;
         });
 
-        return $history;
+        $historyCollection = new ArrayCollection();
+        foreach($history as $h)
+        {
+            $historyCollection[] = $h;
+        }
+        $this->myHistoryCached = $historyCollection;
+        $this->myHistoryCachedSorted = true;
+    }
+    public function getMyHistoryCachedSorted()
+    {
+        if (!$this->myHistoryCachedSorted) $this->SortMyHistoryCached();
+        return $this->myHistoryCached;
     }
     public function getMyJobHistory(): array
     {
@@ -263,7 +264,7 @@ class MemberUser extends AbstrMember implements UserInterface
     {
         //co się zmieniło względem poprzedniego wpisu
         // czy pierwszy wpis dotyczy rejestracji
-        
+        $this->SortMyHistoryCached();
         $numbOfRecord = count($this->getMyHistoryCached());
         if (!$numbOfRecord) return;
         
@@ -677,7 +678,7 @@ class MemberUser extends AbstrMember implements UserInterface
         $i = 0;
         
         //w testach, bez użycia bazy danych historia musi być jawnie posortowana
-        foreach($this->getMyHistoryCachedSorted() as $h)
+        foreach($this->getMyHistoryCached() as $h)
         {
             if($h->changeJob || $h->IsRegisterDate()){
                 $jobHistory[] =  $h;
@@ -697,7 +698,7 @@ class MemberUser extends AbstrMember implements UserInterface
         }
         $history->ReplaceDataWith($p1);
         // $content .='po replace: '.$p1->getJob()->getRate();
-        // $this->myHistory = $jobHistory;
+        $this->myHistory = $jobHistory;
         $content = 'numbOfRecord '.$numbOfRecord.', indexToDelete '.$indexToDelete;
         foreach($this->myHistory as $h){
             $content .= ' '.$h->getDate()->format('d.m.Y').' '.$h->getJob()->getRate();
