@@ -4,12 +4,8 @@ namespace App\Service;
 
 use App\Repository\MemberUserRepository;
 use App\Repository\MemberHistoryRepository;
-use App\Repository\ActiveJobRepository;
+use App\Repository\JobRepository;
 use App\Repository\ContributionRepository;
-// use Symfony\Component\Serializer\Encoder\CsvEncoder;
-// use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-// use Symfony\Component\Serializer\Serializer;
-// use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 
 class MemberUserOptimizer
 {
@@ -23,7 +19,7 @@ class MemberUserOptimizer
     private $contrList;
 
     
-    public function __construct(MemberUserRepository $mur, MemberHistoryRepository $mhr, ActiveJobRepository $jr, ContributionRepository $cr)
+    public function __construct(MemberUserRepository $mur, MemberHistoryRepository $mhr, JobRepository $jr, ContributionRepository $cr)
     {
         $this->memUsRep = $mur;
         $this->memHistRep = $mhr;
