@@ -8,10 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class JobTest extends TestCase
 {
-    // public function testSomething()
-    // {
-    //     $this->assertTrue(true);
-    // }
     public function testInsertJobAsChange()
     {
         $mu = new MemberUser();
@@ -25,5 +21,5 @@ class JobTest extends TestCase
         // $this->assertEquals(1,count($mu->getMyHistory()));
         $this->assertEquals(12,$mu->getMyHistory()->last()->getJob()->getRate());
     }
-    
+   
 }

@@ -100,6 +100,7 @@ class MemberUserControllerTest extends WebTestCase
         // $this->assertResponseIsSuccessful();<-**********odblokować gdy zadziała usuwanie
 
         $user->createTempUsername();
+        //poniższe działa dopiero po wywołaniu $client = static::createClient();
         $container = self::$container;
         $memRep = $container->get('App\Repository\MemberUserRepository');
         $mu = $memRep->findOneBy(['username' => $user->getUsername(),]);
