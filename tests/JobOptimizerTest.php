@@ -11,22 +11,29 @@ use App\Repository\MemberUserRepository;
 
 class JobOptimizerTest extends WebTestCase
 {
-    public function testReplaceOldByNewInAdequateUsers()
-     {
-        $members = array();
-        $jobToChange = new Job();
-        $jobToChange->setRate(11.2);
-        $min = 0;
-        $max = 10;
-        for($i = $min ; $i <= $max ; $i++)
+    private $members;
+    private $jobToChange;
+    private $min = 0;
+    private $max = 10;
+    
+    protected function setUp()
+    {
+        $this->members = array();
+        $this->jobToChange = new Job();
+        $this->jobToChange->setRate(11.2);
+        for($i = $this->min ; $i <= $this->max ; $i++)
         {
             $mu = new MemberUser();
             $mu->CreateDummyData();
-            $mu->setJob($jobToChange);
-            $members[$i] = $mu;
+            $mu->setJob($this->jobToChange);
+            $this->members[$i] = $mu;
         }
-        $randomIndex = rand($min,$max);
-        $this->assertEquals(11.2,$members[$randomIndex]->getJob()->getRate());
+    }
+    public function testReplaceOldByNewInAdequateUsers()
+    {
+        
+        $randomIndex = rand($this->min,$this->max);
+        $this->assertEquals(11.2,$this->members[$randomIndex]->getJob()->getRate());
 
         $jobWithNewRate = new Job();
         $jobWithNewRate->setRate(37.3);
@@ -34,12 +41,12 @@ class JobOptimizerTest extends WebTestCase
         $memUsRepMock = $this->createMock(MemberUserRepository::class);
         $memUsRepMock->expects($this->any())
             ->method('findBy')
-            ->willReturn($members);
+            ->willReturn($this->members);
 
         $jobOptimizer = new JobOptimizer($memUsRepMock);
-        $jobOptimizer->ReplaceOldByNewInAdequateUsers($jobToChange,$jobWithNewRate);
+        $jobOptimizer->ReplaceOldByNewInAdequateUsers($this->jobToChange,$jobWithNewRate);
 
-        $randomMember = $members[rand($min,$max)];
+        $randomMember = $this->members[rand($this->min,$this->max)];
         $this->assertEquals(37.3,$randomMember->getJob()->getRate());
-     }
+    }
 }

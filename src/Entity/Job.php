@@ -121,7 +121,7 @@ class Job
         return $this;
     }
 
-    public function IsAvaliableCancelUpdateRate(): bool
+    public function IsAvaliableCancelUpdateRate(array $JobsActiveAndUnActive): bool
     {
         //musi być jedno stanowisko, które ma moje id w kolumnie replacedBy
         //wśród uzytkowników wyszukać styki historii stare job_id/nowe_id muszą to być ostatnie styki, tzn później nie może być już zmiany

@@ -192,9 +192,10 @@ class JobController extends AbstractController
     /**
      * @Route("/{id}/cancelUpdateRate", name="job_cancel_update_rate", methods={"GET", "POST"})
      */
-    public function CancelUpdateRate(Job $job)
+    public function CancelUpdateRate(Job $job, JobRepository $jobRep)
     {
-        if(!$job->IsAvaliableCancelUpdateRate())return $this->redirectToRoute('job_index');
+        $jobsActiveAndUnactive = $jobRep->findAll();
+        if(!$job->IsAvaliableCancelUpdateRate($jobsActiveAndUnactive))return $this->redirectToRoute('job_index');
         //znaleźć wszystkie wpisy historyczne, gdzie jako następny występuje wycofywany job
         //zrobić usunięcie ich, powinna już być odpowiednia funkcja
         //znaleźć stary job
