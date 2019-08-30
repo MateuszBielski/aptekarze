@@ -32,10 +32,15 @@ class JobTest extends TestCase
 
         //testowanie:
         //przygotować job na którym następnie dokonać update, a także użytkowników, którzy mają ten Job
-        $jobsActiveAndReplaced = $this->createJobSetAfterUpdate();
-        $this->assertEquals(3,$jobsActiveAndReplaced[3]->getId());
-        $this->assertEquals(24.5,$jobsActiveAndReplaced[3]->getRate());
-        $this->assertTrue($jobsActiveAndReplaced[3]->IsAvaliableCancelUpdateRate($jobsActiveAndReplaced));
+        $jobs = array();
+        for($i = 0 ; $i < 5 ; $i++){
+            $jobs[$i] = new Job();
+        }
+        $replacedJob = $jobs[2];
+        $updatedJob = new Job();
+        $replacedJob->setReplacedBy($updatedJob);
+        $jobs[] = $updatedJob;
+        $this->assertTrue($updatedJob->IsAvaliableCancelUpdateRate($jobs));
    }
 
    protected function createMembersWithJob(Job $job, int $number)
@@ -50,19 +55,10 @@ class JobTest extends TestCase
        }
        return $members;
    }
-   protected function createJobSetAfterUpdate()
+   protected function createJobSetAfterUpdate(Job $updatedJob)
    {
-       $jobs = array();
-       for($i = 1 ; $i < 5 ; $i++){
-            $job = $this->createMock(Job::class);
-            $job->expects($this->any())
-                ->method('getId')
-                ->willReturn($i);
-            $job->expects($this->any())
-            ->method('getRate')
-            ->willReturn(24.5);
-            $jobs[$i] = $job;
-       }
+       
+       
        return $jobs;
    }
 }
