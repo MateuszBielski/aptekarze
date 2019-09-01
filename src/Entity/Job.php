@@ -131,7 +131,7 @@ class Job
         //Nowa klasa, która w konstruktorze pobierze Repo History i MemUs
         //MemHisRep::metoda, która zwróci wpisy tylko z tym jobem
         //MemUsRep::metoda zwróci użtkowników z zakresu wynikającego z poprzedniej linii
-        //propozycja klasy RetrieveOldNewRateJunctions
+        //propozycja klasy RetrieveOldNewRateJunctions 
         $result = true;
 
         $num = 0;

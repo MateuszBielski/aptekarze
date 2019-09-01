@@ -63,4 +63,12 @@ class MemberHistoryRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
     }
+    public function findWithThisJob(Job $job)
+    {
+        return $this->createQueryBuilder('o')
+        ->where("o.job = :job)")
+        ->setParameter('job', $job)
+        ->getQuery()
+        ->getResult();
+    }
 }

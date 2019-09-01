@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Job;
+use App\Entity\RetrieveOldNewRateJunctions;
 use App\Form\JobType;
 use App\Repository\JobRepository;
 use App\Repository\ActiveJobRepository;
@@ -192,15 +193,20 @@ class JobController extends AbstractController
     /**
      * @Route("/{id}/cancelUpdateRate", name="job_cancel_update_rate", methods={"GET", "POST"})
      */
-    public function CancelUpdateRate(Job $job, JobRepository $jobRep)
+    public function CancelUpdateRate(Job $job, JobRepository $jobRep, RetrieveOldNewRateJunctions $retrJun)
     {
         $jobsActiveAndUnactive = $jobRep->findAll();
-        if(!$job->IsAvaliableCancelUpdateRate($jobsActiveAndUnactive))return $this->redirectToRoute('job_index');
+
+        if(!$job->IsAvaliableCancelUpdateRate($jobsActiveAndUnactive,$retrJun))return $this->redirectToRoute('job_index');
         //znaleźć wszystkie wpisy historyczne, gdzie jako następny występuje wycofywany job
         //zrobić usunięcie ich, powinna już być odpowiednia funkcja
         //znaleźć stary job
         //usunąć interesujący job,
         //a w starym usunąć replacedBy
+
+        //może przenieść IsAvaliableCancelUpdateRate do klasy jobOptimizer lub podobnej
+
+
     }
 
     /**
