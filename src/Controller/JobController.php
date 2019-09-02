@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Job;
-use App\Entity\RetrieveOldNewRateJunctions;
+use App\Service\RetrieveOldNewRateJunctions;
 use App\Form\JobType;
 use App\Repository\JobRepository;
 use App\Repository\ActiveJobRepository;
@@ -193,11 +193,12 @@ class JobController extends AbstractController
     /**
      * @Route("/{id}/cancelUpdateRate", name="job_cancel_update_rate", methods={"GET", "POST"})
      */
-    public function CancelUpdateRate(Job $job, JobRepository $jobRep, RetrieveOldNewRateJunctions $retrJun)
+    public function CancelUpdateRate(Job $job, RetrieveOldNewRateJunctions $retrJun)
     {
-        $jobsActiveAndUnactive = $jobRep->findAll();
-
-        if(!$job->IsAvaliableCancelUpdateRate($jobsActiveAndUnactive,$retrJun))return $this->redirectToRoute('job_index');
+        // if(!$retrJun->AfterProcess_IsAvaliableCancelUpdateRateFor($job)) return $this->redirectToRoute('job_index');
+        $memberHistoriesToDelete = $retrJun->getHistoryRecordsWithJobAsNext($job);
+        // $restoredJob = $retrJun->getJobReplacedByCanceled();
+        // $restoredJob->setReplacedBy(null);
         //znaleźć wszystkie wpisy historyczne, gdzie jako następny występuje wycofywany job
         //zrobić usunięcie ich, powinna już być odpowiednia funkcja
         //znaleźć stary job
@@ -205,10 +206,14 @@ class JobController extends AbstractController
         //a w starym usunąć replacedBy
 
         //może przenieść IsAvaliableCancelUpdateRate do klasy jobOptimizer lub podobnej
-
-
+        // return $this->render('showTemporaryVariables.html.twig', [
+        //     'variables' => $memberHistoriesToDelete
+        // ]);
+        return $this->render('member_user/index.html.twig', [
+            'member_users' => $memberHistoriesToDelete,
+        ]);
     }
-
+    
     /**
      * @Route("/{id}", name="job_delete", methods={"DELETE"})
      * @Security("is_granted('ROLE_ADMIN')")

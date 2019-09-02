@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\MemberHistory;
+use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -66,7 +67,7 @@ class MemberHistoryRepository extends ServiceEntityRepository
     public function findWithThisJob(Job $job)
     {
         return $this->createQueryBuilder('o')
-        ->where("o.job = :job)")
+        ->where("o.job = :job")
         ->setParameter('job', $job)
         ->getQuery()
         ->getResult();

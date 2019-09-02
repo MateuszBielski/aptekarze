@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\MemberUser;
+use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -86,5 +87,16 @@ class MemberUserRepository extends ServiceEntityRepository
             ->orderBy('o.surname', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findWithJobInRange(Job $job, array $ids_range)
+    {
+        return $this->createQueryBuilder('mu')
+        ->where("mu.id IN(:usersIds)")
+        ->andWhere("mu.job = :jobPar")
+        ->setParameter('usersIds', $ids_range)
+        ->setParameter('jobPar', $job)
+        ->getQuery()
+        ->getResult();
     }
 }

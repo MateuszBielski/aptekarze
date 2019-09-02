@@ -121,26 +121,4 @@ class Job
         return $this;
     }
 
-    public function IsAvaliableCancelUpdateRate(array $jobsActiveAndUnActive)//: bool
-    {
-        //musi być jedno stanowisko, które ma moje id w kolumnie replacedBy
-        //wśród uzytkowników wyszukać styki historii stare job_id/nowe_id muszą to być ostatnie styki, tzn później nie może być już zmiany
-        //lub wszystkie historyczne z nową stawką Job muszą mieć jednkową datę, nie ma sensu cofać zmiany stawki, jeśli ktoś już ma celowo wybraną później,
-        //zapewne omyłkowa zmiana stawki cofana jest tego samego dnia
-
-        //Nowa klasa, która w konstruktorze pobierze Repo History i MemUs
-        //MemHisRep::metoda, która zwróci wpisy tylko z tym jobem
-        //MemUsRep::metoda zwróci użtkowników z zakresu wynikającego z poprzedniej linii
-        //propozycja klasy RetrieveOldNewRateJunctions 
-        $result = true;
-
-        $num = 0;
-        foreach($jobsActiveAndUnActive as $job)
-        {
-            if ($job->getReplacedBy() == null) continue;
-            if ($job->getReplacedBy() == $this) $num++;
-        }
-        if($num != 1)return false;
-        return $result;
-    }
 }

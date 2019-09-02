@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pokaż zmienne{% endblock %}
+
+{% block body %}
+    <h3>Pokaż zmienne</h3>
+{% for var in variables %}
+    <p>{{ var }}</p>
+{% endfor %}
+{% endblock %}
+
+
