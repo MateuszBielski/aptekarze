@@ -58,6 +58,10 @@ class JobTest extends TestCase
         //przygotować job na którym następnie dokonać update, a także użytkowników, którzy mają ten Job    
     // $this->assertTrue($retrieveRateJunctions->IsAvaliableCancelUpdateRateFor($updatedJob));
    }
+   public function testRetrieveJunctions()
+   {
+       
+   }
    
 
    protected function createMembersWithJob(Job $job, int $number)

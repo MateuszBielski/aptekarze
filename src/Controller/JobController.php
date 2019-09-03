@@ -193,10 +193,12 @@ class JobController extends AbstractController
     /**
      * @Route("/{id}/cancelUpdateRate", name="job_cancel_update_rate", methods={"GET", "POST"})
      */
-    public function CancelUpdateRate(Job $job, RetrieveOldNewRateJunctions $retrJun)
+    public function CancelUpdateRate(Job $jobCanceled, RetrieveOldNewRateJunctions $retrJun)
     {
         // if(!$retrJun->AfterProcess_IsAvaliableCancelUpdateRateFor($job)) return $this->redirectToRoute('job_index');
-        $memberHistoriesToDelete = $retrJun->getHistoryRecordsWithJobAsNext($job);
+        $jobToRestore = $retrJun->GetUniqueReplacedOldJobFor($jobCanceled);
+        $retrJun->RetrieveJunctions($jobToRestore, $jobCanceled);
+        $memberHistoriesToDelete = $retrJun->getHistoryRecordsWithJobAsNextAndLast();
         // $restoredJob = $retrJun->getJobReplacedByCanceled();
         // $restoredJob->setReplacedBy(null);
         //znaleźć wszystkie wpisy historyczne, gdzie jako następny występuje wycofywany job
@@ -209,8 +211,11 @@ class JobController extends AbstractController
         // return $this->render('showTemporaryVariables.html.twig', [
         //     'variables' => $memberHistoriesToDelete
         // ]);
-        return $this->render('member_user/index.html.twig', [
-            'member_users' => $memberHistoriesToDelete,
+        // return $this->render('member_user/index.html.twig', [
+        //     'member_users' => $memberHistoriesToDelete,
+        // ]);
+        return $this->render('member_history/index.html.twig', [
+            'member_histories' => $memberHistoriesToDelete,
         ]);
     }
     
