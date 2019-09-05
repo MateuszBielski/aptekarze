@@ -93,7 +93,7 @@ class RetrieveOldNewRateJunctions
     {
         return $this->junctionsOldNew['last'];
     }
-    private function CompleteHistoryFor(array $members, array $member_ids )
+    public function CompleteHistoryFor(array $members, array $member_ids )
     {
         $historyToDistribute = $this->memHistRep->findByUserIdIn($member_ids);
         foreach($historyToDistribute as $h)

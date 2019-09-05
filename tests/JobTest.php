@@ -4,6 +4,8 @@ namespace App\Tests;
 
 use App\Entity\Job;
 use App\Entity\MemberUser;
+use App\Entity\MemberUserToTest;
+use App\Entity\MemberHistory;
 use App\Service\RetrieveOldNewRateJunctions;
 use App\Repository\MemberUserRepository;
 use App\Repository\JobRepository;
@@ -46,6 +48,44 @@ class JobTest extends TestCase
         $this->assertEquals($replacedJob,$retrieveRateJunctions->GetUniqueReplacedOldJobFor($updatedJob));
    }
 
+   public function testCompleteHistoryFor()
+   {
+        $memNum = 324;
+        $members = $this->CreateMembersToTest($memNum);
+        $numberHistory = 563;
+        $historyToDistribute = $this->CreateRandomHistoryFor($members,$numberHistory,"Jan 01 2012","Nov 01 2016");
+        $mhRep = $this->createMock(MemberHistoryRepository::class);
+        $mhRep->expects($this->any())
+        ->method('findByUserIdIn')
+        ->willReturn($historyToDistribute);
+        
+        $muRep = $this->createMock(MemberUserRepository::class);
+        $jobRep = $this->createMock(JobRepository::class);
+        
+        $retrieveRateJunctions = new RetrieveOldNewRateJunctions($muRep,$mhRep,$jobRep);
+        
+        $memberIndex = rand(0,$memNum - 1);
+        $randomMember = $members[$memberIndex];
+        $memberHistory = $randomMember->getMyHistoryCached();
+        $this->assertEquals(0,count($memberHistory));
+
+        $retrieveRateJunctions->CompleteHistoryFor($members,range(0,$memNum - 1));
+        
+        $historyAmount = 0;
+        while(!$historyAmount)
+        {
+            $randomMember = $members[$memberIndex];
+            $memberHistory = $randomMember->getMyHistoryCached();
+            $historyAmount = count($memberHistory);
+            $memberIndex = ($memberIndex < $memNum - 1) ? $memberIndex + 1 : $memberIndex - 1;
+        }
+        
+        $randomHistory = $memberHistory[rand(0,count($memberHistory) - 1)];
+
+        $this->assertEquals($randomMember->getId(),$randomHistory->getMyUser()->getId());
+        $this->assertEquals($randomMember,$randomHistory->getMyUser());
+   }
+
    public function testIsAvaliableCancelUpdateRate()
    {
         //musi być jedno stanowisko, które ma moje id w kolumnie replacedBy
@@ -60,7 +100,34 @@ class JobTest extends TestCase
    }
    public function testRetrieveJunctions()
    {
-       
+        // $numHistory = 10;
+        // $newJob = new Job();
+        // $newJob->setRate(32.1);
+        // $oldJob = new Job();
+        // $oldJob->setRate(13.5);
+        // $oldJob->setReplacedBy($newJob);
+
+        // $user_1 = 
+        // for($i = 0 ; $i < $numHistory ; $i++)
+        // {
+        //     $memberHistory = new MemberHistory()
+        //     $historyWithReplacedJob[] = $memberHistory;
+        // }
+
+        // //MemberHistoryRepositoryMock
+        // $mhRep = $this->createMock(MemberHistoryRepository::class);
+        // $mhRep->expects($this->any()
+        //     ->method('findWithThisJob')
+        //     ->willReturn($historyWithReplacedJob);
+
+        // //  = $this->memHistRep->findWithThisJob($replacedJob);
+        // $muRep = $this->createMock(MemberUserRepository::class);
+        // $jobRep = $this->createMock(JobRepository::class);
+        // $retrieveRateJunctions = new RetrieveOldNewRateJunctions($muRep,$mhRep,$jobRep);    
+        // $retrieveRateJunctions->RetrieveJunctions(Job $oldJob,Job $newJob);
+        // $historyRecords = $retrieveRateJunctions->getHistoryRecordsWithJobAsNextAndLast();
+        // $result = $historyRecords[rand(0,$num)]->getJob()->getRate();
+        // $this->assertEquals();
    }
    
 
@@ -75,6 +142,44 @@ class JobTest extends TestCase
            $members[$i] = $mu;
        }
        return $members;
+   }
+   protected function CreateMembersToTest(int $number)
+   {
+       $members = array();
+       for($i = 0 ; $i < $number ; $i++)
+       {
+           $mu = new MemberUserToTest();
+           $mu->CreateDummyData();
+           $mu->setId($i);
+        //    $mu->setJob($job);
+           $members[$i] = $mu;
+       }
+       return $members;
+   }
+   protected function CreateRandomHistoryFor(array $members,int $numberHistory, string $firstDate, string $lastDate)
+   {
+        $histories = array();
+        $numberMembers = count($members);
+        for($i = 0 ; $i < $numberHistory ; $i++){
+            $memberRandIndex = rand(0,$numberMembers - 1);
+            $mu = $members[$memberRandIndex];
+            $h = new MemberHistory($mu);
+            
+            $timestamp = rand( strtotime($firstDate), strtotime($lastDate) );
+            // $h->setDate(strtotime($firstDate));
+            $h->setDate(new \DateTime(date("d.m.Y", $timestamp )));
+            $histories[] = $h;
+        }
+        return $histories;
+   }
+
+   protected function AmountNotEmptyHistories(array $members)
+   {
+       $result = 0;
+       foreach ($members as $mu) {
+           if( count( $mu->getMyHistoryCached() ) ) $result++;
+       }
+       return $result;
    }
    protected function createJobSetAfterUpdate(Job $updatedJob)
    {
