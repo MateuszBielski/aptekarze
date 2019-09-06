@@ -57,7 +57,7 @@ class JobTest extends TestCase
         $mhRep = $this->createMock(MemberHistoryRepository::class);
         $mhRep->expects($this->any())
         ->method('findByUserIdIn')
-        ->willReturn($historyToDistribute);
+        ->willReturn($HistoryVariousJob);
         
         $muRep = $this->createMock(MemberUserRepository::class);
         $jobRep = $this->createMock(JobRepository::class);
@@ -100,34 +100,54 @@ class JobTest extends TestCase
    }
    public function testRetrieveJunctions()
    {
-        // $numHistory = 10;
-        // $newJob = new Job();
-        // $newJob->setRate(32.1);
-        // $oldJob = new Job();
-        // $oldJob->setRate(13.5);
-        // $oldJob->setReplacedBy($newJob);
+    // RetrieveJunctions(Job $replacedJob,Job $canceledJob)
+    // {
+    //     $historyWithReplacedJob = $this->memHistRep->findWithThisJob($replacedJob);
+    //     $memberIds_OfHistoryReplacedJob = array();
+    //     foreach($historyWithReplacedJob as $rec)
+    //     {
+    //         $memberIds_OfHistoryReplacedJob[] = $rec->getMyUser()->getId();
+    //     }
+    //     $memberIds_OfHistoryReplacedJob = array_unique($memberIds_OfHistoryReplacedJob);
+    //     $memberWithReplacedInHistoryAndCanceledAsLast = $this->memUsRep->findWithJobInRangeIndexedById($canceledJob, $memberIds_OfHistoryReplacedJob);
+    //     $this->CompleteHistoryFor($memberWithReplacedInHistoryAndCanceledAsLast, $memberIds_OfHistoryReplacedJob);
+        
+    //     foreach($memberWithReplacedInHistoryAndCanceledAsLast as $mem){
+    //         $history = $mem->getMyHistoryCached();
+    //         $historyCount = count($history);
+    //         for($i = 0 ; $i < $historyCount-1 ; $i++){
+    //             if($history[$i]->getJob() == $replacedJob && 
+    //             $history[$i + 1]->getJob() == $canceledJob)
+    //             $this->junctionsOldNew['not last'][] = $history[$i];
+    //         }
 
-        // $user_1 = 
-        // for($i = 0 ; $i < $numHistory ; $i++)
-        // {
-        //     $memberHistory = new MemberHistory()
-        //     $historyWithReplacedJob[] = $memberHistory;
-        // }
+    //         $lastHistory = $history[$historyCount - 1];
+    //         if($lastHistory->getJob() == $replacedJob && $mem->getJob() == $canceledJob){
+    //             $this->junctionsOldNew['last'][] = $lastHistory;
+    //         }
+    //     }
+        $replacedJob = new Job();
+        $replacedJob->setRate(22.3);
+        $canceledJob = new Job();
+        $canceledJob->setRate(24.3);
+        $otherJobs = createJobWithRandomRate($amount = 7,$minRate = 12,$maxRate = 20);
+        //dodać oddzielne Joby do zbioru?
 
-        // //MemberHistoryRepositoryMock
-        // $mhRep = $this->createMock(MemberHistoryRepository::class);
-        // $mhRep->expects($this->any()
-        //     ->method('findWithThisJob')
-        //     ->willReturn($historyWithReplacedJob);
-
-        // //  = $this->memHistRep->findWithThisJob($replacedJob);
-        // $muRep = $this->createMock(MemberUserRepository::class);
-        // $jobRep = $this->createMock(JobRepository::class);
-        // $retrieveRateJunctions = new RetrieveOldNewRateJunctions($muRep,$mhRep,$jobRep);    
-        // $retrieveRateJunctions->RetrieveJunctions(Job $oldJob,Job $newJob);
-        // $historyRecords = $retrieveRateJunctions->getHistoryRecordsWithJobAsNextAndLast();
-        // $result = $historyRecords[rand(0,$num)]->getJob()->getRate();
-        // $this->assertEquals();
+    
+        $memNum = 324;
+        $members = $this->CreateMembersToTest($memNum);
+        $numberHistory = 563;
+        $historyVariousJob = $this->CreateRandomHistoryFor($members,$numberHistory,"Jan 01 2012","Nov 01 2016");
+        $historyWithReplacedJob = $this->SetJobForFractionOf($replacedJob,$fraction = 8,$historyVariousJob);
+        $mhRep = $mhRep = $this->createMock(MemberHistoryRepository::class);
+        $mhRep->expects($this->any())
+        ->method('findWithThisJob')
+        ->willReturn($historyWithReplacedJob);
+        
+        $mhRep->expects($this->any())
+        ->method('findByUserIdIn')
+        ->willReturn($historyVariousJob);
+        $retrieveRateJunctions = new RetrieveOldNewRateJunctions($muRep,$mhRep,$jobRep);
    }
    
 
@@ -181,10 +201,50 @@ class JobTest extends TestCase
        }
        return $result;
    }
-   protected function createJobSetAfterUpdate(Job $updatedJob)
+   protected function createJobWithRandomRate(int $amount,int $rateMin, int $rateMax)
    {
-       
-       
+       $jobs = array();
+       for($i = 0 ; $i < $amount ; $i++)
+       {
+           $job = new Job();
+           $rate = rand($rateMin,$rateMax);
+           $rate += 0.57;
+           $job->setRate($rate);
+           $jobs[] = $job;
+       }
        return $jobs;
+   }
+
+   protected function CreateHistoryWithJunctionsForUser(Job $oldJob, Job $newJob, MemberUser $mu, bool $asLast = false)
+   {
+       $members[] = $mu;
+        $historyAmountMin = 3;
+        $historyAmountMax = 8;
+        $historyAmount = rand($historyAmountMin, $historyAmountMax);
+        $firstDate = "Jan 01 2012";
+        $lastDate = "Dec 31 2017";
+        $history = $this->CreateRandomHistoryFor($members,$historyAmount, $firstDate, $lastDate);
+
+        uasort($history,function($a, $b) {
+            if ($a->getDate() == $b->getDate()) {
+                return 0;
+            }
+            return ($a->getDate() < $b->getDate()) ? -1 : 1;
+        });
+
+        $indexOldJob = $asLast ? $historyAmount - 1 : function() use($historyAmount){
+            $possibleIndex = $historyAmount - 2;
+            if ($possibleIndex < 1) return 0;
+            return rand(0,$possibleIndex);
+        };
+        $history[$indexOldJob]->setJob($oldJob);
+
+        if ($asLast) $mu->setJob($newJob);
+        else $history[$indexOldJob + 1]->setJob(newJob);
+
+        foreach($history as $h)
+        {
+            $mu->addMyHistoryDirectly($h);
+        }
    }
 }
