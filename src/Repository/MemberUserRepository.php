@@ -99,4 +99,13 @@ class MemberUserRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
     }
+
+    public function findByJob(Job $job)
+    {
+        return $this->createQueryBuilder('mu')
+        ->Where("mu.job = :jobPar")
+        ->setParameter('jobPar', $job)
+        ->getQuery()
+        ->getResult();
+    }
 }

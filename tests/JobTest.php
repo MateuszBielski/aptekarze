@@ -134,11 +134,12 @@ class JobTest extends TestCase
         // //dodać oddzielne Joby do zbioru?
 
     
-        // $memNum = 324;
+        
         // $members = $this->CreateMembersToTest($memNum);
         // $numberHistory = 563;
+        // 
         // $historyVariousJob = $this->CreateRandomHistoryFor($members,$numberHistory,"Jan 01 2012","Nov 01 2016");
-        // $historyWithReplacedJob = $this->SetJobForFractionOf($replacedJob,$fraction = 8,$historyVariousJob);
+        // $historyWithReplacedJob = $this->ExtractHistoryWithSpecifiedJobFrom($replacedJob,$historyVariousJob);
         // $mhRep = $mhRep = $this->createMock(MemberHistoryRepository::class);
         // $mhRep->expects($this->any())
         // ->method('findWithThisJob')
@@ -150,7 +151,7 @@ class JobTest extends TestCase
         // $retrieveRateJunctions = new RetrieveOldNewRateJunctions($muRep,$mhRep,$jobRep);
    }
 
-   public function testCreateHistoryWithJunctionsForUser()
+   public function testCreateHistoryWithJunctionsForUserAsLast()
    {
        $memberUser = new MemberUser();
        $memberUser->CreateDummyData();
@@ -172,6 +173,30 @@ class JobTest extends TestCase
        $lastIndex = count($history) - 1;
        $res1 = $history[$lastIndex]->getJob() == $oldJob;
        $res2 = $memberUser->getJob() == $newJob;
+       $this->assertTrue($res1 && $res2);
+   }
+   public function testCreateHistoryWithJunctionsForUserAs_Not_Last()
+   {
+       $memberUser = new MemberUser();
+       $memberUser->CreateDummyData();
+
+
+
+       $oldJob = new Job();
+       $newJob = new Job();
+       $otherJob = new Job();
+
+       $oldJob->setRate(3.21);
+       $newJob->setRate(7.54);
+       $otherJob->setRate(2.11);
+
+       $memberUser->setJob($otherJob);
+
+       $this->CreateHistoryWithJunctionsForUser($oldJob,$newJob,$memberUser);
+       $history = $memberUser->getMyHistoryCached();
+       $lastIndex = count($history) - 1;
+       $res1 = $history[$lastIndex]->getJob() != $oldJob;
+       $res2 = $memberUser->getJob() != $newJob;
        $this->assertTrue($res1 && $res2);
    }
    
@@ -256,22 +281,19 @@ class JobTest extends TestCase
             return ($a->getDate() < $b->getDate()) ? -1 : 1;
         });
         
-        $i = 0;
         foreach($history as $h)
         {
             $mu->addMyHistoryDirectly($h);
         }
         $mu->setOptimizedTrue();
-        $RandomIndex = function() use($historyAmount){
-            $possibleIndex = $historyAmount - 2;
-            if ($possibleIndex < 1) return 0;
-            return rand(0,$possibleIndex);
-        };
-
-        $indexOldJob = $asLast ? $historyAmount - 1 : $RandomIndex;
+        
+        $possibleIndex = $historyAmount - 2;
+        $possibleIndex = $possibleIndex < 1 ? 0 : rand(0,$possibleIndex);
+        $indexOldJob = $asLast ? $historyAmount - 1 : $possibleIndex;
+        // print("historyAmount: ".$historyAmount." indexOldJob: ".$indexOldJob);
         $mu->getMyHistoryCached()[$indexOldJob]->setJob($oldJob);
 
         if ($asLast) $mu->setJob($newJob);
-        else $mu->getMyHistoryCached()[$indexOldJob + 1]->setJob(newJob);
+        else $mu->getMyHistoryCached()[$indexOldJob + 1]->setJob($newJob);
    }
 }
