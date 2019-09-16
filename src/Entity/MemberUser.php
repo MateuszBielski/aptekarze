@@ -216,7 +216,9 @@ class MemberUser extends AbstrMember implements UserInterface
                 $myHistory->setmyUser(null);
             }
         }
-
+        $key = array_search ($myHistory, $this->myHistoryCached);
+        unset($this->myHistoryCached[$key]);
+        
         return $this;
     }
 

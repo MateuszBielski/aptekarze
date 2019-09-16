@@ -18,11 +18,11 @@ class CancelUpdateRate
     private $newJob;
     private $memberHistoryWithOldJob;
 
-    public function __construct()//MemberUserRepository $mur, MemberHistoryRepository $mhr, 
+    public function __construct(JobRepository $jobRep, MemberUserRepository $mur)//MemberUserRepository $mur, MemberHistoryRepository $mhr, 
     {
         // $this->memHistRep = $mhr;
-        // $this->memUsRep = $mur;
-        // $this->jobRep = $jobRep;
+        $this->memUsRep = $mur;
+        $this->jobRep = $jobRep;
     }
 
     public function MakeCancel()
@@ -30,14 +30,7 @@ class CancelUpdateRate
         return true;
     }
 
-    public function setJobRep(JobRepository $jobRep)
-    {
-        $this->jobRep = $jobRep;
-    }
-    public function setMemUserRep(MemberUserRepository $mur)
-    {
-        $this->memUsRep = $mur;
-    }
+    
 
     public function RestoreJobReplacedBy(Job $jobToCancel)
     {
@@ -51,8 +44,15 @@ class CancelUpdateRate
                 break;
             }
         }
-        $mu = $this->memUsRep->findByJob($jobToCancel);
-        $mu->setJob($jobToRestore);
+        $memberUsers = $this->memUsRep->findByJob($jobToCancel);
+        foreach($memberUsers as $mu)
+        {
+            $mu->setJob($jobToRestore);
+            foreach($mu->getMyHistoryCached() as $h)
+            $mu->removeMyHistory($h);
+            
+
+        }
     }
     
 
