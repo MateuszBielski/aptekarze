@@ -49,7 +49,10 @@ class CancelUpdateRate
         {
             $mu->setJob($jobToRestore);
             foreach($mu->getMyHistoryCached() as $h)
-            $mu->removeMyHistory($h);
+            {
+                if($h->getJob() == $jobToRestore)
+                $mu->removeMyHistory($h);
+            }
             
 
         }

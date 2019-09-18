@@ -11,6 +11,7 @@ use App\Repository\MemberUserRepository;
 use App\Repository\JobRepository;
 use App\Repository\MemberHistoryRepository;
 use App\Service\CancelUpdateRate as AppCancelUpdateRate;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 class CancelUpdateRateTest extends TestCase
@@ -36,10 +37,9 @@ class CancelUpdateRateTest extends TestCase
     public function testRestoreReplacedJob()
     {
         
-        $replacedJob = new Job();
-        $newJob = new Job();
-        $replacedJob->setRate(9);
-        $newJob->setRate(40);
+        $jobs = $this->createJobsWithRates([9,40]);
+        $replacedJob = $jobs[0];
+        $newJob = $jobs[1];
 
         $replacedJob->setReplacedBy($newJob);
 
@@ -50,15 +50,10 @@ class CancelUpdateRateTest extends TestCase
         $memberUser2 = new MemberUser();
         $memberUser2->setJob($newJob);
 
-        
-        $this->jobRep->expects($this->any())
-            ->method('findAll')
-            ->willReturn([$replacedJob, $newJob]);
-
-        
-        $this->memUserRep->expects($this->any())  
-            ->method('findByJob')
-            ->willReturn([$memberUser,$memberUser2]);
+        $this->FillMocks(['findAll','findByJob'],
+            [[$replacedJob, $newJob],
+            [$memberUser,$memberUser2]
+            ]);    
 
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
         $this->assertEquals(9,$memberUser->getJob()->getRate());
@@ -66,30 +61,22 @@ class CancelUpdateRateTest extends TestCase
     }
     public function testRemoveReplacedJobHistory()
     {
-        $replacedJob = new Job();
-        $newJob = new Job();
-        $replacedJob->setRate(9);
-        $newJob->setRate(40);
+        $jobs = $this->createJobsWithRates([9,40]);
+        $replacedJob = $jobs[0];
+        $newJob = $jobs[1];
 
         $replacedJob->setReplacedBy($newJob);
 
-        $memberUser = new MemberUser();
-        $memberUser->CreateDummyData();
-        $memberUser->setJob($newJob);
+        $memberUser = $this->CreateMemberWithDummyDataAndJob($newJob);
 
-        $memberHistory = new MemberHistory($memberUser);
-        $memberHistory->setJob($replacedJob);
+        $this->AddHistoryWithJobAndDateTo([$replacedJob,],
+                                        ['2012-05-06',]
+                                        ,$memberUser );
 
-        $memberUser->addMyHistoryDirectly($memberHistory);
-        $memberUser->setOptimizedTrue();
-
-        $this->jobRep->expects($this->any())
-            ->method('findAll')
-            ->willReturn([$replacedJob, $newJob]);
-
-        $this->memUserRep->expects($this->any())  
-            ->method('findByJob')
-            ->willReturn([$memberUser]);
+        $this->FillMocks(['findAll','findByJob'],
+                        [[$replacedJob, $newJob],
+                        [$memberUser]
+                        ]);
         
         $this->assertEquals(1,count($memberUser->getMyHistoryCached()));
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
@@ -99,38 +86,53 @@ class CancelUpdateRateTest extends TestCase
 
     public function testNotRemoveOtherHistory()
     {
-        $otherJob1 = new Job();
-        $otherJob2 = new Job();
-        $newJob = new Job();
-        $otherJob1->setRate(9);
-        $otherJob2->setRate(51);
-        $newJob->setRate(40);
+        $jobs = $this->createJobsWithRates([9,51,40]);
+        $otherJob1 = $jobs[0];
+        $otherJob2 = $jobs[1];
+        $newJob = $jobs[2];
 
-        $memberUser = new MemberUser();
-        $memberUser->CreateDummyData();
-        $memberUser->setJob($otherJob2);
+        $memberUser = $this->CreateMemberWithDummyDataAndJob($otherJob2);
 
-        $memberHistory = new MemberHistory($memberUser);
-        $memberHistory->setJob($otherJob1);
+        $this->AddHistoryWithJobAndDateTo([$otherJob1,],
+                                        ['2012-05-06',]
+                                        ,$memberUser );
 
-        $memberUser->addMyHistoryDirectly($memberHistory);
-        $memberUser->setOptimizedTrue();
-
-        $this->jobRep->expects($this->any())
-            ->method('findAll')
-            ->willReturn([$otherJob1, $otherJob2]);
-
-        $this->memUserRep->expects($this->any())  
-            ->method('findByJob')
-            ->willReturn([$memberUser]);
+        $this->FillMocks(['findAll','findByJob'],
+                        [[$otherJob1, $otherJob2],
+                        [$memberUser]
+                        ]);
         
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
         $this->assertEquals(1,count($memberUser->getMyHistoryCached()));
     }
 
-    public function t_notCancelIfFurtherChangesExist(Type $var = null)
+    public function testRestoreNotAffectIfFurtherChangesJobExist()
     {
-        # code...
+        $jobs = $this->createJobsWithRates([9,40,51]);
+        $replacedJob = $jobs[0];
+        $newJob = $jobs[1];
+        $replacedJob->setReplacedBy($newJob);
+        
+        $otherJob = $jobs[2];
+
+        $memberUser = $this->CreateMemberWithDummyDataAndJob($newJob);
+
+        $this->AddHistoryWithJobAndDateTo([$replacedJob,$otherJob],
+                                        ['2012-05-06','2014-03-07']
+                                        ,$memberUser );
+        $this->FillMocks(['findAll','findByJob'],
+                                        [[$replacedJob,$otherJob],
+                                        [$memberUser]
+                                        ]);
+
+        $this->assertEquals(2,count($memberUser->getMyHistoryCached()));                            
+        $this->cancelUpR->RestoreJobReplacedBy($newJob);
+        $this->assertEquals(40,$memberUser->getJob()->getRate());
+
+    }
+    public function t_RestoreIfHistoryLoadSeparately()
+    {
+        
     }
     public function notUsed()
     {
@@ -145,5 +147,50 @@ class CancelUpdateRateTest extends TestCase
         // $allJobs[] = $replacedJob;
         // $allJobs[] = $newJob;
 
+    }
+
+    private function createJobsWithRates(array $rates)
+    {
+        foreach($rates as $rate)
+        {
+            $job = new Job();
+            $job->setRate($rate);
+            $jobs[] = $job;
+        }
+        return $jobs;
+        
+    }
+
+    private function AddHistoryWithJobAndDateTo(array $jobs, array $dates, MemberUser $mu)
+    {
+        $number = count($jobs);
+        for($i = 0 ; $i < $number ; $i++)
+        {
+            $memberHistory = new MemberHistory($mu);
+            $memberHistory->setJob($jobs[$i]);
+            $memberHistory->setDate(new \DateTime($dates[$i]));
+            $mu->addMyHistoryDirectly($memberHistory);
+
+        }
+        $mu->setOptimizedTrue();
+    }
+    private function CreateMemberWithDummyDataAndJob(Job $otherJob2)
+    {
+        $memberUser = new MemberUser();
+        $memberUser->CreateDummyData();
+        $memberUser->setJob($otherJob2);
+        return $memberUser;
+    }
+    private function FillMocks(array $methods, array $returns)
+    {
+        $repositories = [$this->jobRep,$this->memUserRep];
+        $i = 0;
+        foreach($repositories as $rep)
+        {
+            $rep->expects($this->any())
+            ->method($methods[$i])
+            ->willReturn($returns[$i]);
+            $i++;
+        }
     }
 }
