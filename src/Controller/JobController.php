@@ -206,6 +206,8 @@ class JobController extends AbstractController
         //znaleźć stary job
         //usunąć interesujący job,
         //a w starym usunąć replacedBy
+        //----------ponowna definicja--------------
+        //przywrócić job tym, którzy mieli go jako bieżący w czasie zmiany
 
         //może przenieść IsAvaliableCancelUpdateRate do klasy jobOptimizer lub podobnej
         // return $this->render('showTemporaryVariables.html.twig', [

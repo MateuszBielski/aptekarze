@@ -47,13 +47,19 @@ class CancelUpdateRate
         $memberUsers = $this->memUsRep->findByJob($jobToCancel);
         foreach($memberUsers as $mu)
         {
-            $mu->setJob($jobToRestore);
-            foreach($mu->getMyHistoryCached() as $h)
+            $history = $mu->getMyHistoryCached();
+            $number = count($history);
+            for($i = 0 ; $i < $number; $i++)
             {
+                $h = $history[$i];
                 if($h->getJob() == $jobToRestore)
-                $mu->removeMyHistory($h);
+                {
+                    // if($i == $number - 1)break;//chyba ten warunek nie wystarczy
+                    $mu->removeMyHistory($h);
+
+                }
             }
-            
+            $mu->setJob($jobToRestore);
 
         }
     }
