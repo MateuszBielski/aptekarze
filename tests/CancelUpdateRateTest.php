@@ -106,36 +106,7 @@ class CancelUpdateRateTest extends TestCase
         $this->assertEquals(1,count($memberUser->getMyHistoryCached()));
     }
 
-    public function t_RestoreNotAffectIfFurtherChangesJobExist()
-    {
-        $jobs = $this->createJobsWithRates([9,40,51]);
-        $replacedJob = $jobs[0];
-        $newJob = $jobs[1];
-        $replacedJob->setReplacedBy($newJob);
-        
-        $otherJob = $jobs[2];
-
-        $memberUser = $this->CreateMemberWithDummyDataAndJob($newJob);
-        $memberUser2 = $this->CreateMemberWithDummyDataAndJob($newJob);
-
-        $this->AddHistoryWithJobAndDateTo($jobs,
-                                        ['2012-05-06','2014-03-07']
-                                        ,$memberUser );
-                                        $this->AddHistoryWithJobAndDateTo([$replacedJob],
-                                        ['2012-05-06']
-                                        ,$memberUser2 );
-                                        
-        $this->FillMocks(['findAll','findByJob'],
-                                        [$jobs,
-                                        [$memberUser,$memberUser2]
-                                        ]);
-
-        $this->assertEquals(2,count($memberUser->getMyHistoryCached()));                            
-        $this->cancelUpR->RestoreJobReplacedBy($newJob);
-        $this->assertEquals(40,$memberUser->getJob()->getRate());
-        $this->assertEquals(40,$memberUser2->getJob()->getRate());
-
-    }
+    
     public function testRestoreJobAffectOnlyUpdatedUsers()
     {
         $jobs = $this->createJobsWithRates([9,40,32]);
@@ -158,12 +129,13 @@ class CancelUpdateRateTest extends TestCase
         $this->assertEquals($replacedJob,$memberUser->getJob());
         $this->assertEquals($otherJob,$memberUser2->getJob());
     }
-    public function testRestoreReplacedJobInPast()
+    public function testRemoveHistoryIfReplacedJobInPast()
     {
         $jobs = $this->createJobsWithRates([9,40,32]);
         $replacedJob = $jobs[0];
         $newJob = $jobs[1];
         $otherJob = $jobs[2];
+        $replacedJob->setReplacedBy($newJob);
 
         $memberUser = $this->CreateMemberWithDummyDataAndJob($otherJob);
 
@@ -188,6 +160,7 @@ class CancelUpdateRateTest extends TestCase
         $newJob = $jobs[1];
         $otherJob1 = $jobs[2];
         $otherJob2 = $jobs[3];
+        $replacedJob->setReplacedBy($newJob);
 
         $memberUser = $this->CreateMemberWithDummyDataAndJob($otherJob1);
 
@@ -204,7 +177,7 @@ class CancelUpdateRateTest extends TestCase
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
         $this->assertEquals(3,count($memberUser->getMyHistoryCached()));
     }
-    public function testThrowErrorIfCanceledFollowsOtherJob()
+    public function testThrowExeptionIfCanceledFollowsOtherJob_1()
     {
         //w historii ma przywrócić te przypadki, gdzie aktualizowany job był bieżącym, czyli musi być styk replaced/new 
         $jobs = $this->createJobsWithRates([9,40,32,25]);
@@ -216,6 +189,53 @@ class CancelUpdateRateTest extends TestCase
         $memberUser = $this->CreateMemberWithDummyDataAndJob($otherJob1);
 
         $this->AddHistoryWithJobAndDateTo([$replacedJob,$otherJob2,$newJob],
+                                        ['2012-05-06','2013-04-23','2018-05-12']
+                                        ,$memberUser );
+
+        $this->FillMocks(['findAll','findByJob'],
+                            [$jobs,
+                            [$memberUser]
+                            ]);
+
+        $this->expectException("Exception");//najpierw spodziewa się
+        $this->cancelUpR->RestoreJobReplacedBy($newJob);// potem funkcja, która wyrzuci wyjątek
+    }
+    public function testThrowExeptionIfCanceledFollowsOtherJob_2()
+    {
+        //w historii ma przywrócić te przypadki, gdzie aktualizowany job był bieżącym, czyli musi być styk replaced/new 
+        $jobs = $this->createJobsWithRates([9,40,32,25]);
+        $replacedJob = $jobs[0];
+        $newJob = $jobs[1];
+        $otherJob1 = $jobs[2];
+        $otherJob2 = $jobs[3];
+
+        $memberUser = $this->CreateMemberWithDummyDataAndJob($newJob);
+
+        $this->AddHistoryWithJobAndDateTo([$replacedJob,$otherJob2,$otherJob1],
+                                        ['2012-05-06','2013-04-23','2018-05-12']
+                                        ,$memberUser );
+
+        $this->FillMocks(['findAll','findByJob'],
+                            [$jobs,
+                            [$memberUser]
+                            ]);
+
+        $this->expectException("Exception");//najpierw spodziewa się
+        $this->cancelUpR->RestoreJobReplacedBy($newJob);// potem funkcja, która wyrzuci wyjątek
+    }
+    public function testRestoreReplacedJobInPast()
+    {
+        $jobs = $this->createJobsWithRates([9,40,32,25,62]);
+        $replacedJob = $jobs[0];
+        $newJob = $jobs[1];
+        $otherJob1 = $jobs[2];
+        $otherJob2 = $jobs[3];
+        $otherJob3 = $jobs[4];
+        $replacedJob->setReplacedBy($newJob);
+
+        $memberUser = $this->CreateMemberWithDummyDataAndJob($otherJob3);
+
+        $this->AddHistoryWithJobAndDateTo([$otherJob1,$replacedJob,$newJob,$otherJob2],
                                         ['2012-05-06','2013-04-23','2017-02-12','2018-05-12']
                                         ,$memberUser );
 
@@ -224,10 +244,8 @@ class CancelUpdateRateTest extends TestCase
                             [$memberUser]
                             ]);
 
-        // $this->assertEquals(1,count($memberUser->getMyHistoryCached()));                                
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
-        $this->expectException("Exception");
-        // $this->assertEquals(3,count($memberUser->getMyHistoryCached()));
+        $this->assertEquals($replacedJob,$memberUser->getMyHistoryCached()[2]->getJob());//indeks 2, bo element z indeksem 1 jest tu usuwany, więc indeks też jest niezdefiniowany
     }
     public function t_RestoreReplacedJobInPastIfHistoryNotSorted()
     {

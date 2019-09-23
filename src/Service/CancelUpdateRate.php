@@ -49,19 +49,34 @@ class CancelUpdateRate
         {
             $history = $mu->getMyHistoryCached();
             $number = count($history);
-            for($i = 0 ; $i < $number; $i++)
+            
+            $findJobToCancel = true;
+            $i = 0;
+            $isJunction = true;
+            $historyToRemove = null;
+            $placeToRestoreJob = $mu;
+            while($i < $number && $findJobToCancel)
             {
                 $h = $history[$i];
-                if($h->getJob() == $jobToRestore)
+                if($h->getJob() == $jobToCancel)
                 {
-                    // if($i == $number - 1)break;//chyba ten warunek nie wystarczy
-                    $mu->removeMyHistory($h);
-
+                    $findJobToCancel = false;
+                    $isJunction = ($history[$i - 1]->getJob() == $jobToRestore);
+                    $placeToRestoreJob = $h;
                 }
+                if($h->getJob() == $jobToRestore)$historyToRemove = $h;
+                $i++;
             }
-            $mu->setJob($jobToRestore);
+            if($number && $findJobToCancel && $mu->getJob() == $jobToCancel)
+            $isJunction = $history[$number - 1]->getJob() == $jobToRestore ? true : false;
+            if(!$isJunction)throw new \Exception('RestoreJobReplacedBy jobToCancel nie następuje bezpośrednio po jobToRestore');
+            
+            if($historyToRemove != null)$mu->removeMyHistory($historyToRemove);
+            // if($historyToRemove != null)$mu->removeMyJobHistory($historyToRemove);//ta funkcja nie działa w tym miejscu
+            $placeToRestoreJob->setJob($jobToRestore);
 
         }
+        
     }
     
 
