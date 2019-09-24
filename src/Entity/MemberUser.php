@@ -216,7 +216,9 @@ class MemberUser extends AbstrMember implements UserInterface
                 $myHistory->setmyUser(null);
             }
         }
-        $key = array_search ($myHistory, $this->myHistoryCached);
+        
+        $history = is_array($this->myHistoryCached) ? $this->myHistoryCached : $this->myHistoryCached->toArray();
+        $key = array_search ($myHistory, $history);
         unset($this->myHistoryCached[$key]);
         
         return $this;
@@ -716,7 +718,9 @@ class MemberUser extends AbstrMember implements UserInterface
             $content .= ' '.$h->getDate()->format('d.m.Y').' '.$h->getJob()->getRate();
             
         }
-        $this->myHistory->removeElement($history);
+        
+        // $this->myHistory->removeElement($history);
+        $this->removeMyHistory($history);
         
         return $content;
     }

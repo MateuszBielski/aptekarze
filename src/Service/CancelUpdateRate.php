@@ -47,7 +47,8 @@ class CancelUpdateRate
         $memberUsers = $this->memUsRep->findByJob($jobToCancel);
         foreach($memberUsers as $mu)
         {
-            $history = $mu->getMyHistoryCached();
+            // $mu->SortMyHistoryCached();
+            $history = $mu->getMyHistoryCachedSorted();
             $number = count($history);
             
             $findJobToCancel = true;
@@ -71,8 +72,8 @@ class CancelUpdateRate
             $isJunction = $history[$number - 1]->getJob() == $jobToRestore ? true : false;
             if(!$isJunction)throw new \Exception('RestoreJobReplacedBy jobToCancel nie następuje bezpośrednio po jobToRestore');
             
-            if($historyToRemove != null)$mu->removeMyHistory($historyToRemove);
-            // if($historyToRemove != null)$mu->removeMyJobHistory($historyToRemove);//ta funkcja nie działa w tym miejscu
+            // if($historyToRemove != null)$mu->removeMyHistory($historyToRemove);//ta funkcja nie działa z SortMyHistoryCached lub getMyHistoryCachedSorted
+            if($historyToRemove != null)$mu->removeMyJobHistory($historyToRemove);//ta funkcja nie pozwala przejść testom
             $placeToRestoreJob->setJob($jobToRestore);
 
         }

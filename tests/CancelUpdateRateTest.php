@@ -247,11 +247,35 @@ class CancelUpdateRateTest extends TestCase
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
         $this->assertEquals($replacedJob,$memberUser->getMyHistoryCached()[2]->getJob());//indeks 2, bo element z indeksem 1 jest tu usuwany, więc indeks też jest niezdefiniowany
     }
-    public function t_RestoreReplacedJobInPastIfHistoryNotSorted()
+    public function testRestoreReplacedJobInPastIfHistoryNotSorted()
     {
-        # code...
+        $jobs = $this->createJobsWithRates([9,40,32,25,62]);
+        $replacedJob = $jobs[0];
+        $newJob = $jobs[1];
+        $otherJob1 = $jobs[2];
+        $otherJob2 = $jobs[3];
+        $otherJob3 = $jobs[4];
+        $replacedJob->setReplacedBy($newJob);
+
+        $memberUser = $this->CreateMemberWithDummyDataAndJob($otherJob3);
+
+        $this->AddHistoryWithJobAndDateTo([$newJob,$replacedJob,$otherJob2,$otherJob1],
+                                        ['2017-02-12','2013-04-23','2018-05-12','2012-05-06']
+                                        ,$memberUser );
+
+        $this->FillMocks(['findAll','findByJob'],
+                            [$jobs,
+                            [$memberUser]
+                            ]);
+
+        $this->cancelUpR->RestoreJobReplacedBy($newJob);
+        $this->assertEquals($replacedJob,$memberUser->getMyHistoryCached()[2]->getJob());
     }
     public function t_RestoreIfHistoryLoadSeparately()
+    {
+        
+    }
+    public function t_RestoreIfRegisterDataExist()
     {
         
     }
