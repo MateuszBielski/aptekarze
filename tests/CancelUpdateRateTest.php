@@ -26,6 +26,7 @@ class CancelUpdateRateTest extends TestCase
         //nie wiadomo dlaczego nie ma potrzeby deklaracji poniższych pól
         $this->jobRep = $this->createMock(JobRepository::class);
         $this->memUserRep = $this->createMock(MemberUserRepository::class);
+        $this->histRep = $this->createMock(MemberHistoryRepository::class);
         $this->cancelUpR = new AppCancelUpdateRate($this->jobRep,$this->memUserRep);
     }
     public function testMakeCancel()
@@ -271,9 +272,34 @@ class CancelUpdateRateTest extends TestCase
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
         $this->assertEquals($replacedJob,$memberUser->getMyHistoryCached()[2]->getJob());
     }
-    public function t_RestoreIfHistoryLoadSeparately()
+    public function testRestoreIfHistoryLoadSeparately()
     {
+        $jobs = $this->createJobsWithRates([9,40,32,25,62]);
+        $replacedJob = $jobs[0];
+        $newJob = $jobs[1];
+        $otherJob1 = $jobs[2];
+        $replacedJob->setReplacedBy($newJob);
+
+        $memberUser = $this->CreateMemberWithDummyDataAndJob($newJob);
+
         
+        $this->FillMocks(['findAll','findByJob'],
+        [$jobs,
+        [$memberUser]
+        ]);
+        $this->cancelUpR->RestoreJobReplacedBy($newJob);
+        
+        $this->histRep->expects($this->any())
+                    ->method('findByUserIdIn')
+                    ->willReturn($this->CreateHistoryWithJobAndDateFor([$replacedJob,$otherJob1],
+                    ['2017-02-12','2013-04-23'],$memberUser));
+        $this->assertEquals(1,count($memberUser->getMyHistoryCached()));
+        //test nie przechodzi - musi być użyta funkcja CompleteHistoryFor
+
+    }
+    public function t_testRestoreIfHistoryLoadSeparatelyToManyMembers()
+    {
+
     }
     public function t_RestoreIfRegisterDataExist()
     {
@@ -308,16 +334,33 @@ class CancelUpdateRateTest extends TestCase
 
     private function AddHistoryWithJobAndDateTo(array $jobs, array $dates, MemberUser $mu)
     {
+        // $number = count($jobs);
+        // for($i = 0 ; $i < $number ; $i++)
+        // {
+        //     $memberHistory = new MemberHistory($mu);
+        //     $memberHistory->setJob($jobs[$i]);
+        //     $memberHistory->setDate(new \DateTime($dates[$i]));
+        //     $mu->addMyHistoryDirectly($memberHistory);
+
+        // }
+        foreach($this->CreateHistoryWithJobAndDateFor($jobs, $dates, $mu) as $h)
+        {
+            $mu->addMyHistoryDirectly($h);
+        }
+        $mu->setOptimizedTrue();
+    }
+    private function CreateHistoryWithJobAndDateFor(array $jobs, array $dates, MemberUser $mu)
+    {
         $number = count($jobs);
+        $history = array();
         for($i = 0 ; $i < $number ; $i++)
         {
             $memberHistory = new MemberHistory($mu);
             $memberHistory->setJob($jobs[$i]);
             $memberHistory->setDate(new \DateTime($dates[$i]));
-            $mu->addMyHistoryDirectly($memberHistory);
-
+            $history[] = $memberHistory;
         }
-        $mu->setOptimizedTrue();
+        return $history;
     }
     private function CreateMemberWithDummyDataAndJob(Job $otherJob2)
     {
