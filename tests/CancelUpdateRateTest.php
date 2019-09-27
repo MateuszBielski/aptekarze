@@ -27,7 +27,7 @@ class CancelUpdateRateTest extends TestCase
         $this->jobRep = $this->createMock(JobRepository::class);
         $this->memUserRep = $this->createMock(MemberUserRepository::class);
         $this->histRep = $this->createMock(MemberHistoryRepository::class);
-        $this->cancelUpR = new AppCancelUpdateRate($this->jobRep,$this->memUserRep);
+        $this->cancelUpR = new AppCancelUpdateRate($this->jobRep,$this->memUserRep,$this->histRep);
     }
     public function testMakeCancel()
     {
@@ -281,20 +281,24 @@ class CancelUpdateRateTest extends TestCase
         $replacedJob->setReplacedBy($newJob);
 
         $memberUser = $this->CreateMemberWithDummyDataAndJob($newJob);
+        $memberUser->setId(14);
 
         
         $this->FillMocks(['findAll','findByJob'],
         [$jobs,
-        [$memberUser]
+        [14 => $memberUser]
         ]);
-        $this->cancelUpR->RestoreJobReplacedBy($newJob);
         
         $this->histRep->expects($this->any())
-                    ->method('findByUserIdIn')
-                    ->willReturn($this->CreateHistoryWithJobAndDateFor([$replacedJob,$otherJob1],
-                    ['2017-02-12','2013-04-23'],$memberUser));
+        ->method('findByUserIdIn')
+        ->willReturn($this->CreateHistoryWithJobAndDateFor([$replacedJob,$otherJob1],
+        ['2017-02-12','2013-04-23'],$memberUser));
+
+        $this->cancelUpR->RestoreJobReplacedBy($newJob);
         $this->assertEquals(1,count($memberUser->getMyHistoryCached()));
-        //test nie przechodzi - musi być użyta funkcja CompleteHistoryFor
+    }
+    public function t_RestoreUsingMemUsRepIndexedById()
+    {
 
     }
     public function t_testRestoreIfHistoryLoadSeparatelyToManyMembers()
@@ -364,7 +368,7 @@ class CancelUpdateRateTest extends TestCase
     }
     private function CreateMemberWithDummyDataAndJob(Job $otherJob2)
     {
-        $memberUser = new MemberUser();
+        $memberUser = new MemberUserToTest();
         $memberUser->CreateDummyData();
         $memberUser->setJob($otherJob2);
         return $memberUser;

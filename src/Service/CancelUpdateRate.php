@@ -18,9 +18,9 @@ class CancelUpdateRate
     private $newJob;
     private $memberHistoryWithOldJob;
 
-    public function __construct(JobRepository $jobRep, MemberUserRepository $mur)//MemberUserRepository $mur, MemberHistoryRepository $mhr, 
+    public function __construct(JobRepository $jobRep, MemberUserRepository $mur, MemberHistoryRepository $mhr)//MemberUserRepository $mur, MemberHistoryRepository $mhr, 
     {
-        // $this->memHistRep = $mhr;
+        $this->memHistRep = $mhr;
         $this->memUsRep = $mur;
         $this->jobRep = $jobRep;
     }
@@ -45,6 +45,14 @@ class CancelUpdateRate
             }
         }
         $memberUsers = $this->memUsRep->findByJob($jobToCancel);
+        $member_ids = array();
+        foreach($memberUsers as $mu)
+        {
+            if($mu->getId() != null)$member_ids[] = $mu->getId();
+        }
+        if(count($member_ids)){
+            $this->CompleteHistoryFor($memberUsers,$member_ids);
+        }
         foreach($memberUsers as $mu)
         {
             // $mu->SortMyHistoryCached();
@@ -72,8 +80,7 @@ class CancelUpdateRate
             $isJunction = $history[$number - 1]->getJob() == $jobToRestore ? true : false;
             if(!$isJunction)throw new \Exception('RestoreJobReplacedBy jobToCancel nie następuje bezpośrednio po jobToRestore');
             
-            // if($historyToRemove != null)$mu->removeMyHistory($historyToRemove);//ta funkcja nie działa z SortMyHistoryCached lub getMyHistoryCachedSorted
-            if($historyToRemove != null)$mu->removeMyJobHistory($historyToRemove);//ta funkcja nie pozwala przejść testom
+            if($historyToRemove != null)$mu->removeMyJobHistory($historyToRemove);
             $placeToRestoreJob->setJob($jobToRestore);
 
         }
