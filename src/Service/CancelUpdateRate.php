@@ -44,7 +44,13 @@ class CancelUpdateRate
                 break;
             }
         }
-        $memberUsers = $this->memUsRep->findByJob($jobToCancel);
+        $historyWithReplacedJob = $this->memHistRep->findWithThisJob($jobToCancel);
+        $memberIds_OfHistoryReplacedJob = array();
+        foreach($historyWithReplacedJob as $rec)
+        {
+            $memberIds_OfHistoryReplacedJob[] = $rec->getMyUser()->getId();
+        }
+        $memberUsers = $this->memUsRep->findByJobIndexed($jobToCancel,$memberIds_OfHistoryReplacedJob);
         $member_ids = array();
         foreach($memberUsers as $mu)
         {

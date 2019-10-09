@@ -51,7 +51,7 @@ class CancelUpdateRateTest extends TestCase
         $memberUser2 = new MemberUser();
         $memberUser2->setJob($newJob);
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
             [[$replacedJob, $newJob],
             [$memberUser,$memberUser2]
             ]);    
@@ -74,7 +74,7 @@ class CancelUpdateRateTest extends TestCase
                                         ['2012-05-06',]
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                         [[$replacedJob, $newJob],
                         [$memberUser]
                         ]);
@@ -98,7 +98,7 @@ class CancelUpdateRateTest extends TestCase
                                         ['2012-05-06',]
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                         [[$otherJob1, $otherJob2],
                         [$memberUser]
                         ]);
@@ -121,7 +121,7 @@ class CancelUpdateRateTest extends TestCase
         $memberUser = $this->CreateMemberWithDummyDataAndJob($newJob);
         $memberUser2 = $this->CreateMemberWithDummyDataAndJob($otherJob);
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
             [$jobs,
             [$memberUser]
             ]);    
@@ -144,7 +144,7 @@ class CancelUpdateRateTest extends TestCase
                                         ['2012-05-06','2014-04-23']
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                             [$jobs,
                             [$memberUser]
                             ]);
@@ -169,7 +169,7 @@ class CancelUpdateRateTest extends TestCase
                                         ['2012-05-06','2013-04-23','2017-02-12','2018-05-12']
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                             [$jobs,
                             [$memberUser]
                             ]);
@@ -193,7 +193,7 @@ class CancelUpdateRateTest extends TestCase
                                         ['2012-05-06','2013-04-23','2018-05-12']
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                             [$jobs,
                             [$memberUser]
                             ]);
@@ -216,7 +216,7 @@ class CancelUpdateRateTest extends TestCase
                                         ['2012-05-06','2013-04-23','2018-05-12']
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                             [$jobs,
                             [$memberUser]
                             ]);
@@ -240,7 +240,7 @@ class CancelUpdateRateTest extends TestCase
                                         ['2012-05-06','2013-04-23','2017-02-12','2018-05-12']
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                             [$jobs,
                             [$memberUser]
                             ]);
@@ -264,9 +264,9 @@ class CancelUpdateRateTest extends TestCase
                                         ['2017-02-12','2013-04-23','2018-05-12','2012-05-06']
                                         ,$memberUser );
 
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
                             [$jobs,
-                            [$memberUser]
+                            [$memberUser]//test jest źle napisany, bo przy pomocy tego rep memberUSer nie zostanie znaleziony
                             ]);
 
         $this->cancelUpR->RestoreJobReplacedBy($newJob);
@@ -284,7 +284,7 @@ class CancelUpdateRateTest extends TestCase
         $memberUser->setId(14);
 
         
-        $this->FillMocks(['findAll','findByJob'],
+        $this->FillMocks(['findAll','findByJobIndexed'],
         [$jobs,
         [14 => $memberUser]
         ]);
@@ -309,6 +309,8 @@ class CancelUpdateRateTest extends TestCase
     {
         
     }
+    //należy posprawdzać inne wyszukiwania, które są użyte w funkcji:
+    //RetrieveJunctions()
     public function notUsed()
     {
         $allJobs = array();

@@ -100,11 +100,13 @@ class MemberUserRepository extends ServiceEntityRepository
         ->getResult();
     }
 
-    public function findByJob(Job $job)
+    public function findByJobIndexed(Job $job, array $ids_range = null)
     {
-        return $this->createQueryBuilder('mu')
+        return $this->createQueryBuilder('mu','mu.id')
         ->Where("mu.job = :jobPar")
+        ->orWhere( "mu.id IN(:usersIds)")
         ->setParameter('jobPar', $job)
+        ->setParameter('usersIds', $ids_range)
         ->getQuery()
         ->getResult();
     }
